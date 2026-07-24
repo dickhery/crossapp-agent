@@ -6,6 +6,7 @@ import {
   MessageSquare,
   PanelLeft,
   PanelLeftClose,
+  Plug,
   Sparkles,
   Workflow,
 } from "lucide-react";
@@ -23,6 +24,7 @@ type NavItem = {
 
 const NAV_ITEMS: NavItem[] = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard, ocid: "nav.dashboard" },
+  { to: "/setup", label: "Setup", icon: Plug, ocid: "nav.setup" },
   { to: "/chat", label: "Chat", icon: MessageSquare, ocid: "nav.chat" },
   {
     to: "/workflows",

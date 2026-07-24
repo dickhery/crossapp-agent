@@ -6,11 +6,14 @@ import {
   createRouter,
   redirect,
 } from "@tanstack/react-router";
+import { Loader2 } from "lucide-react";
+import { useEffect, useRef } from "react";
 
 import { Layout } from "@/components/Layout";
 import { ChatPage } from "@/pages/ChatPage";
 import DashboardPage from "@/pages/DashboardPage";
 import { MemoryPage } from "@/pages/MemoryPage";
+import { SetupPage } from "@/pages/SetupPage";
 import { WorkflowEditPage } from "@/pages/WorkflowEditPage";
 import { WorkflowsPage } from "@/pages/WorkflowsPage";
 
@@ -20,9 +23,28 @@ type AppRouterContext = {
   auth: ReturnType<typeof useInternetIdentity>;
 };
 
+function AuthBootScreen() {
+  return (
+    <main
+      data-ocid="auth.boot_screen"
+      className="flex min-h-dvh flex-col items-center justify-center gap-3 bg-background px-6"
+    >
+      <Loader2
+        className="h-6 w-6 animate-spin text-primary"
+        aria-label="Restoring session"
+      />
+      <p className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
+        Restoring your Internet Identity session…
+      </p>
+    </main>
+  );
+}
+
 const rootRoute = createRootRouteWithContext<AppRouterContext>()({
   beforeLoad: ({ context, location }) => {
     const { isAuthenticated, isInitializing } = context.auth;
+    // Stay put while the II client hydrates from IndexedDB — do not bounce
+    // to /login mid-restore (that is the classic "stuck after refresh" bug).
     if (isInitializing) return;
     if (!isAuthenticated && location.pathname !== "/login") {
       throw redirect({ to: "/login" });
@@ -31,7 +53,15 @@ const rootRoute = createRootRouteWithContext<AppRouterContext>()({
       throw redirect({ to: "/" });
     }
   },
-  component: () => <Outlet />,
+  component: function RootComponent() {
+    const auth = useInternetIdentity();
+    // While auth is still restoring, render a dedicated boot screen instead of
+    // the protected layout (which would fire owner-scoped queries and hang).
+    if (auth.isInitializing) {
+      return <AuthBootScreen />;
+    }
+    return <Outlet />;
+  },
 });
 
 const loginRoute = createRoute({
@@ -91,6 +121,12 @@ const historyRoute = createRoute({
   component: () => <HistoryPage />,
 });
 
+const setupRoute = createRoute({
+  getParentRoute: () => protectedRoute,
+  path: "/setup",
+  component: () => <SetupPage />,
+});
+
 const routeTree = rootRoute.addChildren([
   loginRoute,
   protectedRoute.addChildren([
@@ -100,6 +136,7 @@ const routeTree = rootRoute.addChildren([
     workflowEditRoute,
     memoryRoute,
     historyRoute,
+    setupRoute,
   ]),
 ]);
 
@@ -122,12 +159,32 @@ export const router = createRouter({
   },
 });
 
-// Inject the live auth context into the router once the provider mounts.
+// Inject the live auth context into the router once the provider mounts, and
+// invalidate the route tree whenever auth settles or the signed-in bit flips.
+// Without invalidate(), beforeLoad does not re-run after login — the UI looks
+// "stuck" on the login screen even though II succeeded.
 export function useSyncRouterAuth() {
   const auth = useInternetIdentity();
-  // TanStack Router reads context on each render — updating it here keeps the
-  // beforeLoad guard in sync with the live II state.
-  router.update({ context: { auth } });
+  const prev = useRef({
+    isAuthenticated: auth.isAuthenticated,
+    isInitializing: auth.isInitializing,
+  });
+
+  useEffect(() => {
+    router.update({ context: { auth } });
+
+    const changed =
+      prev.current.isAuthenticated !== auth.isAuthenticated ||
+      prev.current.isInitializing !== auth.isInitializing;
+
+    if (changed) {
+      prev.current = {
+        isAuthenticated: auth.isAuthenticated,
+        isInitializing: auth.isInitializing,
+      };
+      void router.invalidate();
+    }
+  }, [auth]);
 }
 
 // Lazy import to avoid a circular dependency at module load time.

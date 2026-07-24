@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import type { LucideIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -61,7 +62,7 @@ export function EmptyState({
 
       {actionLabel && actionTo && (
         <Button asChild size="sm" data-ocid={`${ocid}.primary_button`}>
-          <a href={actionTo}>{actionLabel}</a>
+          <Link to={actionTo}>{actionLabel}</Link>
         </Button>
       )}
     </div>

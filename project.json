@@ -1,23 +1,26 @@
 {
-  "overview": "A personal control center for a cross-app AI agent on the Internet Computer — describe goals in chat, get Claude-optimized plans, save reusable workflows, and manage on-chain preferences.",
+  "overview": "True Cross-App Personal Agent — plan multi-dApp Internet Computer workflows on-chain, configure Internet Identity + the official IC MCP server, and run plans from Claude/ChatGPT under your II.",
   "features": [
     "Log in with Internet Identity and see your principal",
-    "Describe cross-dApp goals in a chat and get structured plans optimized for Claude + ICP MCP",
-    "Refine plans through conversation and copy them to clipboard",
-    "Save plans as reusable workflows with tags and favorites",
-    "Search, edit, duplicate, delete, and export workflows as markdown",
-    "Store preferred dApps, canister IDs, personal rules, and persistent notes on-chain",
-    "Dashboard with recent plans, workflow count, and onboarding for new users",
-    "History log of all generated plans with timestamps and re-open support"
+    "Guided Setup for trusting the IC MCP server (mcp.beta.id.ai) and connecting Claude or ChatGPT",
+    "Describe cross-dApp goals in chat and get numbered plans with real MCP tool hints",
+    "Offline template planner when the operator AI key is not set — still MCP-tool-aware",
+    "Copy plans for MCP (clipboard preamble + connector URL) and save as reusable workflows",
+    "Store preferred dApps, canister IDs, personal rules, and notes on-chain",
+    "Dashboard with MCP status, recent plans, and first-time onboarding",
+    "History log of generated plans with re-open support",
+    "Cycle-conscious caps on history, workflows, memory size, and model context"
   ],
   "category": "productivity",
   "tags": [
     "ai-agent",
     "internet-identity",
+    "mcp",
+    "cross-app",
     "workflow",
     "planner",
     "motoko",
     "dark-mode"
   ],
-  "last_updated": "2026-07-24T10:42:01.753Z"
+  "last_updated": "2026-07-24T12:00:00.000Z"
 }

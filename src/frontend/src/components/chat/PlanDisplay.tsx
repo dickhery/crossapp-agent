@@ -1,15 +1,15 @@
 import { Check, Copy, RefreshCw, Save } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { planClipboardPayload } from "@/lib/mcp";
 import { cn } from "@/lib/utils";
 
-// PlanDisplay renders the assistant's numbered plan with two affordances:
-// "Copy Plan" (clipboard) and "Save as Workflow" (persist to backend). The
-// plan text is expected to already be a numbered, structured plan from the
-// backend's PlanResult.planText field. We render it with monospace numerals
-// and preserve line breaks so the structure reads cleanly.
+// PlanDisplay renders the assistant's numbered plan with copy + save
+// affordances. "Copy for MCP" wraps the plan with connector instructions so
+// Claude/ChatGPT knows to execute via the IC MCP server.
 
 type PlanDisplayProps = {
   planText: string;
@@ -32,12 +32,12 @@ export function PlanDisplay({
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(planText);
+      await navigator.clipboard.writeText(planClipboardPayload(planText));
       setCopied(true);
+      toast.success("Plan copied — paste into Claude or ChatGPT with MCP");
       window.setTimeout(() => setCopied(false), 2000);
     } catch {
-      // Clipboard may be unavailable (permissions, insecure context). Fail
-      // silently — the plan text remains visible for manual selection.
+      toast.error("Clipboard unavailable — select the plan text manually");
     }
   };
 
@@ -94,7 +94,7 @@ export function PlanDisplay({
               <Copy className="h-3.5 w-3.5" aria-hidden />
             )}
             <span className="hidden sm:inline">
-              {copied ? "Copied" : "Copy Plan"}
+              {copied ? "Copied" : "Copy for MCP"}
             </span>
           </Button>
           <Button

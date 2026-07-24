@@ -1,12 +1,14 @@
 import Array "mo:core/Array";
 import List "mo:core/List";
 import Map "mo:core/Map";
+import Nat "mo:core/Nat";
 import Principal "mo:core/Principal";
 import Text "mo:core/Text";
 import Time "mo:core/Time";
 import Runtime "mo:core/Runtime";
 import Common "../types/common";
 import Core "../types/core";
+import OfflinePlan "./offline-plan";
 import OpenAI "./openai";
 
 // Domain logic for the CrossApp Agent core.
@@ -15,7 +17,20 @@ import OpenAI "./openai";
 // read and mutate the per-owner Maps/Lists passed in by the mixin layer, which
 // owns authorization. Each function assumes the caller has already been
 // verified as the data owner.
+//
+// Cycle-conscious defaults: per-user history is capped, conversation context
+// sent to the model is truncated, and plan generation falls back to a local
+// template when OpenAI is not configured (no HTTPS outcall).
 module {
+  // Soft caps to keep heap growth and outcall payloads bounded.
+  let MAX_HISTORY_PER_OWNER : Nat = 40;
+  let MAX_CONVERSATION_MESSAGES : Nat = 12;
+  let MAX_GOAL_CHARS : Nat = 2_000;
+  let MAX_MESSAGE_CHARS : Nat = 4_000;
+  let MAX_DAPPS : Nat = 40;
+  let MAX_RULES : Nat = 40;
+  let MAX_NOTES_CHARS : Nat = 4_000;
+  let MAX_WORKFLOWS_PER_OWNER : Nat = 80;
 
   // =========================================================================
   // Internal helpers
@@ -164,6 +179,9 @@ module {
     favorite : Bool,
   ) : Core.Workflow {
     let list = ensureWorkflowList(workflowsByOwner, owner);
+    if (list.size() >= MAX_WORKFLOWS_PER_OWNER) {
+      Runtime.trap("Workflow limit reached (" # Nat.toText(MAX_WORKFLOWS_PER_OWNER) # "). Delete unused workflows first.");
+    };
     let counter = ensureWorkflowIdCounter(workflowIdsByOwner, owner);
     let id = counter.next;
     counter.next += 1;
@@ -390,6 +408,9 @@ module {
     canisterId : Text,
   ) : Core.Preferences {
     let prefs = ensurePreferences(preferencesByOwner, owner);
+    if (prefs.dApps.size() >= MAX_DAPPS) {
+      Runtime.trap("Preferred dApp limit reached (" # Nat.toText(MAX_DAPPS) # ")");
+    };
     let id = nextDAppId(prefs);
     let dApp : Core.PreferredDApp = { id; friendlyName; canisterId };
     let updated : Core.Preferences = {
@@ -432,6 +453,9 @@ module {
     text : Text,
   ) : Core.Preferences {
     let prefs = ensurePreferences(preferencesByOwner, owner);
+    if (prefs.rules.size() >= MAX_RULES) {
+      Runtime.trap("Rule limit reached (" # Nat.toText(MAX_RULES) # ")");
+    };
     let id = nextRuleId(prefs);
     let rule : Core.Rule = { id; text };
     let updated : Core.Preferences = {
@@ -473,6 +497,9 @@ module {
     owner : Common.Owner,
     notes : Text,
   ) : Core.Preferences {
+    if (notes.size() > MAX_NOTES_CHARS) {
+      Runtime.trap("Notes exceed " # Nat.toText(MAX_NOTES_CHARS) # " characters");
+    };
     let prefs = ensurePreferences(preferencesByOwner, owner);
     let updated : Core.Preferences = { prefs with notes };
     preferencesByOwner.add(owner, updated);
@@ -505,6 +532,25 @@ module {
     };
   };
 
+  // Drop oldest history rows when the per-owner cap is exceeded. Entries are
+  // appended at the end, so index 0 is the oldest. Rebuild in place because
+  // mo:core List has no remove-at-index.
+  func trimHistory(list : List.List<Core.HistoryEntry>) {
+    let n = list.size();
+    if (n <= MAX_HISTORY_PER_OWNER) { return };
+    let drop = n - MAX_HISTORY_PER_OWNER;
+    var i = 0;
+    let kept = List.empty<Core.HistoryEntry>();
+    for (entry in list.values()) {
+      if (i >= drop) { kept.add(entry) };
+      i += 1;
+    };
+    list.clear();
+    for (entry in kept.values()) {
+      list.add(entry);
+    };
+  };
+
   public func recordHistory(
     historyByOwner : Map.Map<Common.Owner, List.List<Core.HistoryEntry>>,
     historyIdsByOwner : Map.Map<Common.Owner, { var next : Common.HistoryId }>,
@@ -524,6 +570,7 @@ module {
       createdAt = Time.now();
     };
     list.add(entry);
+    trimHistory(list);
     entry;
   };
 
@@ -559,27 +606,77 @@ module {
   // model can ground its plan in the user's environment and constraints.
   // =========================================================================
 
-  // The system prompt instructs the model to produce a Claude + ICP MCP
-  // optimized plan: numbered steps, explicit canister IDs, MCP tool-call
-  // hints, and step-by-step instructions ready to paste into Claude.
+  // System prompt tuned for the official Internet Computer MCP beta server
+  // (https://mcp.beta.id.ai/). Tool names must match that server exactly —
+  // agents only speak textual Candid; the server encodes/decodes.
   func planSystemPrompt() : Text {
-    "You are a planning assistant for the Internet Computer. Given a user's " #
-    "goal, their preferred dApps and canister IDs, their personal rules, and " #
-    "the conversation so far, produce a clean, numbered, executable plan " #
-    "optimized for Claude with the official ICP MCP server connected.\n\n" #
+    "You are a planning assistant for the True Cross-App Personal Agent on the " #
+    "Internet Computer. Users will paste your plan into Claude or ChatGPT with " #
+    "the official IC MCP server connected (URL: " # OfflinePlan.MCP_URL # "). " #
+    "The agent acts under the user's Internet Identity with only the access " #
+    "they grant.\n\n" #
+    "MCP setup the user already (or will) complete:\n" #
+    "- Trust " # OfflinePlan.MCP_URL # " under Internet Identity → Trusted MCP servers.\n" #
+    "- Add the same URL as a custom connector/MCP server in Claude or ChatGPT.\n" #
+    "- Authorize Actions & questions (or questions-only for research).\n\n" #
+    "Use ONLY these real MCP tool names in hints:\n" #
+    "Discovery: discover_app_canisters, icp_find_canister_by_name, icp_find_app_by_name, " #
+    "icp_lookup_canister_info_by_id, get_canister_candid, get_canister_api_doc.\n" #
+    "Identity: list_app_accounts, get_app_principal, resolve_app.\n" #
+    "OQL: icp_oql_guide, get_canister_oql_schema, canister_query (when oql:true).\n" #
+    "Actions: canister_query, canister_update_call, icp_cycles_balance, " #
+    "icp_create_canister, icp_top_up_canister, icp_install_code, icp_canister_status, " #
+    "icp_update_canister_settings, icp_start_canister, icp_stop_canister, " #
+    "icp_uninstall_code, icp_delete_canister.\n" #
+    "Skills: icp_list_skills, icp_get_skill.\n\n" #
     "Output requirements:\n" #
     "1. Numbered steps (1., 2., 3., ...), each a single concrete action.\n" #
-    "2. Each step that touches a canister MUST reference the canister by its " #
-    "explicit canister ID (the principal as text), not just a friendly name.\n" #
-    "3. Where a step maps to an ICP MCP tool, include a short MCP tool-call " #
-    "hint in parentheses, e.g. (MCP: icp.call_canister method=... canister=...).\n" #
-    "4. Include preflight checks where the user's rules demand them (e.g. " #
-    "cycles checks, balance thresholds).\n" #
-    "5. Keep the plan copy-paste ready: no markdown fences, no commentary " #
-    "before or after the numbered list, just the steps.\n" #
-    "6. Respect every personal rule the user provided; if a rule conflicts " #
-    "with the goal, add a step that surfaces the conflict rather than " #
-    "silently ignoring the rule."
+    "2. Reference canisters by explicit principal text when known; otherwise " #
+    "start with a discovery tool step.\n" #
+    "3. Include MCP tool-call hints like (MCP: canister_query) or " #
+    "(MCP: canister_update_call) on relevant steps.\n" #
+    "4. Prefer read-only tools before updates. Check icp_cycles_balance before " #
+    "create/top-up. Stop before delete.\n" #
+    "5. Respect every personal rule; if a rule conflicts with the goal, add a " #
+    "step that surfaces the conflict instead of ignoring it.\n" #
+    "6. Copy-paste ready: no markdown fences, no preamble/epilogue — only the " #
+    "numbered steps (a one-line Goal: header is allowed).\n" #
+    "7. Be cycle-conscious: avoid redundant status checks, batch discovery, " #
+    "and never suggest unbounded loops of update calls."
+  };
+
+  // Truncate free text so HTTPS outcall bodies stay small (cycles + latency).
+  func truncate(text : Text, maxChars : Nat) : Text {
+    if (text.size() <= maxChars) { text } else {
+      // Text is UTF-8; slice by bytes via chars for safety within limit.
+      var acc = "";
+      var n = 0;
+      label l for (c in text.chars()) {
+        if (n >= maxChars) { break l };
+        acc #= Text.fromChar(c);
+        n += 1;
+      };
+      acc # "…";
+    };
+  };
+
+  // Keep only the most recent conversation turns and bound each message body.
+  func slimConversation(conversation : Core.Conversation) : Core.Conversation {
+    let msgs = conversation.messages;
+    let start = if (msgs.size() > MAX_CONVERSATION_MESSAGES) {
+      msgs.size() - MAX_CONVERSATION_MESSAGES
+    } else { 0 };
+    var slim : [Core.ChatMessage] = [];
+    var i = start;
+    while (i < msgs.size()) {
+      let m = msgs[i];
+      slim := slim.concat([{
+        m with
+        content = truncate(m.content, MAX_MESSAGE_CHARS);
+      }]);
+      i += 1;
+    };
+    { messages = slim };
   };
 
   // Renders the user's preferences (dApps, rules, notes) as a compact text
@@ -686,7 +783,8 @@ module {
 
   // Generates a structured, numbered plan from a natural-language goal. The
   // caller's preferences and conversation context are folded into the prompt.
-  // The generated plan is recorded in the caller's history before returning.
+  // Uses OpenAI when configured; otherwise returns a deterministic MCP-aware
+  // template (no HTTPS outcall — conserves cycles). Always records history.
   public func generatePlan(
     preferencesByOwner : Map.Map<Common.Owner, Core.Preferences>,
     historyByOwner : Map.Map<Common.Owner, List.List<Core.HistoryEntry>>,
@@ -696,25 +794,31 @@ module {
     goal : Text,
     conversation : Core.Conversation,
   ) : async Core.PlanResult {
-    let ?key = openAIApiKey.value else {
-      Runtime.trap("OpenAI is not configured");
+    if (goal.isEmpty()) {
+      Runtime.trap("Goal must not be empty");
     };
+    let safeGoal = truncate(goal, MAX_GOAL_CHARS);
     let prefs = resolvePreferences(preferencesByOwner, owner);
-    let userPrompt = buildGenerateUserPrompt(goal, prefs, conversation);
-    let planText = await* OpenAI.runChatCompletion(
-      OpenAI.configForKey(key),
-      planSystemPrompt(),
-      userPrompt,
-    );
-    // Record the generated plan in the caller's history.
-    ignore recordHistory(historyByOwner, historyIdsByOwner, owner, goal, planText);
+    let slim = slimConversation(conversation);
+    let planText = switch (openAIApiKey.value) {
+      case (?key) {
+        let userPrompt = buildGenerateUserPrompt(safeGoal, prefs, slim);
+        await* OpenAI.runChatCompletion(
+          OpenAI.configForKey(key),
+          planSystemPrompt(),
+          userPrompt,
+        );
+      };
+      case null {
+        OfflinePlan.build(safeGoal, prefs);
+      };
+    };
+    ignore recordHistory(historyByOwner, historyIdsByOwner, owner, safeGoal, planText);
     { planText };
   };
 
-  // Refines an existing plan based on a follow-up instruction, regenerating
-  // the plan via the external AI model. Refinements are not recorded as new
-  // history entries (only initial generations are); the caller can save the
-  // refined plan as a workflow if desired.
+  // Refines an existing plan based on a follow-up instruction. Falls back to
+  // an offline template when OpenAI is not configured (no outcall).
   public func refinePlan(
     preferencesByOwner : Map.Map<Common.Owner, Core.Preferences>,
     openAIApiKey : { var value : ?Text },
@@ -722,16 +826,32 @@ module {
     instruction : Text,
     conversation : Core.Conversation,
   ) : async Core.PlanResult {
-    let ?key = openAIApiKey.value else {
-      Runtime.trap("OpenAI is not configured");
+    if (instruction.isEmpty()) {
+      Runtime.trap("Instruction must not be empty");
     };
+    let safeInstruction = truncate(instruction, MAX_GOAL_CHARS);
     let prefs = resolvePreferences(preferencesByOwner, owner);
-    let userPrompt = buildRefineUserPrompt(instruction, prefs, conversation);
-    let planText = await* OpenAI.runChatCompletion(
-      OpenAI.configForKey(key),
-      planSystemPrompt(),
-      userPrompt,
-    );
+    let slim = slimConversation(conversation);
+    let planText = switch (openAIApiKey.value) {
+      case (?key) {
+        let userPrompt = buildRefineUserPrompt(safeInstruction, prefs, slim);
+        await* OpenAI.runChatCompletion(
+          OpenAI.configForKey(key),
+          planSystemPrompt(),
+          userPrompt,
+        );
+      };
+      case null {
+        // Re-plan from the instruction + latest context offline.
+        let goalFromCtx = if (slim.messages.size() == 0) {
+          safeInstruction
+        } else {
+          "Refine: " # safeInstruction # "\nPrior context: " #
+          truncate(slim.messages[slim.messages.size() - 1].content, 800)
+        };
+        OfflinePlan.build(goalFromCtx, prefs);
+      };
+    };
     { planText };
   };
 };

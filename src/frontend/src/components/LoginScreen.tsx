@@ -1,9 +1,29 @@
+import { useNavigate } from "@tanstack/react-router";
+import {
+  AlertCircle,
+  ArrowRight,
+  Loader2,
+  ShieldCheck,
+  Sparkles,
+  Workflow,
+} from "lucide-react";
+import { useEffect } from "react";
+
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
-import { AlertCircle, Loader2, ShieldCheck, Sparkles } from "lucide-react";
 
 export function LoginScreen() {
-  const { login, isLoggingIn, isLoginError } = useAuth();
+  const { login, isLoggingIn, isLoginError, isAuthenticated, isInitializing } =
+    useAuth();
+  const navigate = useNavigate();
+
+  // Belt-and-suspenders: if auth flips while we are still on /login (e.g. the
+  // route guard has not re-run yet), navigate home ourselves.
+  useEffect(() => {
+    if (!isInitializing && isAuthenticated) {
+      void navigate({ to: "/" });
+    }
+  }, [isAuthenticated, isInitializing, navigate]);
 
   return (
     <main
@@ -29,7 +49,7 @@ export function LoginScreen() {
         }}
       />
 
-      <div className="relative z-10 flex w-full max-w-sm flex-col items-center text-center">
+      <div className="relative z-10 flex w-full max-w-md flex-col items-center text-center">
         <div
           className="mb-8 flex h-16 w-16 items-center justify-center rounded-2xl border border-border bg-card shadow-subtle"
           data-ocid="login.logo"
@@ -47,23 +67,52 @@ export function LoginScreen() {
           className="mt-3 text-sm leading-relaxed text-muted-foreground"
           data-ocid="login.subtitle"
         >
-          Your on-chain operator for cross-dapp workflows. Sign in with Internet
-          Identity to access your plans, memory, and history.
+          One agent, every IC dApp. Plan cross-app moves on-chain, then run them
+          through the Internet Computer MCP server under your Internet Identity.
         </p>
 
-        <div className="mt-10 w-full">
+        <ul
+          data-ocid="login.highlights"
+          className="mt-6 w-full space-y-2 rounded-xl border border-border bg-card/60 p-4 text-left text-sm text-muted-foreground"
+        >
+          <li className="flex gap-2">
+            <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+            <span>
+              Sign in here to store plans, memory, and preferences under your II
+              principal.
+            </span>
+          </li>
+          <li className="flex gap-2">
+            <Workflow className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+            <span>
+              Trust the IC MCP server once, then let Claude or ChatGPT act on IC
+              as you.
+            </span>
+          </li>
+          <li className="flex gap-2">
+            <ArrowRight className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+            <span>
+              After login, open Setup for the exact MCP URL and a 3-step
+              checklist.
+            </span>
+          </li>
+        </ul>
+
+        <div className="mt-8 w-full">
           <Button
             type="button"
             size="lg"
             data-ocid="login.signin_button"
             onClick={() => void login()}
-            disabled={isLoggingIn}
+            disabled={isLoggingIn || isInitializing}
             className="w-full"
           >
-            {isLoggingIn ? (
+            {isLoggingIn || isInitializing ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
-                <span>Connecting…</span>
+                <span>
+                  {isInitializing ? "Restoring session…" : "Connecting…"}
+                </span>
               </>
             ) : (
               <>
@@ -80,12 +129,19 @@ export function LoginScreen() {
               className="mt-4 flex items-center justify-center gap-2 text-sm text-destructive"
             >
               <AlertCircle className="h-4 w-4" aria-hidden />
-              Sign-in failed. Please try again.
+              Sign-in failed or was cancelled. Close any blocked pop-ups and try
+              again.
             </p>
           )}
         </div>
 
-        <p className="mt-8 font-mono text-[11px] uppercase tracking-widest text-muted-foreground/60">
+        <p className="mt-8 max-w-sm text-xs leading-relaxed text-muted-foreground/80">
+          A passkey popup from{" "}
+          <span className="font-mono text-muted-foreground">id.ai</span> should
+          open. If nothing happens, allow pop-ups for this site and retry.
+        </p>
+
+        <p className="mt-4 font-mono text-[11px] uppercase tracking-widest text-muted-foreground/60">
           secured by the internet computer
         </p>
       </div>

@@ -1,7 +1,9 @@
+import { Link } from "@tanstack/react-router";
 import {
   Brain,
   History,
   MessageSquare,
+  Plug,
   Sparkles,
   Workflow,
 } from "lucide-react";
@@ -9,19 +11,29 @@ import {
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { QuickAccessCard } from "@/components/dashboard/QuickAccessCard";
 import { RecentPlans } from "@/components/dashboard/RecentPlans";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useListHistory } from "@/hooks/use-history";
+import { useIsOpenAIConfigured } from "@/hooks/use-openai-status";
 import { useGetPreferences } from "@/hooks/use-preferences";
 import { useListWorkflows } from "@/hooks/use-workflows";
+import { MCP_CONNECTOR_URL } from "@/lib/mcp";
 
 const QUICK_ACCESS = [
   {
+    to: "/setup",
+    label: "Setup",
+    description: "Trust the IC MCP server and connect Claude or ChatGPT.",
+    icon: Plug,
+    ocid: "dashboard.quick_access.setup",
+    featured: true,
+  },
+  {
     to: "/chat",
     label: "Chat",
-    description: "Describe a goal and generate a step-by-step plan.",
+    description: "Describe a cross-app goal and get an MCP-ready plan.",
     icon: MessageSquare,
     ocid: "dashboard.quick_access.chat",
-    featured: true,
   },
   {
     to: "/workflows",
@@ -59,6 +71,7 @@ export default function DashboardPage() {
   const historyQuery = useListHistory();
   const workflowsQuery = useListWorkflows();
   const preferencesQuery = useGetPreferences();
+  const openAiQuery = useIsOpenAIConfigured();
 
   const history = historyQuery.data;
   const workflows = workflowsQuery.data;
@@ -70,7 +83,11 @@ export default function DashboardPage() {
 
   const workflowCount = workflows?.length ?? 0;
   const historyCount = history?.length ?? 0;
-  const hasPreferences = !!preferences;
+  const hasPreferences =
+    !!preferences &&
+    (preferences.dApps.length > 0 ||
+      preferences.rules.length > 0 ||
+      preferences.notes.trim().length > 0);
 
   // First-time user: nothing saved anywhere yet.
   const isFirstTime =
@@ -91,23 +108,51 @@ export default function DashboardPage() {
           </span>
         </div>
         <h1 className="font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-          Dashboard
+          One agent, every app
         </h1>
         <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
-          Generate plans from natural-language goals, save reusable workflows,
-          and keep your preferences on-chain. Everything here is yours alone.
+          Plan cross-dApp moves on the Internet Computer, store memory on-chain,
+          then run plans through the IC MCP server under your Internet Identity
+          — no tab-switching.
         </p>
       </header>
+
+      <div
+        data-ocid="dashboard.mcp_banner"
+        className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4 sm:flex-row sm:items-center sm:justify-between"
+      >
+        <div className="min-w-0 space-y-1">
+          <p className="text-sm font-medium text-foreground">
+            IC MCP connector
+          </p>
+          <p className="truncate font-mono text-xs text-muted-foreground">
+            {MCP_CONNECTOR_URL}
+          </p>
+          <p className="text-xs text-muted-foreground">
+            {openAiQuery.data === false
+              ? "Template planner is active (operator AI key not set). Plans still target real MCP tools."
+              : openAiQuery.data === true
+                ? "AI-assisted plans enabled. Copy any plan into Claude/ChatGPT with MCP connected."
+                : "Checking planner status…"}
+          </p>
+        </div>
+        <Button asChild size="sm" data-ocid="dashboard.setup_cta">
+          <Link to="/setup">
+            <Plug className="h-3.5 w-3.5" aria-hidden />
+            Open Setup
+          </Link>
+        </Button>
+      </div>
 
       {isFirstTime ? (
         <EmptyState
           ocid="dashboard.onboarding.empty_state"
           icon={Sparkles}
-          title="Welcome — let's create your first plan"
-          description="You have no plans, workflows, or preferences yet. Head to the chat, describe a goal in plain language, and the agent will draft a step-by-step plan you can save and reuse."
+          title="Welcome — finish Setup, then plan"
+          description="Trust the IC MCP server with your Internet Identity, connect Claude or ChatGPT, seed Memory with your dApps, then describe a cross-app goal in Chat. Plans are built to paste into your MCP-connected AI."
           hint="first-time · onboarding"
-          actionLabel="Open chat"
-          actionTo="/chat"
+          actionLabel="Start Setup"
+          actionTo="/setup"
         />
       ) : null}
 
@@ -146,7 +191,7 @@ export default function DashboardPage() {
         >
           Quick access
         </h2>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           {QUICK_ACCESS.map((card) => (
             <QuickAccessCard
               key={card.to}

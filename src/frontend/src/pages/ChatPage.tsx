@@ -376,9 +376,9 @@ export function ChatPage() {
 
 function EmptyState() {
   const examples = [
-    "Launch a token-gated community on ICP",
-    "Build a daily standup bot for our DAO",
-    "Onboard a new contributor to our Motoko canister",
+    "Delist my NFTs on Marketplace X, vault the rare ones, re-list the rest on Y at +15%",
+    "Mirror last 30 days of OpenChat posts + follows onto another IC social app",
+    "Migrate my DeFi position between protocols while minimizing cycles spend",
   ];
   return (
     <div
@@ -390,12 +390,12 @@ function EmptyState() {
       </div>
       <div className="space-y-2">
         <h2 className="font-display text-xl font-semibold tracking-tight text-foreground">
-          Describe a goal. Get a plan.
+          Describe a cross-app goal. Get an MCP plan.
         </h2>
         <p className="mx-auto max-w-md text-sm text-muted-foreground">
-          CrossApp Agent drafts a numbered, step-by-step plan from your goal.
-          Refine it conversationally, then save the result as a reusable
-          workflow.
+          We draft numbered steps with real IC MCP tool hints (canister_query,
+          canister_update_call, resolve_app, …). Copy for MCP, paste into Claude
+          or ChatGPT with the connector enabled, and the agent acts as you.
         </p>
       </div>
       <div className="flex flex-wrap justify-center gap-2">
@@ -403,7 +403,7 @@ function EmptyState() {
           <span
             key={ex}
             data-ocid={`chat.empty_state.example.${i + 1}`}
-            className="rounded-full border border-border bg-card px-3 py-1.5 text-xs text-muted-foreground"
+            className="max-w-xs rounded-full border border-border bg-card px-3 py-1.5 text-left text-xs text-muted-foreground"
           >
             {ex}
           </span>

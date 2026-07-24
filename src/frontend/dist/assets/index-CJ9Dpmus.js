@@ -38871,40 +38871,40 @@ const createLucideIcon = (iconName, iconNode) => {
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$v = [
+const __iconNode$A = [
   ["path", { d: "m12 19-7-7 7-7", key: "1l729n" }],
   ["path", { d: "M19 12H5", key: "x3x0zl" }]
 ];
-const ArrowLeft = createLucideIcon("arrow-left", __iconNode$v);
+const ArrowLeft = createLucideIcon("arrow-left", __iconNode$A);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$u = [
+const __iconNode$z = [
   ["path", { d: "M5 12h14", key: "1ays0h" }],
   ["path", { d: "m12 5 7 7-7 7", key: "xquz4c" }]
 ];
-const ArrowRight = createLucideIcon("arrow-right", __iconNode$u);
+const ArrowRight = createLucideIcon("arrow-right", __iconNode$z);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$t = [
+const __iconNode$y = [
   ["path", { d: "m5 12 7-7 7 7", key: "hav0vg" }],
   ["path", { d: "M12 19V5", key: "x0mq9r" }]
 ];
-const ArrowUp = createLucideIcon("arrow-up", __iconNode$t);
+const ArrowUp = createLucideIcon("arrow-up", __iconNode$y);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$s = [
+const __iconNode$x = [
   ["path", { d: "M12 8V4H8", key: "hb8ula" }],
   ["rect", { width: "16", height: "12", x: "4", y: "8", rx: "2", key: "enze0r" }],
   ["path", { d: "M2 14h2", key: "vft8re" }],
@@ -38912,14 +38912,14 @@ const __iconNode$s = [
   ["path", { d: "M15 13v2", key: "1xurst" }],
   ["path", { d: "M9 13v2", key: "rq6x2g" }]
 ];
-const Bot = createLucideIcon("bot", __iconNode$s);
+const Bot = createLucideIcon("bot", __iconNode$x);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$r = [
+const __iconNode$w = [
   [
     "path",
     {
@@ -38942,15 +38942,73 @@ const __iconNode$r = [
   ["path", { d: "M6 18a4 4 0 0 1-1.967-.516", key: "2e4loj" }],
   ["path", { d: "M19.967 17.484A4 4 0 0 1 18 18", key: "159ez6" }]
 ];
-const Brain = createLucideIcon("brain", __iconNode$r);
+const Brain = createLucideIcon("brain", __iconNode$w);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$q = [["path", { d: "M20 6 9 17l-5-5", key: "1gmf2c" }]];
-const Check = createLucideIcon("check", __iconNode$q);
+const __iconNode$v = [["path", { d: "M20 6 9 17l-5-5", key: "1gmf2c" }]];
+const Check = createLucideIcon("check", __iconNode$v);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$u = [
+  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
+  ["line", { x1: "12", x2: "12", y1: "8", y2: "12", key: "1pkeuh" }],
+  ["line", { x1: "12", x2: "12.01", y1: "16", y2: "16", key: "4dfq90" }]
+];
+const CircleAlert = createLucideIcon("circle-alert", __iconNode$u);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$t = [
+  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
+  ["polyline", { points: "12 6 12 12 16 14", key: "68esgv" }]
+];
+const Clock = createLucideIcon("clock", __iconNode$t);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$s = [
+  ["rect", { width: "14", height: "14", x: "8", y: "8", rx: "2", ry: "2", key: "17jyea" }],
+  ["path", { d: "M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2", key: "zix9uf" }]
+];
+const Copy = createLucideIcon("copy", __iconNode$s);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$r = [
+  ["path", { d: "M12 15V3", key: "m9g1x1" }],
+  ["path", { d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4", key: "ih7n3h" }],
+  ["path", { d: "m7 10 5 5 5-5", key: "brsn70" }]
+];
+const Download = createLucideIcon("download", __iconNode$r);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$q = [
+  ["circle", { cx: "12", cy: "12", r: "1", key: "41hilf" }],
+  ["circle", { cx: "19", cy: "12", r: "1", key: "1wjl8i" }],
+  ["circle", { cx: "5", cy: "12", r: "1", key: "1pcz8c" }]
+];
+const Ellipsis = createLucideIcon("ellipsis", __iconNode$q);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -38958,11 +39016,11 @@ const Check = createLucideIcon("check", __iconNode$q);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$p = [
-  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
-  ["line", { x1: "12", x2: "12", y1: "8", y2: "12", key: "1pkeuh" }],
-  ["line", { x1: "12", x2: "12.01", y1: "16", y2: "16", key: "4dfq90" }]
+  ["path", { d: "M15 3h6v6", key: "1q9fwt" }],
+  ["path", { d: "M10 14 21 3", key: "gplh6r" }],
+  ["path", { d: "M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6", key: "a6xqqp" }]
 ];
-const CircleAlert = createLucideIcon("circle-alert", __iconNode$p);
+const ExternalLink = createLucideIcon("external-link", __iconNode$p);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -38970,10 +39028,11 @@ const CircleAlert = createLucideIcon("circle-alert", __iconNode$p);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$o = [
-  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
-  ["polyline", { points: "12 6 12 12 16 14", key: "68esgv" }]
+  ["path", { d: "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", key: "1357e3" }],
+  ["path", { d: "M3 3v5h5", key: "1xhq8a" }],
+  ["path", { d: "M12 7v5l4 2", key: "1fdv2h" }]
 ];
-const Clock = createLucideIcon("clock", __iconNode$o);
+const History = createLucideIcon("history", __iconNode$o);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -38981,10 +39040,16 @@ const Clock = createLucideIcon("clock", __iconNode$o);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$n = [
-  ["rect", { width: "14", height: "14", x: "8", y: "8", rx: "2", ry: "2", key: "17jyea" }],
-  ["path", { d: "M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2", key: "zix9uf" }]
+  [
+    "path",
+    {
+      d: "M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z",
+      key: "1s6t7t"
+    }
+  ],
+  ["circle", { cx: "16.5", cy: "7.5", r: ".5", fill: "currentColor", key: "w0ekpg" }]
 ];
-const Copy = createLucideIcon("copy", __iconNode$n);
+const KeyRound = createLucideIcon("key-round", __iconNode$n);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -38992,11 +39057,12 @@ const Copy = createLucideIcon("copy", __iconNode$n);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$m = [
-  ["path", { d: "M12 15V3", key: "m9g1x1" }],
-  ["path", { d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4", key: "ih7n3h" }],
-  ["path", { d: "m7 10 5 5 5-5", key: "brsn70" }]
+  ["rect", { width: "7", height: "9", x: "3", y: "3", rx: "1", key: "10lvy0" }],
+  ["rect", { width: "7", height: "5", x: "14", y: "3", rx: "1", key: "16une8" }],
+  ["rect", { width: "7", height: "9", x: "14", y: "12", rx: "1", key: "1hutg5" }],
+  ["rect", { width: "7", height: "5", x: "3", y: "16", rx: "1", key: "ldoo1y" }]
 ];
-const Download = createLucideIcon("download", __iconNode$m);
+const LayoutDashboard = createLucideIcon("layout-dashboard", __iconNode$m);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -39004,11 +39070,11 @@ const Download = createLucideIcon("download", __iconNode$m);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$l = [
-  ["circle", { cx: "12", cy: "12", r: "1", key: "41hilf" }],
-  ["circle", { cx: "19", cy: "12", r: "1", key: "1wjl8i" }],
-  ["circle", { cx: "5", cy: "12", r: "1", key: "1pcz8c" }]
+  ["path", { d: "M9 17H7A5 5 0 0 1 7 7h2", key: "8i5ue5" }],
+  ["path", { d: "M15 7h2a5 5 0 1 1 0 10h-2", key: "1b9ql8" }],
+  ["line", { x1: "8", x2: "16", y1: "12", y2: "12", key: "1jonct" }]
 ];
-const Ellipsis = createLucideIcon("ellipsis", __iconNode$l);
+const Link2 = createLucideIcon("link-2", __iconNode$l);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -39016,32 +39082,33 @@ const Ellipsis = createLucideIcon("ellipsis", __iconNode$l);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$k = [
-  ["path", { d: "M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8", key: "1357e3" }],
-  ["path", { d: "M3 3v5h5", key: "1xhq8a" }],
-  ["path", { d: "M12 7v5l4 2", key: "1fdv2h" }]
+  ["path", { d: "m3 17 2 2 4-4", key: "1jhpwq" }],
+  ["path", { d: "m3 7 2 2 4-4", key: "1obspn" }],
+  ["path", { d: "M13 6h8", key: "15sg57" }],
+  ["path", { d: "M13 12h8", key: "h98zly" }],
+  ["path", { d: "M13 18h8", key: "oe0vm4" }]
 ];
-const History = createLucideIcon("history", __iconNode$k);
+const ListChecks = createLucideIcon("list-checks", __iconNode$k);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$j = [
-  ["rect", { width: "7", height: "9", x: "3", y: "3", rx: "1", key: "10lvy0" }],
-  ["rect", { width: "7", height: "5", x: "14", y: "3", rx: "1", key: "16une8" }],
-  ["rect", { width: "7", height: "9", x: "14", y: "12", rx: "1", key: "1hutg5" }],
-  ["rect", { width: "7", height: "5", x: "3", y: "16", rx: "1", key: "ldoo1y" }]
-];
-const LayoutDashboard = createLucideIcon("layout-dashboard", __iconNode$j);
+const __iconNode$j = [["path", { d: "M21 12a9 9 0 1 1-6.219-8.56", key: "13zald" }]];
+const LoaderCircle = createLucideIcon("loader-circle", __iconNode$j);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$i = [["path", { d: "M21 12a9 9 0 1 1-6.219-8.56", key: "13zald" }]];
-const LoaderCircle = createLucideIcon("loader-circle", __iconNode$i);
+const __iconNode$i = [
+  ["path", { d: "m16 17 5-5-5-5", key: "1bji2h" }],
+  ["path", { d: "M21 12H9", key: "dn1m92" }],
+  ["path", { d: "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4", key: "1uf3rs" }]
+];
+const LogOut = createLucideIcon("log-out", __iconNode$i);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -39049,11 +39116,11 @@ const LoaderCircle = createLucideIcon("loader-circle", __iconNode$i);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$h = [
-  ["path", { d: "m16 17 5-5-5-5", key: "1bji2h" }],
-  ["path", { d: "M21 12H9", key: "dn1m92" }],
-  ["path", { d: "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4", key: "1uf3rs" }]
+  ["path", { d: "M4 12h16", key: "1lakjw" }],
+  ["path", { d: "M4 18h16", key: "19g7jn" }],
+  ["path", { d: "M4 6h16", key: "1o0s65" }]
 ];
-const LogOut = createLucideIcon("log-out", __iconNode$h);
+const Menu$1 = createLucideIcon("menu", __iconNode$h);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -39061,11 +39128,9 @@ const LogOut = createLucideIcon("log-out", __iconNode$h);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$g = [
-  ["path", { d: "M4 12h16", key: "1lakjw" }],
-  ["path", { d: "M4 18h16", key: "19g7jn" }],
-  ["path", { d: "M4 6h16", key: "1o0s65" }]
+  ["path", { d: "M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z", key: "1lielz" }]
 ];
-const Menu$1 = createLucideIcon("menu", __iconNode$g);
+const MessageSquare = createLucideIcon("message-square", __iconNode$g);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -39073,9 +39138,11 @@ const Menu$1 = createLucideIcon("menu", __iconNode$g);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$f = [
-  ["path", { d: "M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z", key: "1lielz" }]
+  ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", key: "afitv7" }],
+  ["path", { d: "M9 3v18", key: "fh3hqa" }],
+  ["path", { d: "m16 15-3-3 3-3", key: "14y99z" }]
 ];
-const MessageSquare = createLucideIcon("message-square", __iconNode$f);
+const PanelLeftClose = createLucideIcon("panel-left-close", __iconNode$f);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -39084,10 +39151,9 @@ const MessageSquare = createLucideIcon("message-square", __iconNode$f);
  */
 const __iconNode$e = [
   ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", key: "afitv7" }],
-  ["path", { d: "M9 3v18", key: "fh3hqa" }],
-  ["path", { d: "m16 15-3-3 3-3", key: "14y99z" }]
+  ["path", { d: "M9 3v18", key: "fh3hqa" }]
 ];
-const PanelLeftClose = createLucideIcon("panel-left-close", __iconNode$e);
+const PanelLeft = createLucideIcon("panel-left", __iconNode$e);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -39095,17 +39161,6 @@ const PanelLeftClose = createLucideIcon("panel-left-close", __iconNode$e);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$d = [
-  ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", key: "afitv7" }],
-  ["path", { d: "M9 3v18", key: "fh3hqa" }]
-];
-const PanelLeft = createLucideIcon("panel-left", __iconNode$d);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$c = [
   [
     "path",
     {
@@ -39115,15 +39170,28 @@ const __iconNode$c = [
   ],
   ["path", { d: "m15 5 4 4", key: "1mk7zo" }]
 ];
-const Pencil = createLucideIcon("pencil", __iconNode$c);
+const Pencil = createLucideIcon("pencil", __iconNode$d);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$b = [["polygon", { points: "6 3 20 12 6 21 6 3", key: "1oa8hb" }]];
-const Play = createLucideIcon("play", __iconNode$b);
+const __iconNode$c = [["polygon", { points: "6 3 20 12 6 21 6 3", key: "1oa8hb" }]];
+const Play = createLucideIcon("play", __iconNode$c);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$b = [
+  ["path", { d: "M12 22v-5", key: "1ega77" }],
+  ["path", { d: "M9 8V2", key: "14iosj" }],
+  ["path", { d: "M15 8V2", key: "18g5xt" }],
+  ["path", { d: "M18 8v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V8Z", key: "osxo6l" }]
+];
+const Plug = createLucideIcon("plug", __iconNode$b);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -41969,6 +42037,7 @@ function Button({
 }
 const NAV_ITEMS = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard, ocid: "nav.dashboard" },
+  { to: "/setup", label: "Setup", icon: Plug, ocid: "nav.setup" },
   { to: "/chat", label: "Chat", icon: MessageSquare, ocid: "nav.chat" },
   {
     to: "/workflows",
@@ -47716,6 +47785,7 @@ function Header({ onOpenMobile }) {
   const routeTitle = (() => {
     const path = location2.pathname;
     if (path === "/") return "Dashboard";
+    if (path === "/setup") return "Setup";
     if (path.startsWith("/workflows/") && path !== "/workflows")
       return "Edit Workflow";
     const seg = path.split("/")[1] ?? "";
@@ -47804,9 +47874,20 @@ function Layout({ children }) {
               "data-ocid": "footer",
               className: "border-t border-border bg-card px-4 py-3 sm:px-6",
               children: /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-center font-mono text-[11px] text-muted-foreground/70", children: [
-                "© ",
-                (/* @__PURE__ */ new Date()).getFullYear(),
-                ". Built with love using",
+                "IC MCP ·",
+                " ",
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  "a",
+                  {
+                    href: "https://mcp.beta.id.ai/",
+                    target: "_blank",
+                    rel: "noreferrer",
+                    className: "text-primary hover:underline",
+                    children: "mcp.beta.id.ai"
+                  }
+                ),
+                " · ",
+                "Built with",
                 " ",
                 /* @__PURE__ */ jsxRuntimeExports.jsx(
                   "a",
@@ -48854,6 +48935,19 @@ function Badge({
     }
   );
 }
+const MCP_CONNECTOR_URL = "https://mcp.beta.id.ai/mcp-prod";
+const II_TRUSTED_MCP_SETTINGS_URL = "https://id.ai/manage/settings";
+const MCP_DOCS_URL = "https://mcp.beta.id.ai/";
+function planClipboardPayload(planText) {
+  return [
+    "Execute this Internet Computer cross-app plan using the IC MCP server.",
+    `MCP URL: ${MCP_CONNECTOR_URL}`,
+    "Prefer read-only tools (canister_query, discovery, get_canister_candid) before any canister_update_call.",
+    "Confirm write/delete actions with me. Respect every personal rule listed in the plan.",
+    "",
+    planText.trim()
+  ].join("\n");
+}
 function PlanDisplay({
   planText,
   onSave,
@@ -48865,10 +48959,12 @@ function PlanDisplay({
   const [copied, setCopied] = reactExports.useState(false);
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(planText);
+      await navigator.clipboard.writeText(planClipboardPayload(planText));
       setCopied(true);
+      ue.success("Plan copied — paste into Claude or ChatGPT with MCP");
       window.setTimeout(() => setCopied(false), 2e3);
     } catch {
+      ue.error("Clipboard unavailable — select the plan text manually");
     }
   };
   const lines = planText.split("\n").filter((line) => line.trim().length > 0);
@@ -48925,7 +49021,7 @@ function PlanDisplay({
                 className: "h-8 text-muted-foreground hover:text-foreground",
                 children: [
                   copied ? /* @__PURE__ */ jsxRuntimeExports.jsx(Check, { className: "h-3.5 w-3.5 text-success", "aria-hidden": true }) : /* @__PURE__ */ jsxRuntimeExports.jsx(Copy, { className: "h-3.5 w-3.5", "aria-hidden": true }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hidden sm:inline", children: copied ? "Copied" : "Copy Plan" })
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hidden sm:inline", children: copied ? "Copied" : "Copy for MCP" })
                 ]
               }
             ),
@@ -50002,9 +50098,9 @@ function ChatPage() {
 }
 function EmptyState$2() {
   const examples = [
-    "Launch a token-gated community on ICP",
-    "Build a daily standup bot for our DAO",
-    "Onboard a new contributor to our Motoko canister"
+    "Delist my NFTs on Marketplace X, vault the rare ones, re-list the rest on Y at +15%",
+    "Mirror last 30 days of OpenChat posts + follows onto another IC social app",
+    "Migrate my DeFi position between protocols while minimizing cycles spend"
   ];
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(
     "div",
@@ -50014,14 +50110,14 @@ function EmptyState$2() {
       children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Sparkles, { className: "h-7 w-7", "aria-hidden": true }) }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-2", children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-display text-xl font-semibold tracking-tight text-foreground", children: "Describe a goal. Get a plan." }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mx-auto max-w-md text-sm text-muted-foreground", children: "CrossApp Agent drafts a numbered, step-by-step plan from your goal. Refine it conversationally, then save the result as a reusable workflow." })
+          /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-display text-xl font-semibold tracking-tight text-foreground", children: "Describe a cross-app goal. Get an MCP plan." }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mx-auto max-w-md text-sm text-muted-foreground", children: "We draft numbered steps with real IC MCP tool hints (canister_query, canister_update_call, resolve_app, …). Copy for MCP, paste into Claude or ChatGPT with the connector enabled, and the agent acts as you." })
         ] }),
         /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex flex-wrap justify-center gap-2", children: examples.map((ex, i) => /* @__PURE__ */ jsxRuntimeExports.jsx(
           "span",
           {
             "data-ocid": `chat.empty_state.example.${i + 1}`,
-            className: "rounded-full border border-border bg-card px-3 py-1.5 text-xs text-muted-foreground",
+            className: "max-w-xs rounded-full border border-border bg-card px-3 py-1.5 text-left text-xs text-muted-foreground",
             children: ex
           },
           ex
@@ -50191,7 +50287,7 @@ function EmptyState$1({
           /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mx-auto max-w-sm text-sm leading-relaxed text-muted-foreground", children: description })
         ] }),
         hint && /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-mono text-[11px] uppercase tracking-widest text-muted-foreground/70", children: hint }),
-        actionLabel && actionTo && /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { asChild: true, size: "sm", "data-ocid": `${ocid}.primary_button`, children: /* @__PURE__ */ jsxRuntimeExports.jsx("a", { href: actionTo, children: actionLabel }) })
+        actionLabel && actionTo && /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { asChild: true, size: "sm", "data-ocid": `${ocid}.primary_button`, children: /* @__PURE__ */ jsxRuntimeExports.jsx(Link, { to: actionTo, children: actionLabel }) })
       ]
     }
   );
@@ -50380,6 +50476,19 @@ function RecentPlans({ history, isLoading }) {
     }
   );
 }
+function useIsOpenAIConfigured() {
+  const { actor, isFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: ["openai-configured"],
+    queryFn: async () => {
+      if (!actor) return false;
+      return actor.isOpenAIConfigured();
+    },
+    // Can be called without owner auth — still needs a ready actor.
+    enabled: !!actor && !isFetching,
+    staleTime: 6e4
+  });
+}
 const preferencesKey = ["preferences"];
 function useGetPreferences() {
   const { actor, isFetching } = useActor(createActor);
@@ -50485,12 +50594,19 @@ function useSetNotes() {
 }
 const QUICK_ACCESS = [
   {
+    to: "/setup",
+    label: "Setup",
+    description: "Trust the IC MCP server and connect Claude or ChatGPT.",
+    icon: Plug,
+    ocid: "dashboard.quick_access.setup",
+    featured: true
+  },
+  {
     to: "/chat",
     label: "Chat",
-    description: "Describe a goal and generate a step-by-step plan.",
+    description: "Describe a cross-app goal and get an MCP-ready plan.",
     icon: MessageSquare,
-    ocid: "dashboard.quick_access.chat",
-    featured: true
+    ocid: "dashboard.quick_access.chat"
   },
   {
     to: "/workflows",
@@ -50518,6 +50634,7 @@ function DashboardPage() {
   const historyQuery = useListHistory();
   const workflowsQuery = useListWorkflows();
   const preferencesQuery = useGetPreferences();
+  const openAiQuery = useIsOpenAIConfigured();
   const history = historyQuery.data;
   const workflows = workflowsQuery.data;
   const preferences = preferencesQuery.data;
@@ -50526,7 +50643,7 @@ function DashboardPage() {
   const preferencesLoading = preferencesQuery.isLoading;
   const workflowCount = (workflows == null ? void 0 : workflows.length) ?? 0;
   const historyCount = (history == null ? void 0 : history.length) ?? 0;
-  const hasPreferences = !!preferences;
+  const hasPreferences = !!preferences && (preferences.dApps.length > 0 || preferences.rules.length > 0 || preferences.notes.trim().length > 0);
   const isFirstTime = !historyLoading && !workflowsLoading && !preferencesLoading && historyCount === 0 && workflowCount === 0 && !hasPreferences;
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { "data-ocid": "dashboard.page", className: "space-y-8", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsxs("header", { className: "space-y-2", "data-ocid": "dashboard.header", children: [
@@ -50534,19 +50651,37 @@ function DashboardPage() {
         /* @__PURE__ */ jsxRuntimeExports.jsx(Sparkles, { className: "h-4 w-4", "aria-hidden": true }),
         /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-mono text-[11px] uppercase tracking-widest text-muted-foreground", children: "Overview" })
       ] }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl", children: "Dashboard" }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "max-w-2xl text-sm leading-relaxed text-muted-foreground", children: "Generate plans from natural-language goals, save reusable workflows, and keep your preferences on-chain. Everything here is yours alone." })
+      /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl", children: "One agent, every app" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "max-w-2xl text-sm leading-relaxed text-muted-foreground", children: "Plan cross-dApp moves on the Internet Computer, store memory on-chain, then run plans through the IC MCP server under your Internet Identity — no tab-switching." })
     ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "div",
+      {
+        "data-ocid": "dashboard.mcp_banner",
+        className: "flex flex-col gap-3 rounded-xl border border-border bg-card p-4 sm:flex-row sm:items-center sm:justify-between",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0 space-y-1", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm font-medium text-foreground", children: "IC MCP connector" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "truncate font-mono text-xs text-muted-foreground", children: MCP_CONNECTOR_URL }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-muted-foreground", children: openAiQuery.data === false ? "Template planner is active (operator AI key not set). Plans still target real MCP tools." : openAiQuery.data === true ? "AI-assisted plans enabled. Copy any plan into Claude/ChatGPT with MCP connected." : "Checking planner status…" })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { asChild: true, size: "sm", "data-ocid": "dashboard.setup_cta", children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Link, { to: "/setup", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Plug, { className: "h-3.5 w-3.5", "aria-hidden": true }),
+            "Open Setup"
+          ] }) })
+        ]
+      }
+    ),
     isFirstTime ? /* @__PURE__ */ jsxRuntimeExports.jsx(
       EmptyState$1,
       {
         ocid: "dashboard.onboarding.empty_state",
         icon: Sparkles,
-        title: "Welcome — let's create your first plan",
-        description: "You have no plans, workflows, or preferences yet. Head to the chat, describe a goal in plain language, and the agent will draft a step-by-step plan you can save and reuse.",
+        title: "Welcome — finish Setup, then plan",
+        description: "Trust the IC MCP server with your Internet Identity, connect Claude or ChatGPT, seed Memory with your dApps, then describe a cross-app goal in Chat. Plans are built to paste into your MCP-connected AI.",
         hint: "first-time · onboarding",
-        actionLabel: "Open chat",
-        actionTo: "/chat"
+        actionLabel: "Start Setup",
+        actionTo: "/setup"
       }
     ) : null,
     /* @__PURE__ */ jsxRuntimeExports.jsxs(
@@ -50598,7 +50733,7 @@ function DashboardPage() {
               children: "Quick access"
             }
           ),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4", children: QUICK_ACCESS.map((card) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5", children: QUICK_ACCESS.map((card) => /* @__PURE__ */ jsxRuntimeExports.jsx(
             QuickAccessCard,
             {
               to: card.to,
@@ -50983,7 +51118,7 @@ function DAppEditor({ dApps }) {
               children: "Preferred dApps"
             }
           ),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground", children: "Pin the canister IDs you reference most often with friendly names." })
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground", children: "Pin the canisters and dApps your MCP-connected agent should know — friendly name plus principal (e.g. marketplace, vault, ledger)." })
         ] }) }),
         /* @__PURE__ */ jsxRuntimeExports.jsx(
           "div",
@@ -51705,6 +51840,311 @@ function MemoryPage() {
           /* @__PURE__ */ jsxRuntimeExports.jsx(RulesEditor, { rules: (data == null ? void 0 : data.rules) ?? [] }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-px bg-border" }),
           /* @__PURE__ */ jsxRuntimeExports.jsx(NotesEditor, { notes: (data == null ? void 0 : data.notes) ?? "" })
+        ] })
+      ]
+    }
+  );
+}
+const SETUP_CHECKLIST_KEY = "crossapp.setup.checklist.v1";
+const DEFAULT_CHECKLIST = {
+  trustedMcp: false,
+  connectedAi: false,
+  authorizedGrant: false,
+  memorySeeded: false
+};
+function loadChecklist() {
+  try {
+    const raw = localStorage.getItem(SETUP_CHECKLIST_KEY);
+    if (!raw) return DEFAULT_CHECKLIST;
+    return { ...DEFAULT_CHECKLIST, ...JSON.parse(raw) };
+  } catch {
+    return DEFAULT_CHECKLIST;
+  }
+}
+function saveChecklist(state) {
+  try {
+    localStorage.setItem(SETUP_CHECKLIST_KEY, JSON.stringify(state));
+  } catch {
+  }
+}
+function SetupPage() {
+  const [checklist, setChecklist] = reactExports.useState(
+    () => loadChecklist()
+  );
+  const [copied, setCopied] = reactExports.useState(false);
+  const toggle = (key) => {
+    setChecklist((prev) => {
+      const next = { ...prev, [key]: !prev[key] };
+      saveChecklist(next);
+      return next;
+    });
+  };
+  const copyUrl = async () => {
+    try {
+      await navigator.clipboard.writeText(MCP_CONNECTOR_URL);
+      setCopied(true);
+      ue.success("MCP connector URL copied");
+      window.setTimeout(() => setCopied(false), 2e3);
+    } catch {
+      ue.error("Could not copy — select the URL and copy manually");
+    }
+  };
+  const doneCount = Object.values(checklist).filter(Boolean).length;
+  const total = Object.keys(DEFAULT_CHECKLIST).length;
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { "data-ocid": "setup.page", className: "space-y-8", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("header", { className: "space-y-2", "data-ocid": "setup.header", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2 text-primary", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(Plug, { className: "h-4 w-4", "aria-hidden": true }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-mono text-[11px] uppercase tracking-widest text-muted-foreground", children: "Onboarding" })
+      ] }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl", children: "Set up your CrossApp Agent" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "max-w-2xl text-sm leading-relaxed text-muted-foreground", children: [
+        "This app stores your plans, dApp memory, and rules on-chain under your Internet Identity. Execution happens in Claude or ChatGPT through the official Internet Computer MCP server — acting as ",
+        /* @__PURE__ */ jsxRuntimeExports.jsx("em", { children: "you" }),
+        " on every dApp you authorize."
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx(
+      "div",
+      {
+        "data-ocid": "setup.mcp_url_card",
+        className: "rounded-xl border border-primary/20 bg-primary/5 p-5",
+        children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap items-start justify-between gap-3", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0 space-y-1", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-mono text-[11px] uppercase tracking-widest text-muted-foreground", children: "IC MCP connector URL" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "p",
+              {
+                className: "break-all font-mono text-sm text-foreground",
+                "data-ocid": "setup.mcp_url_value",
+                children: MCP_CONNECTOR_URL
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-xs text-muted-foreground", children: [
+              "Beta server docs:",
+              " ",
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                "a",
+                {
+                  href: MCP_DOCS_URL,
+                  target: "_blank",
+                  rel: "noreferrer",
+                  className: "text-primary hover:underline",
+                  children: "mcp.beta.id.ai"
+                }
+              )
+            ] })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            Button,
+            {
+              type: "button",
+              size: "sm",
+              "data-ocid": "setup.copy_mcp_url_button",
+              onClick: () => void copyUrl(),
+              children: [
+                copied ? /* @__PURE__ */ jsxRuntimeExports.jsx(Check, { className: "h-3.5 w-3.5", "aria-hidden": true }) : /* @__PURE__ */ jsxRuntimeExports.jsx(Copy, { className: "h-3.5 w-3.5", "aria-hidden": true }),
+                copied ? "Copied" : "Copy URL"
+              ]
+            }
+          )
+        ] })
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs("ol", { className: "space-y-4", "data-ocid": "setup.steps", children: [
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        StepCard,
+        {
+          index: 1,
+          icon: ShieldCheck,
+          title: "Trust the MCP server in Internet Identity",
+          description: /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
+            "Open",
+            " ",
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "a",
+              {
+                href: II_TRUSTED_MCP_SETTINGS_URL,
+                target: "_blank",
+                rel: "noreferrer",
+                className: "text-primary hover:underline",
+                children: "Internet Identity settings"
+              }
+            ),
+            ", sign in with the identity you want the agent to use, and add the connector URL under ",
+            /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { children: "Trusted MCP servers" }),
+            "."
+          ] }),
+          action: /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { asChild: true, variant: "outline", size: "sm", children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "a",
+            {
+              href: II_TRUSTED_MCP_SETTINGS_URL,
+              target: "_blank",
+              rel: "noreferrer",
+              "data-ocid": "setup.open_ii_settings",
+              children: [
+                "Open II settings",
+                /* @__PURE__ */ jsxRuntimeExports.jsx(ExternalLink, { className: "h-3.5 w-3.5", "aria-hidden": true })
+              ]
+            }
+          ) })
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        StepCard,
+        {
+          index: 2,
+          icon: Link2,
+          title: "Add the same URL to Claude or ChatGPT",
+          description: /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { children: "Claude:" }),
+            " Settings → Connectors → Add custom connector → paste the URL. Allow read-only tools; keep write/delete on Ask.",
+            /* @__PURE__ */ jsxRuntimeExports.jsx("br", {}),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { children: "ChatGPT:" }),
+            " enable Developer mode, then create an app/connector and paste the URL."
+          ] })
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        StepCard,
+        {
+          index: 3,
+          icon: KeyRound,
+          title: "Authorize the grant",
+          description: /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
+            "Your AI app will send you to Internet Identity. Pick the same identity, choose how long the grant lasts, and select",
+            " ",
+            /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { children: "Actions & questions" }),
+            " if you want the agent to call methods and manage canisters — or questions-only for research. Grants expire by design; re-approving later is normal."
+          ] })
+        }
+      ),
+      /* @__PURE__ */ jsxRuntimeExports.jsx(
+        StepCard,
+        {
+          index: 4,
+          icon: ListChecks,
+          title: "Seed Memory, then plan in Chat",
+          description: /* @__PURE__ */ jsxRuntimeExports.jsx(jsxRuntimeExports.Fragment, { children: "Add preferred dApps (friendly name + canister ID), personal rules (e.g. “never move more than 20% of my ICP”), and notes. Then open Chat, describe a cross-app goal, copy the plan, and paste it into Claude/ChatGPT with the MCP connector enabled." }),
+          action: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap gap-2", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { asChild: true, size: "sm", variant: "outline", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Link, { to: "/memory", "data-ocid": "setup.go_memory", children: "Open Memory" }) }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { asChild: true, size: "sm", children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              Link,
+              {
+                to: "/chat",
+                search: { historyId: void 0, plan: void 0 },
+                "data-ocid": "setup.go_chat",
+                children: [
+                  "Open Chat",
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(Sparkles, { className: "h-3.5 w-3.5", "aria-hidden": true })
+                ]
+              }
+            ) })
+          ] })
+        }
+      )
+    ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "div",
+      {
+        "data-ocid": "setup.checklist",
+        className: "rounded-xl border border-border bg-card p-5",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mb-4 flex items-center justify-between gap-3", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-display text-lg font-semibold tracking-tight", children: "Your progress" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "font-mono text-[11px] uppercase tracking-widest text-muted-foreground", children: [
+              doneCount,
+              "/",
+              total,
+              " done"
+            ] })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("ul", { className: "space-y-2", children: [
+            ["trustedMcp", "Trusted MCP server in Internet Identity"],
+            ["connectedAi", "Connected MCP URL in Claude or ChatGPT"],
+            ["authorizedGrant", "Authorized an II grant for the MCP server"],
+            ["memorySeeded", "Added at least one dApp or rule in Memory"]
+          ].map(([key, label]) => /* @__PURE__ */ jsxRuntimeExports.jsx("li", { children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "button",
+            {
+              type: "button",
+              "data-ocid": `setup.checklist.${key}`,
+              onClick: () => toggle(key),
+              className: cn(
+                "flex w-full items-center gap-3 rounded-lg border px-3 py-2.5 text-left text-sm transition-colors",
+                checklist[key] ? "border-primary/30 bg-primary/10 text-foreground" : "border-border bg-secondary/40 text-muted-foreground hover:bg-secondary"
+              ),
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  "span",
+                  {
+                    className: cn(
+                      "flex h-5 w-5 shrink-0 items-center justify-center rounded border",
+                      checklist[key] ? "border-primary bg-primary text-primary-foreground" : "border-border"
+                    ),
+                    children: checklist[key] ? /* @__PURE__ */ jsxRuntimeExports.jsx(Check, { className: "h-3 w-3", "aria-hidden": true }) : null
+                  }
+                ),
+                label
+              ]
+            }
+          ) }, key)) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "mt-3 text-xs text-muted-foreground", children: [
+            "Checklist is stored in this browser only (not on-chain). Revoke MCP access anytime in",
+            " ",
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "a",
+              {
+                href: II_TRUSTED_MCP_SETTINGS_URL,
+                target: "_blank",
+                rel: "noreferrer",
+                className: "text-primary hover:underline",
+                children: "II settings"
+              }
+            ),
+            "."
+          ] })
+        ]
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "div",
+      {
+        "data-ocid": "setup.examples",
+        className: "rounded-xl border border-border bg-card/60 p-5",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-display text-lg font-semibold tracking-tight", children: "Example goals this agent is built for" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("ul", { className: "mt-3 space-y-2 text-sm text-muted-foreground", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("li", { children: "“Take all my listed NFTs off Marketplace X, move the rare ones into my personal vault canister, and list the rest on Marketplace Y with 15% higher prices.”" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("li", { children: "“Pull my OpenChat history + contacts and mirror the last 30 days of posts + follows onto another IC social app.”" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("li", { children: "“Migrate my entire DeFi position from one protocol to another while optimizing for gas/cycles.”" })
+          ] })
+        ]
+      }
+    )
+  ] });
+}
+function StepCard({
+  index: index2,
+  icon: Icon2,
+  title,
+  description,
+  action
+}) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    "li",
+    {
+      "data-ocid": `setup.step.${index2}`,
+      className: "flex gap-4 rounded-xl border border-border bg-card p-5",
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 font-mono text-sm font-semibold text-primary", children: index2 }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0 flex-1 space-y-2", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Icon2, { className: "h-4 w-4 text-primary", "aria-hidden": true }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "font-display text-base font-semibold tracking-tight text-foreground", children: title })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "text-sm leading-relaxed text-muted-foreground", children: description }),
+          action ? /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "pt-1", children: action }) : null
         ] })
       ]
     }
@@ -52603,7 +53043,13 @@ function WorkflowsPage() {
   ] });
 }
 function LoginScreen() {
-  const { login, isLoggingIn, isLoginError } = useAuth();
+  const { login, isLoggingIn, isLoginError, isAuthenticated, isInitializing } = useAuth();
+  const navigate = useNavigate();
+  reactExports.useEffect(() => {
+    if (!isInitializing && isAuthenticated) {
+      void navigate({ to: "/" });
+    }
+  }, [isAuthenticated, isInitializing, navigate]);
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(
     "main",
     {
@@ -52631,7 +53077,7 @@ function LoginScreen() {
             }
           }
         ),
-        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative z-10 flex w-full max-w-sm flex-col items-center text-center", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "relative z-10 flex w-full max-w-md flex-col items-center text-center", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx(
             "div",
             {
@@ -52653,10 +53099,31 @@ function LoginScreen() {
             {
               className: "mt-3 text-sm leading-relaxed text-muted-foreground",
               "data-ocid": "login.subtitle",
-              children: "Your on-chain operator for cross-dapp workflows. Sign in with Internet Identity to access your plans, memory, and history."
+              children: "One agent, every IC dApp. Plan cross-app moves on-chain, then run them through the Internet Computer MCP server under your Internet Identity."
             }
           ),
-          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-10 w-full", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "ul",
+            {
+              "data-ocid": "login.highlights",
+              className: "mt-6 w-full space-y-2 rounded-xl border border-border bg-card/60 p-4 text-left text-sm text-muted-foreground",
+              children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { className: "flex gap-2", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(ShieldCheck, { className: "mt-0.5 h-4 w-4 shrink-0 text-primary" }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "Sign in here to store plans, memory, and preferences under your II principal." })
+                ] }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { className: "flex gap-2", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(Workflow$1, { className: "mt-0.5 h-4 w-4 shrink-0 text-primary" }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "Trust the IC MCP server once, then let Claude or ChatGPT act on IC as you." })
+                ] }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { className: "flex gap-2", children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(ArrowRight, { className: "mt-0.5 h-4 w-4 shrink-0 text-primary" }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "After login, open Setup for the exact MCP URL and a 3-step checklist." })
+                ] })
+              ]
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mt-8 w-full", children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx(
               Button,
               {
@@ -52664,11 +53131,11 @@ function LoginScreen() {
                 size: "lg",
                 "data-ocid": "login.signin_button",
                 onClick: () => void login(),
-                disabled: isLoggingIn,
+                disabled: isLoggingIn || isInitializing,
                 className: "w-full",
-                children: isLoggingIn ? /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
+                children: isLoggingIn || isInitializing ? /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
                   /* @__PURE__ */ jsxRuntimeExports.jsx(LoaderCircle, { className: "h-4 w-4 animate-spin", "aria-hidden": true }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "Connecting…" })
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: isInitializing ? "Restoring session…" : "Connecting…" })
                 ] }) : /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
                   /* @__PURE__ */ jsxRuntimeExports.jsx(ShieldCheck, { className: "h-4 w-4", "aria-hidden": true }),
                   /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "Sign in with Internet Identity" })
@@ -52683,12 +53150,18 @@ function LoginScreen() {
                 className: "mt-4 flex items-center justify-center gap-2 text-sm text-destructive",
                 children: [
                   /* @__PURE__ */ jsxRuntimeExports.jsx(CircleAlert, { className: "h-4 w-4", "aria-hidden": true }),
-                  "Sign-in failed. Please try again."
+                  "Sign-in failed or was cancelled. Close any blocked pop-ups and try again."
                 ]
               }
             )
           ] }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-8 font-mono text-[11px] uppercase tracking-widest text-muted-foreground/60", children: "secured by the internet computer" })
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "mt-8 max-w-sm text-xs leading-relaxed text-muted-foreground/80", children: [
+            "A passkey popup from",
+            " ",
+            /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-mono text-muted-foreground", children: "id.ai" }),
+            " should open. If nothing happens, allow pop-ups for this site and retry."
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-4 font-mono text-[11px] uppercase tracking-widest text-muted-foreground/60", children: "secured by the internet computer" })
         ] })
       ]
     }
@@ -52987,6 +53460,25 @@ function HistoryPage() {
     isLoading ? /* @__PURE__ */ jsxRuntimeExports.jsx(HistorySkeleton, {}) : isError ? /* @__PURE__ */ jsxRuntimeExports.jsx(ErrorState, { onRetry: () => void refetch() }) : entries.length === 0 ? /* @__PURE__ */ jsxRuntimeExports.jsx(EmptyState, { onStart: goToChat }) : /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "space-y-3", "data-ocid": "history.list", children: entries.map((entry, i) => /* @__PURE__ */ jsxRuntimeExports.jsx(HistoryEntryCard, { entry, index: i }, entry.id)) })
   ] });
 }
+function AuthBootScreen() {
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    "main",
+    {
+      "data-ocid": "auth.boot_screen",
+      className: "flex min-h-dvh flex-col items-center justify-center gap-3 bg-background px-6",
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx(
+          LoaderCircle,
+          {
+            className: "h-6 w-6 animate-spin text-primary",
+            "aria-label": "Restoring session"
+          }
+        ),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-mono text-[11px] uppercase tracking-widest text-muted-foreground", children: "Restoring your Internet Identity session…" })
+      ]
+    }
+  );
+}
 const rootRoute = createRootRouteWithContext()({
   beforeLoad: ({ context, location: location2 }) => {
     const { isAuthenticated, isInitializing } = context.auth;
@@ -52998,7 +53490,13 @@ const rootRoute = createRootRouteWithContext()({
       throw redirect({ to: "/" });
     }
   },
-  component: () => /* @__PURE__ */ jsxRuntimeExports.jsx(Outlet, {})
+  component: function RootComponent() {
+    const auth = useInternetIdentity();
+    if (auth.isInitializing) {
+      return /* @__PURE__ */ jsxRuntimeExports.jsx(AuthBootScreen, {});
+    }
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(Outlet, {});
+  }
 });
 const loginRoute = createRoute({
   getParentRoute: () => rootRoute,
@@ -53044,6 +53542,11 @@ const historyRoute = createRoute({
   path: "/history",
   component: () => /* @__PURE__ */ jsxRuntimeExports.jsx(HistoryPage, {})
 });
+const setupRoute = createRoute({
+  getParentRoute: () => protectedRoute,
+  path: "/setup",
+  component: () => /* @__PURE__ */ jsxRuntimeExports.jsx(SetupPage, {})
+});
 const routeTree = rootRoute.addChildren([
   loginRoute,
   protectedRoute.addChildren([
@@ -53052,7 +53555,8 @@ const routeTree = rootRoute.addChildren([
     workflowsRoute,
     workflowEditRoute,
     memoryRoute,
-    historyRoute
+    historyRoute,
+    setupRoute
   ])
 ]);
 const router = createRouter({
@@ -53077,7 +53581,21 @@ const router = createRouter({
 });
 function useSyncRouterAuth() {
   const auth = useInternetIdentity();
-  router.update({ context: { auth } });
+  const prev = reactExports.useRef({
+    isAuthenticated: auth.isAuthenticated,
+    isInitializing: auth.isInitializing
+  });
+  reactExports.useEffect(() => {
+    router.update({ context: { auth } });
+    const changed = prev.current.isAuthenticated !== auth.isAuthenticated || prev.current.isInitializing !== auth.isInitializing;
+    if (changed) {
+      prev.current = {
+        isAuthenticated: auth.isAuthenticated,
+        isInitializing: auth.isInitializing
+      };
+      void router.invalidate();
+    }
+  }, [auth]);
 }
 function LoginRoute() {
   return /* @__PURE__ */ jsxRuntimeExports.jsx(LoginScreen, {});

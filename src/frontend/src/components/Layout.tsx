@@ -70,6 +70,7 @@ function Header({ onOpenMobile }: { onOpenMobile: () => void }) {
   const routeTitle = (() => {
     const path = location.pathname;
     if (path === "/") return "Dashboard";
+    if (path === "/setup") return "Setup";
     if (path.startsWith("/workflows/") && path !== "/workflows")
       return "Edit Workflow";
     const seg = path.split("/")[1] ?? "";
@@ -156,7 +157,17 @@ export function Layout({ children }: { children: ReactNode }) {
           className="border-t border-border bg-card px-4 py-3 sm:px-6"
         >
           <p className="text-center font-mono text-[11px] text-muted-foreground/70">
-            © {new Date().getFullYear()}. Built with love using{" "}
+            IC MCP ·{" "}
+            <a
+              href="https://mcp.beta.id.ai/"
+              target="_blank"
+              rel="noreferrer"
+              className="text-primary hover:underline"
+            >
+              mcp.beta.id.ai
+            </a>
+            {" · "}
+            Built with{" "}
             <a
               href={`https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(
                 typeof window !== "undefined" ? window.location.hostname : "",

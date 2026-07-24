@@ -124,7 +124,8 @@ export function DAppEditor({ dApps }: DAppEditorProps) {
             Preferred dApps
           </h2>
           <p className="text-sm text-muted-foreground">
-            Pin the canister IDs you reference most often with friendly names.
+            Pin the canisters and dApps your MCP-connected agent should know —
+            friendly name plus principal (e.g. marketplace, vault, ledger).
           </p>
         </div>
       </div>
