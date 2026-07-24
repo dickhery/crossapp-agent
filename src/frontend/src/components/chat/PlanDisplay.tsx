@@ -1,21 +1,29 @@
-import { Check, Copy, RefreshCw, Save } from "lucide-react";
+import {
+  Check,
+  Copy,
+  ExternalLink,
+  Loader2,
+  Play,
+  RefreshCw,
+  Save,
+} from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { planClipboardPayload } from "@/lib/mcp";
+import { GROK_CHAT_URL, planClipboardPayload } from "@/lib/mcp";
 import { cn } from "@/lib/utils";
 
-// PlanDisplay renders the assistant's numbered plan with copy + save
-// affordances. "Copy for MCP" wraps the plan with connector instructions so
-// Claude/ChatGPT knows to execute via the IC MCP server.
+// PlanDisplay: numbered plan + Run now (in-app reads) + Copy for MCP + Save.
 
 type PlanDisplayProps = {
   planText: string;
   onSave: () => void;
   onRetry: () => void;
+  onRun?: () => void | Promise<void>;
   isSaving?: boolean;
+  isRunning?: boolean;
   canRetry?: boolean;
   className?: string;
 };
@@ -24,7 +32,9 @@ export function PlanDisplay({
   planText,
   onSave,
   onRetry,
+  onRun,
   isSaving = false,
+  isRunning = false,
   canRetry = false,
   className,
 }: PlanDisplayProps) {
@@ -35,7 +45,7 @@ export function PlanDisplay({
       await navigator.clipboard.writeText(planClipboardPayload(planText));
       setCopied(true);
       toast.success(
-        "Plan copied — paste into Grok, Claude, or ChatGPT with MCP",
+        "Plan copied — paste into Grok with the IC MCP connector enabled",
       );
       window.setTimeout(() => setCopied(false), 2000);
     } catch {
@@ -43,9 +53,22 @@ export function PlanDisplay({
     }
   };
 
-  // Split the plan into lines and render numbered steps with a hanging indent
-  // so wrapped lines align under the text, not the numeral.
+  const handleOpenGrok = async () => {
+    try {
+      await navigator.clipboard.writeText(planClipboardPayload(planText));
+      toast.success(
+        "Plan copied — paste it into the Grok chat that just opened",
+      );
+    } catch {
+      // still open Grok
+    }
+    window.open(GROK_CHAT_URL, "_blank", "noopener,noreferrer");
+  };
+
+  // Prefer lines that look like steps; still show full text for template headers.
   const lines = planText.split("\n").filter((line) => line.trim().length > 0);
+  const stepLines = lines.filter((line) => /^\s*\d+[\.)]\s/.test(line));
+  const displayLines = stepLines.length > 0 ? stepLines : lines;
 
   return (
     <div
@@ -55,7 +78,7 @@ export function PlanDisplay({
         className,
       )}
     >
-      <div className="mb-3 flex items-center justify-between gap-2">
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <Badge
             variant="secondary"
@@ -65,10 +88,10 @@ export function PlanDisplay({
             Plan
           </Badge>
           <span className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground/70">
-            {lines.length} {lines.length === 1 ? "step" : "steps"}
+            {displayLines.length} {displayLines.length === 1 ? "step" : "steps"}
           </span>
         </div>
-        <div className="flex items-center gap-1.5">
+        <div className="flex flex-wrap items-center gap-1.5">
           {canRetry && (
             <Button
               variant="ghost"
@@ -76,6 +99,7 @@ export function PlanDisplay({
               data-ocid="plan_display.retry_button"
               aria-label="Regenerate plan"
               onClick={onRetry}
+              disabled={isRunning}
               className="h-8 text-muted-foreground hover:text-foreground"
             >
               <RefreshCw className="h-3.5 w-3.5" aria-hidden />
@@ -86,8 +110,9 @@ export function PlanDisplay({
             variant="ghost"
             size="sm"
             data-ocid="plan_display.copy_button"
-            aria-label="Copy plan to clipboard"
-            onClick={handleCopy}
+            aria-label="Copy plan for MCP"
+            onClick={() => void handleCopy()}
+            disabled={isRunning}
             className="h-8 text-muted-foreground hover:text-foreground"
           >
             {copied ? (
@@ -100,24 +125,64 @@ export function PlanDisplay({
             </span>
           </Button>
           <Button
-            variant="default"
+            variant="outline"
+            size="sm"
+            data-ocid="plan_display.grok_button"
+            aria-label="Open Grok to run with MCP"
+            onClick={() => void handleOpenGrok()}
+            disabled={isRunning}
+            className="h-8"
+          >
+            <ExternalLink className="h-3.5 w-3.5" aria-hidden />
+            <span className="hidden sm:inline">Open Grok</span>
+          </Button>
+          {onRun ? (
+            <Button
+              variant="default"
+              size="sm"
+              data-ocid="plan_display.run_button"
+              aria-label="Run plan in this app"
+              onClick={() => void onRun()}
+              disabled={isRunning || isSaving}
+              className="h-8"
+            >
+              {isRunning ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />
+              ) : (
+                <Play className="h-3.5 w-3.5" aria-hidden />
+              )}
+              <span className="hidden sm:inline">
+                {isRunning ? "Running…" : "Run now"}
+              </span>
+            </Button>
+          ) : null}
+          <Button
+            variant="secondary"
             size="sm"
             data-ocid="plan_display.save_button"
             aria-label="Save plan as workflow"
             onClick={onSave}
-            disabled={isSaving}
+            disabled={isSaving || isRunning}
             className="h-8"
           >
             <Save className="h-3.5 w-3.5" aria-hidden />
             <span className="hidden sm:inline">
-              {isSaving ? "Saving…" : "Save as Workflow"}
+              {isSaving ? "Saving…" : "Save"}
             </span>
           </Button>
         </div>
       </div>
 
+      <p className="mb-3 text-xs leading-relaxed text-muted-foreground">
+        <strong className="text-foreground">Run now</strong> executes read-only
+        IC queries in this browser (e.g. ICP balance for your CrossApp
+        principal). Full cross-app MCP actions need{" "}
+        <strong className="text-foreground">Copy for MCP → Grok</strong> with
+        the connector connected.
+      </p>
+
       <ol className="space-y-2.5" data-ocid="plan_display.steps">
-        {lines.map((line, index) => (
+        {displayLines.map((line, index) => (
           <li
             // biome-ignore lint/suspicious/noArrayIndexKey: static plan step list
             key={index}

@@ -38761,6 +38761,7 @@ function useAuth() {
     isLoginError,
     login,
     logout: clear,
+    identity,
     principal,
     principalText,
     principalShort
@@ -48054,7 +48055,7 @@ Service({
   "updateRule": Func([Rule], [Preferences], []),
   "updateWorkflow": Func([Workflow], [Opt(Workflow)], [])
 });
-const idlFactory = ({ IDL: IDL2 }) => {
+const idlFactory$1 = ({ IDL: IDL2 }) => {
   const Error2 = IDL2.Variant({
     "FrontendOriginsNotConfigured": IDL2.Null,
     "MixedSsoSources": IDL2.Record({
@@ -48820,7 +48821,7 @@ function createActor(canisterId, _uploadFile, _downloadFile, options = {}) {
   if (options.agent && options.agentOptions) {
     console.warn("Detected both agent and agentOptions passed to createActor. Ignoring agentOptions and proceeding with the provided agent.");
   }
-  const actor = Actor.createActor(idlFactory, {
+  const actor = Actor.createActor(idlFactory$1, {
     agent,
     canisterId,
     ...options.actorOptions
@@ -48953,9 +48954,11 @@ function Badge({
 const MCP_CONNECTOR_URL = "https://mcp.beta.id.ai/mcp-prod";
 const II_TRUSTED_MCP_SETTINGS_URL = "https://id.ai/manage/settings";
 const MCP_DOCS_URL = "https://mcp.beta.id.ai/";
+const GROK_CONNECTORS_URL = "https://grok.com/connectors";
+const GROK_CHAT_URL = "https://grok.com/";
 const AI_APPS = {
   grok: {
-    connectorsUrl: "https://grok.com/connectors",
+    connectorsUrl: GROK_CONNECTORS_URL,
     docsUrl: "https://docs.x.ai/grok/connectors",
     planNote: "Works on personal Grok accounts — no business plan required."
   },
@@ -48985,7 +48988,9 @@ function PlanDisplay({
   planText,
   onSave,
   onRetry,
+  onRun,
   isSaving = false,
+  isRunning = false,
   canRetry = false,
   className
 }) {
@@ -48995,14 +49000,26 @@ function PlanDisplay({
       await navigator.clipboard.writeText(planClipboardPayload(planText));
       setCopied(true);
       ue.success(
-        "Plan copied — paste into Grok, Claude, or ChatGPT with MCP"
+        "Plan copied — paste into Grok with the IC MCP connector enabled"
       );
       window.setTimeout(() => setCopied(false), 2e3);
     } catch {
       ue.error("Clipboard unavailable — select the plan text manually");
     }
   };
+  const handleOpenGrok = async () => {
+    try {
+      await navigator.clipboard.writeText(planClipboardPayload(planText));
+      ue.success(
+        "Plan copied — paste it into the Grok chat that just opened"
+      );
+    } catch {
+    }
+    window.open(GROK_CHAT_URL, "_blank", "noopener,noreferrer");
+  };
   const lines = planText.split("\n").filter((line) => line.trim().length > 0);
+  const stepLines = lines.filter((line) => /^\s*\d+[\.)]\s/.test(line));
+  const displayLines = stepLines.length > 0 ? stepLines : lines;
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(
     "div",
     {
@@ -49012,7 +49029,7 @@ function PlanDisplay({
         className
       ),
       children: [
-        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mb-3 flex items-center justify-between gap-2", children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mb-3 flex flex-wrap items-center justify-between gap-2", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx(
               Badge,
@@ -49024,12 +49041,12 @@ function PlanDisplay({
               }
             ),
             /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "font-mono text-[11px] uppercase tracking-widest text-muted-foreground/70", children: [
-              lines.length,
+              displayLines.length,
               " ",
-              lines.length === 1 ? "step" : "steps"
+              displayLines.length === 1 ? "step" : "steps"
             ] })
           ] }),
-          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-1.5", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap items-center gap-1.5", children: [
             canRetry && /* @__PURE__ */ jsxRuntimeExports.jsxs(
               Button,
               {
@@ -49038,6 +49055,7 @@ function PlanDisplay({
                 "data-ocid": "plan_display.retry_button",
                 "aria-label": "Regenerate plan",
                 onClick: onRetry,
+                disabled: isRunning,
                 className: "h-8 text-muted-foreground hover:text-foreground",
                 children: [
                   /* @__PURE__ */ jsxRuntimeExports.jsx(RefreshCw, { className: "h-3.5 w-3.5", "aria-hidden": true }),
@@ -49051,8 +49069,9 @@ function PlanDisplay({
                 variant: "ghost",
                 size: "sm",
                 "data-ocid": "plan_display.copy_button",
-                "aria-label": "Copy plan to clipboard",
-                onClick: handleCopy,
+                "aria-label": "Copy plan for MCP",
+                onClick: () => void handleCopy(),
+                disabled: isRunning,
                 className: "h-8 text-muted-foreground hover:text-foreground",
                 children: [
                   copied ? /* @__PURE__ */ jsxRuntimeExports.jsx(Check, { className: "h-3.5 w-3.5 text-success", "aria-hidden": true }) : /* @__PURE__ */ jsxRuntimeExports.jsx(Copy, { className: "h-3.5 w-3.5", "aria-hidden": true }),
@@ -49063,22 +49082,61 @@ function PlanDisplay({
             /* @__PURE__ */ jsxRuntimeExports.jsxs(
               Button,
               {
+                variant: "outline",
+                size: "sm",
+                "data-ocid": "plan_display.grok_button",
+                "aria-label": "Open Grok to run with MCP",
+                onClick: () => void handleOpenGrok(),
+                disabled: isRunning,
+                className: "h-8",
+                children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(ExternalLink, { className: "h-3.5 w-3.5", "aria-hidden": true }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hidden sm:inline", children: "Open Grok" })
+                ]
+              }
+            ),
+            onRun ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              Button,
+              {
                 variant: "default",
+                size: "sm",
+                "data-ocid": "plan_display.run_button",
+                "aria-label": "Run plan in this app",
+                onClick: () => void onRun(),
+                disabled: isRunning || isSaving,
+                className: "h-8",
+                children: [
+                  isRunning ? /* @__PURE__ */ jsxRuntimeExports.jsx(LoaderCircle, { className: "h-3.5 w-3.5 animate-spin", "aria-hidden": true }) : /* @__PURE__ */ jsxRuntimeExports.jsx(Play, { className: "h-3.5 w-3.5", "aria-hidden": true }),
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hidden sm:inline", children: isRunning ? "Running…" : "Run now" })
+                ]
+              }
+            ) : null,
+            /* @__PURE__ */ jsxRuntimeExports.jsxs(
+              Button,
+              {
+                variant: "secondary",
                 size: "sm",
                 "data-ocid": "plan_display.save_button",
                 "aria-label": "Save plan as workflow",
                 onClick: onSave,
-                disabled: isSaving,
+                disabled: isSaving || isRunning,
                 className: "h-8",
                 children: [
                   /* @__PURE__ */ jsxRuntimeExports.jsx(Save, { className: "h-3.5 w-3.5", "aria-hidden": true }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hidden sm:inline", children: isSaving ? "Saving…" : "Save as Workflow" })
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hidden sm:inline", children: isSaving ? "Saving…" : "Save" })
                 ]
               }
             )
           ] })
         ] }),
-        /* @__PURE__ */ jsxRuntimeExports.jsx("ol", { className: "space-y-2.5", "data-ocid": "plan_display.steps", children: lines.map((line, index2) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "mb-3 text-xs leading-relaxed text-muted-foreground", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "Run now" }),
+          " executes read-only IC queries in this browser (e.g. ICP balance for your CrossApp principal). Full cross-app MCP actions need",
+          " ",
+          /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "Copy for MCP → Grok" }),
+          " with the connector connected."
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("ol", { className: "space-y-2.5", "data-ocid": "plan_display.steps", children: displayLines.map((line, index2) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
           "li",
           {
             "data-ocid": `plan_display.step.${index2 + 1}`,
@@ -49098,7 +49156,9 @@ function ChatMessageItem({
   message,
   onSavePlan,
   onRetryPlan,
+  onRunPlan,
   isSavingPlan = false,
+  isRunningPlan = false,
   isLastAssistant = false
 }) {
   const isUser = message.role === "user";
@@ -49132,7 +49192,9 @@ function ChatMessageItem({
         onSave: onSavePlan,
         onRetry: onRetryPlan ?? (() => {
         }),
+        onRun: isLastAssistant && onRunPlan ? () => void onRunPlan() : void 0,
         isSaving: isSavingPlan,
+        isRunning: isRunningPlan,
         canRetry: isLastAssistant && Boolean(onRetryPlan)
       }
     ) : /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -49146,7 +49208,9 @@ function ChatMessageItem({
     ) })
   ] });
 }
-function ChatMessageLoading() {
+function ChatMessageLoading({
+  label = "Generating plan…"
+}) {
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { "data-ocid": "chat.message.loading", className: "flex gap-3", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx(
       "div",
@@ -49180,7 +49244,7 @@ function ChatMessageLoading() {
           }
         )
       ] }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-mono text-[11px] uppercase tracking-widest text-muted-foreground/70", children: "Generating plan…" })
+      /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-mono text-[11px] uppercase tracking-widest text-muted-foreground/70", children: label })
     ] })
   ] });
 }
@@ -49769,6 +49833,135 @@ function useDeleteHistoryEntry() {
     }
   });
 }
+const preferencesKey = ["preferences"];
+const EMPTY_PREFERENCES = {
+  dApps: [],
+  rules: [],
+  notes: ""
+};
+function requireActor(actor) {
+  if (!actor) {
+    throw new Error(
+      "Backend connection not ready. Wait a moment, or sign out and sign in again."
+    );
+  }
+}
+function useGetPreferences() {
+  const { actor, isFetching: actorFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: preferencesKey,
+    queryFn: async () => {
+      requireActor(actor);
+      const prefs = await actor.getPreferences();
+      return {
+        dApps: prefs.dApps ?? [],
+        rules: prefs.rules ?? [],
+        notes: prefs.notes ?? ""
+      };
+    },
+    enabled: !!actor && !actorFetching,
+    // Keep last good prefs visible while refetching after add/edit.
+    placeholderData: (previous) => previous
+  });
+}
+function useAddDApp() {
+  const qc = useQueryClient();
+  const { actor } = useActor(createActor);
+  return useMutation({
+    mutationFn: async (input) => {
+      requireActor(actor);
+      return actor.addDApp(...input);
+    },
+    onSuccess: (prefs) => {
+      qc.setQueryData(preferencesKey, prefs);
+      void qc.invalidateQueries({ queryKey: preferencesKey });
+    }
+  });
+}
+function useUpdateDApp() {
+  const qc = useQueryClient();
+  const { actor } = useActor(createActor);
+  return useMutation({
+    mutationFn: async (update) => {
+      requireActor(actor);
+      return actor.updateDApp(update);
+    },
+    onSuccess: (prefs) => {
+      qc.setQueryData(preferencesKey, prefs);
+      void qc.invalidateQueries({ queryKey: preferencesKey });
+    }
+  });
+}
+function useDeleteDApp() {
+  const qc = useQueryClient();
+  const { actor } = useActor(createActor);
+  return useMutation({
+    mutationFn: async (id) => {
+      requireActor(actor);
+      return actor.deleteDApp(id);
+    },
+    onSuccess: (prefs) => {
+      qc.setQueryData(preferencesKey, prefs);
+      void qc.invalidateQueries({ queryKey: preferencesKey });
+    }
+  });
+}
+function useAddRule() {
+  const qc = useQueryClient();
+  const { actor } = useActor(createActor);
+  return useMutation({
+    mutationFn: async (input) => {
+      requireActor(actor);
+      return actor.addRule(input);
+    },
+    onSuccess: (prefs) => {
+      qc.setQueryData(preferencesKey, prefs);
+      void qc.invalidateQueries({ queryKey: preferencesKey });
+    }
+  });
+}
+function useUpdateRule() {
+  const qc = useQueryClient();
+  const { actor } = useActor(createActor);
+  return useMutation({
+    mutationFn: async (update) => {
+      requireActor(actor);
+      return actor.updateRule(update);
+    },
+    onSuccess: (prefs) => {
+      qc.setQueryData(preferencesKey, prefs);
+      void qc.invalidateQueries({ queryKey: preferencesKey });
+    }
+  });
+}
+function useDeleteRule() {
+  const qc = useQueryClient();
+  const { actor } = useActor(createActor);
+  return useMutation({
+    mutationFn: async (id) => {
+      requireActor(actor);
+      return actor.deleteRule(id);
+    },
+    onSuccess: (prefs) => {
+      qc.setQueryData(preferencesKey, prefs);
+      void qc.invalidateQueries({ queryKey: preferencesKey });
+    }
+  });
+}
+function useSetNotes() {
+  const qc = useQueryClient();
+  const { actor } = useActor(createActor);
+  return useMutation({
+    mutationFn: async (notes) => {
+      requireActor(actor);
+      return actor.setNotes(notes);
+    },
+    onSuccess: (prefs) => {
+      qc.setQueryData(preferencesKey, prefs);
+      void qc.invalidateQueries({ queryKey: preferencesKey });
+    }
+  });
+}
 const workflowsKey = ["workflows"];
 const workflowKey = (id) => ["workflows", id];
 function useListWorkflows() {
@@ -49879,11 +50072,217 @@ function useExportWorkflowMarkdown() {
     }
   });
 }
+const IC_HOST = "https://icp-api.io";
+async function createMainnetAgent(identity) {
+  const agent = await HttpAgent.create({
+    host: IC_HOST,
+    ...identity ? { identity } : {}
+  });
+  return agent;
+}
+const idlFactory = ({ IDL: IDL2 }) => {
+  const Account = IDL2.Record({
+    owner: IDL2.Principal,
+    subaccount: IDL2.Opt(IDL2.Vec(IDL2.Nat8))
+  });
+  return IDL2.Service({
+    icrc1_name: IDL2.Func([], [IDL2.Text], ["query"]),
+    icrc1_symbol: IDL2.Func([], [IDL2.Text], ["query"]),
+    icrc1_decimals: IDL2.Func([], [IDL2.Nat8], ["query"]),
+    icrc1_balance_of: IDL2.Func([Account], [IDL2.Nat], ["query"])
+  });
+};
+function formatUnits(raw, decimals) {
+  const base = 10n ** BigInt(decimals);
+  const whole = raw / base;
+  const frac = raw % base;
+  if (frac === 0n) return whole.toString();
+  const fracStr = frac.toString().padStart(decimals, "0").replace(/0+$/, "");
+  return `${whole.toString()}.${fracStr}`;
+}
+function createIcrc1Actor(agent, canisterId) {
+  return Actor.createActor(idlFactory, { agent, canisterId });
+}
+async function fetchIcrc1Balance(agent, canisterId, owner) {
+  const actor = createIcrc1Actor(agent, canisterId);
+  const [name, symbol, decimals, raw] = await Promise.all([
+    actor.icrc1_name().catch(() => "Token"),
+    actor.icrc1_symbol().catch(() => "TOKEN"),
+    actor.icrc1_decimals().catch(() => 8),
+    actor.icrc1_balance_of({ owner, subaccount: [] })
+  ]);
+  const dec = Number(decimals);
+  return {
+    canisterId,
+    name,
+    symbol,
+    decimals: dec,
+    raw,
+    formatted: formatUnits(raw, dec),
+    owner: owner.toText()
+  };
+}
+const ICP_LEDGER_CANISTER_ID = "ryjl3-tyaaa-aaaaa-aaaba-cai";
+const CYCLES_LEDGER_CANISTER_ID = "um5iw-rqaaa-aaaaq-qaaba-cai";
+const NNS_APP_URL = "https://nns.ic0.app";
+function lower(s) {
+  return s.toLowerCase();
+}
+function isBalanceGoal(goal) {
+  const g2 = lower(goal);
+  return g2.includes("balance") || g2.includes("how much") || g2.includes("check my") || g2.includes("icp") && (g2.includes("account") || g2.includes("ledger"));
+}
+function pickLedgerCanisterIds(goal, dApps) {
+  const ids = /* @__PURE__ */ new Set();
+  const g2 = lower(goal);
+  if (g2.includes("icp") || g2.includes("nns") || g2.includes("ledger") || isBalanceGoal(goal)) {
+    ids.add(ICP_LEDGER_CANISTER_ID);
+  }
+  for (const d2 of dApps) {
+    const name = lower(d2.friendlyName);
+    const id = d2.canisterId.trim();
+    if (!id) continue;
+    if (name.includes("ledger") || name.includes("icp") || id === ICP_LEDGER_CANISTER_ID || id === CYCLES_LEDGER_CANISTER_ID) {
+      ids.add(id);
+    }
+  }
+  if (ids.size === 0) ids.add(ICP_LEDGER_CANISTER_ID);
+  return [...ids];
+}
+function formatBalanceLine(b2, label) {
+  const head = label ? `${label}: ` : "";
+  return `${head}${b2.formatted} ${b2.symbol} (${b2.name})
+  raw=${b2.raw.toString()} · decimals=${b2.decimals}
+  ledger=${b2.canisterId}
+  owner principal=${b2.owner}`;
+}
+async function executePlanInApp(input) {
+  var _a2;
+  const steps = [];
+  const { goal, planText, identity, principal, dApps } = input;
+  if (!identity || !principal) {
+    return {
+      summary: "Cannot execute: you are not signed in with Internet Identity in this app.",
+      steps: [
+        {
+          title: "Authenticate",
+          ok: false,
+          detail: "Sign in, then press Run now again."
+        }
+      ],
+      mcpFollowUp: planClipboardPayload(planText)
+    };
+  }
+  steps.push({
+    title: "Session",
+    ok: true,
+    detail: `Signed in as ${principal.toText()} (principal at *this* app origin).`
+  });
+  const agent = await createMainnetAgent(identity);
+  if (isBalanceGoal(goal) || lower(goal).includes("ledger")) {
+    const ledgers = pickLedgerCanisterIds(goal, dApps);
+    const balances = [];
+    for (const canisterId of ledgers) {
+      try {
+        const bal = await fetchIcrc1Balance(agent, canisterId, principal);
+        balances.push(bal);
+        const label = ((_a2 = dApps.find((d2) => d2.canisterId.trim() === canisterId)) == null ? void 0 : _a2.friendlyName) ?? (canisterId === ICP_LEDGER_CANISTER_ID ? "ICP Ledger" : canisterId);
+        steps.push({
+          title: `Balance · ${label}`,
+          ok: true,
+          detail: formatBalanceLine(bal, label)
+        });
+      } catch (e) {
+        steps.push({
+          title: `Balance · ${canisterId}`,
+          ok: false,
+          detail: e instanceof Error ? e.message : "Query failed (canister may not be ICRC-1)."
+        });
+      }
+    }
+    const icp = balances.find((b2) => b2.canisterId === ICP_LEDGER_CANISTER_ID);
+    const summaryLines = [
+      "## Execution results (in-app)",
+      "",
+      icp ? `**ICP balance at this app's principal:** ${icp.formatted} ${icp.symbol}` : "**ICP balance:** could not read (see step details).",
+      "",
+      "### Principal note (important)",
+      "Internet Identity gives you a **different principal per app**.",
+      `The balance above is for your principal at **CrossApp Agent**, not automatically your principal at [${NNS_APP_URL}](${NNS_APP_URL}).`,
+      "To check the balance of your **NNS dapp** principal, run the same goal in **Grok** (or Claude) with the IC MCP connector authorized for Actions & questions — MCP will call `get_app_principal` / `canister_query` under the NNS derivation origin.",
+      "",
+      "### How to finish via MCP (full cross-app agent)",
+      `1. Trust MCP at Internet Identity if you have not: add \`${MCP_CONNECTOR_URL}\`.`,
+      `2. Connect Grok: ${GROK_CONNECTORS_URL} → New Connector → Custom → paste that URL.`,
+      "3. Press **Copy for MCP** below (or use the button on the plan), paste into Grok, and ask it to execute.",
+      "",
+      "### Step log",
+      ...steps.map(
+        (s, i) => `${i + 1}. ${s.ok ? "✓" : "✗"} **${s.title}**
+${s.detail}`
+      )
+    ];
+    return {
+      summary: summaryLines.join("\n"),
+      steps,
+      mcpFollowUp: planClipboardPayload(
+        [
+          goal,
+          "",
+          "Use IC MCP tools. Preferred canisters from CrossApp Agent memory:",
+          ...dApps.map((d2) => `- ${d2.friendlyName}: ${d2.canisterId}`),
+          "",
+          "Suggested MCP steps:",
+          "1. resolve_app for https://nns.ic0.app",
+          "2. get_app_principal for that app",
+          "3. canister_query on ryjl3-tyaaa-aaaaa-aaaba-cai icrc1_balance_of for that principal",
+          "4. Report the ICP balance clearly",
+          "",
+          planText
+        ].join("\n")
+      )
+    };
+  }
+  steps.push({
+    title: "In-app scope",
+    ok: true,
+    detail: "This goal needs discovery or write tools that the hosted SPA cannot open through MCP OAuth (redirect allow-list). Use Grok/Claude MCP for full execution."
+  });
+  if (dApps.length > 0) {
+    steps.push({
+      title: "Memory apps",
+      ok: true,
+      detail: dApps.map((d2) => `- ${d2.friendlyName}: ${d2.canisterId}`).join("\n")
+    });
+  }
+  return {
+    summary: [
+      "## Execution results (in-app)",
+      "",
+      "This goal is beyond the **read-only, same-origin principal** executor built into CrossApp Agent.",
+      "",
+      "**What this app can run in-browser (no backend cycles):** ICRC-1 balance queries as your CrossApp principal.",
+      "**What requires Grok/Claude + IC MCP:** act-as-you at NNS and other apps, updates, cycles management, multi-dApp migrations.",
+      "",
+      "Use **Copy for MCP** and paste into Grok with the connector enabled to execute the full plan.",
+      "",
+      "### Step log",
+      ...steps.map(
+        (s, i) => `${i + 1}. ${s.ok ? "✓" : "✗"} **${s.title}**
+${s.detail}`
+      )
+    ].join("\n"),
+    steps,
+    mcpFollowUp: planClipboardPayload(planText)
+  };
+}
 const nowNs = () => BigInt(Date.now() * 1e6);
 const newId = () => `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 const looksLikePlan = (text) => /(^|\n)\s*\d+[\.)]\s/m.test(text);
 function ChatPage() {
   const navigate = useNavigate();
+  const { identity, principal } = useAuth();
+  const preferencesQuery = useGetPreferences();
   const generatePlan = useGeneratePlan();
   const refinePlan = useRefinePlan();
   const createWorkflow = useCreateWorkflow();
@@ -49902,8 +50301,10 @@ function ChatPage() {
   const [turns, setTurns] = reactExports.useState([]);
   const [error, setError] = reactExports.useState(null);
   const [saveTarget, setSaveTarget] = reactExports.useState(null);
+  const [isRunning, setIsRunning] = reactExports.useState(false);
+  const lastGoalRef = reactExports.useRef("");
   const scrollRef = reactExports.useRef(null);
-  const isPending = generatePlan.isPending || refinePlan.isPending;
+  const isPending = generatePlan.isPending || refinePlan.isPending || isRunning;
   const seedKey = planParam ?? (historyIdParam ? `history:${historyIdParam}` : null);
   const consumedSeedRef = reactExports.useRef(null);
   reactExports.useEffect(() => {
@@ -49961,6 +50362,7 @@ function ChatPage() {
   };
   const handleNewGoal = async (goal) => {
     setError(null);
+    lastGoalRef.current = goal;
     setTurns([]);
     appendTurn({ role: ChatRole.user, content: goal, timestamp: nowNs() });
     try {
@@ -49976,6 +50378,37 @@ function ChatPage() {
     } catch (err) {
       const message = err instanceof Error ? err.message : "Failed to generate plan.";
       setError(message);
+    }
+  };
+  const handleRunPlan = async (planText) => {
+    var _a2;
+    setError(null);
+    setIsRunning(true);
+    try {
+      const lastUser = [...turns].reverse().find((t) => t.role === ChatRole.user);
+      const goal = (lastUser == null ? void 0 : lastUser.content) ?? (lastGoalRef.current || "Execute the current plan");
+      lastGoalRef.current = goal;
+      const result = await executePlanInApp({
+        goal,
+        planText,
+        identity,
+        principal,
+        dApps: ((_a2 = preferencesQuery.data) == null ? void 0 : _a2.dApps) ?? []
+      });
+      appendTurn({
+        role: ChatRole.assistant,
+        content: result.summary,
+        timestamp: nowNs()
+      });
+      ue.success("Execution finished", {
+        description: "See the results message in the chat."
+      });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Failed to execute plan.";
+      setError(message);
+      ue.error("Execution failed", { description: message });
+    } finally {
+      setIsRunning(false);
     }
   };
   const handleRefine = async (instruction) => {
@@ -50081,13 +50514,20 @@ function ChatPage() {
                 message: turn,
                 onSavePlan: showPlanAffordances ? () => setSaveTarget(turn) : void 0,
                 onRetryPlan: showPlanAffordances && (error || isLastAssistant) ? handleRetry : void 0,
+                onRunPlan: showPlanAffordances && isLastAssistant ? () => handleRunPlan(turn.content) : void 0,
                 isSavingPlan: createWorkflow.isPending,
+                isRunningPlan: isRunning,
                 isLastAssistant
               },
               turn.id
             );
           }),
-          isPending && /* @__PURE__ */ jsxRuntimeExports.jsx(ChatMessageLoading, {}),
+          isPending && /* @__PURE__ */ jsxRuntimeExports.jsx(
+            ChatMessageLoading,
+            {
+              label: isRunning ? "Executing on the Internet Computer…" : void 0
+            }
+          ),
           error && !isPending && /* @__PURE__ */ jsxRuntimeExports.jsxs(Alert, { variant: "destructive", "data-ocid": "chat.error_state", children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx(CircleAlert, { className: "h-4 w-4", "aria-hidden": true }),
             /* @__PURE__ */ jsxRuntimeExports.jsx(AlertTitle, { children: "Something went wrong" }),
@@ -50117,7 +50557,7 @@ function ChatPage() {
         onSubmit: handleSubmit,
         isPending,
         disabled: isPending,
-        placeholder: turns.length === 0 ? "Describe a goal and I'll draft a numbered plan…" : "Refine the plan — e.g. 'add a testing step' or 'make step 2 shorter'…"
+        placeholder: turns.length === 0 ? "e.g. Check my ICP balance on the ledger…" : "Refine the plan, or press Run now on the plan to execute…"
       }
     ) }) }),
     /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -50133,8 +50573,8 @@ function ChatPage() {
 }
 function EmptyState$2() {
   const examples = [
-    "Delist my NFTs on Marketplace X, vault the rare ones, re-list the rest on Y at +15%",
-    "Mirror last 30 days of OpenChat posts + follows onto another IC social app",
+    "Check the balance of ICP in the NNS ledger account",
+    "Look up my ICP ledger balance for this app principal",
     "Migrate my DeFi position between protocols while minimizing cycles spend"
   ];
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(
@@ -50145,8 +50585,15 @@ function EmptyState$2() {
       children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Sparkles, { className: "h-7 w-7", "aria-hidden": true }) }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-2", children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-display text-xl font-semibold tracking-tight text-foreground", children: "Describe a cross-app goal. Get an MCP plan." }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mx-auto max-w-md text-sm text-muted-foreground", children: "We draft numbered steps with real IC MCP tool hints (canister_query, canister_update_call, resolve_app, …). Copy for MCP, paste into Grok, Claude, or ChatGPT with the connector enabled, and the agent acts as you." })
+          /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-display text-xl font-semibold tracking-tight text-foreground", children: "Plan here. Run reads here. Full MCP in Grok." }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "mx-auto max-w-md text-sm text-muted-foreground", children: [
+            "Describe a goal → get a plan → press ",
+            /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { children: "Run now" }),
+            " for in-browser ICP queries (e.g. ledger balance). For true multi-app actions under other dApp principals, use ",
+            /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { children: "Copy for MCP" }),
+            " ",
+            "into Grok with the IC connector."
+          ] })
         ] }),
         /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex flex-wrap justify-center gap-2", children: examples.map((ex, i) => /* @__PURE__ */ jsxRuntimeExports.jsx(
           "span",
@@ -50522,135 +50969,6 @@ function useIsOpenAIConfigured() {
     // Can be called without owner auth — still needs a ready actor.
     enabled: !!actor && !isFetching,
     staleTime: 6e4
-  });
-}
-const preferencesKey = ["preferences"];
-const EMPTY_PREFERENCES = {
-  dApps: [],
-  rules: [],
-  notes: ""
-};
-function requireActor(actor) {
-  if (!actor) {
-    throw new Error(
-      "Backend connection not ready. Wait a moment, or sign out and sign in again."
-    );
-  }
-}
-function useGetPreferences() {
-  const { actor, isFetching: actorFetching } = useActor(createActor);
-  return useQuery({
-    queryKey: preferencesKey,
-    queryFn: async () => {
-      requireActor(actor);
-      const prefs = await actor.getPreferences();
-      return {
-        dApps: prefs.dApps ?? [],
-        rules: prefs.rules ?? [],
-        notes: prefs.notes ?? ""
-      };
-    },
-    enabled: !!actor && !actorFetching,
-    // Keep last good prefs visible while refetching after add/edit.
-    placeholderData: (previous) => previous
-  });
-}
-function useAddDApp() {
-  const qc = useQueryClient();
-  const { actor } = useActor(createActor);
-  return useMutation({
-    mutationFn: async (input) => {
-      requireActor(actor);
-      return actor.addDApp(...input);
-    },
-    onSuccess: (prefs) => {
-      qc.setQueryData(preferencesKey, prefs);
-      void qc.invalidateQueries({ queryKey: preferencesKey });
-    }
-  });
-}
-function useUpdateDApp() {
-  const qc = useQueryClient();
-  const { actor } = useActor(createActor);
-  return useMutation({
-    mutationFn: async (update) => {
-      requireActor(actor);
-      return actor.updateDApp(update);
-    },
-    onSuccess: (prefs) => {
-      qc.setQueryData(preferencesKey, prefs);
-      void qc.invalidateQueries({ queryKey: preferencesKey });
-    }
-  });
-}
-function useDeleteDApp() {
-  const qc = useQueryClient();
-  const { actor } = useActor(createActor);
-  return useMutation({
-    mutationFn: async (id) => {
-      requireActor(actor);
-      return actor.deleteDApp(id);
-    },
-    onSuccess: (prefs) => {
-      qc.setQueryData(preferencesKey, prefs);
-      void qc.invalidateQueries({ queryKey: preferencesKey });
-    }
-  });
-}
-function useAddRule() {
-  const qc = useQueryClient();
-  const { actor } = useActor(createActor);
-  return useMutation({
-    mutationFn: async (input) => {
-      requireActor(actor);
-      return actor.addRule(input);
-    },
-    onSuccess: (prefs) => {
-      qc.setQueryData(preferencesKey, prefs);
-      void qc.invalidateQueries({ queryKey: preferencesKey });
-    }
-  });
-}
-function useUpdateRule() {
-  const qc = useQueryClient();
-  const { actor } = useActor(createActor);
-  return useMutation({
-    mutationFn: async (update) => {
-      requireActor(actor);
-      return actor.updateRule(update);
-    },
-    onSuccess: (prefs) => {
-      qc.setQueryData(preferencesKey, prefs);
-      void qc.invalidateQueries({ queryKey: preferencesKey });
-    }
-  });
-}
-function useDeleteRule() {
-  const qc = useQueryClient();
-  const { actor } = useActor(createActor);
-  return useMutation({
-    mutationFn: async (id) => {
-      requireActor(actor);
-      return actor.deleteRule(id);
-    },
-    onSuccess: (prefs) => {
-      qc.setQueryData(preferencesKey, prefs);
-      void qc.invalidateQueries({ queryKey: preferencesKey });
-    }
-  });
-}
-function useSetNotes() {
-  const qc = useQueryClient();
-  const { actor } = useActor(createActor);
-  return useMutation({
-    mutationFn: async (notes) => {
-      requireActor(actor);
-      return actor.setNotes(notes);
-    },
-    onSuccess: (prefs) => {
-      qc.setQueryData(preferencesKey, prefs);
-      void qc.invalidateQueries({ queryKey: preferencesKey });
-    }
   });
 }
 const QUICK_ACCESS = [
@@ -51999,12 +52317,9 @@ function SetupPage() {
         "This app is the ",
         /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "planner" }),
         " ",
-        "(plans, memory, workflows on-chain under your Internet Identity).",
-        " ",
-        /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "Execution" }),
-        " happens in an AI chat (Grok, Claude, or ChatGPT) that has the official Internet Computer MCP server connected — the agent then acts as ",
-        /* @__PURE__ */ jsxRuntimeExports.jsx("em", { children: "you" }),
-        " on IC dApps you authorize."
+        "and can ",
+        /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "Run now" }),
+        " for read-only IC queries in your browser (e.g. ICP ledger balance for your principal here). Full multi-app MCP actions (act as you at NNS and other dApps) still need Grok/Claude with the IC MCP connector — remote MCP OAuth only allows loopback or DFINITY-allowlisted redirect domains, so this hosted SPA cannot complete the MCP login itself."
       ] })
     ] }),
     /* @__PURE__ */ jsxRuntimeExports.jsxs(
@@ -52018,23 +52333,23 @@ function SetupPage() {
             {
               n: "A",
               title: "This app",
-              body: "Sign in with II. Save dApps, rules, and generate MCP-ready plans."
+              body: "Sign in with II. Save dApps in Memory. Generate plans and Run now for ledger reads."
             }
           ),
           /* @__PURE__ */ jsxRuntimeExports.jsx(
             ModelStep,
             {
               n: "B",
-              title: "Internet Identity",
-              body: "Trust the MCP URL once so grants can mint app-specific principals."
+              title: "Internet Identity + MCP trust",
+              body: "Trust the MCP URL so Grok/Claude can mint app-specific principals for full agent runs."
             }
           ),
           /* @__PURE__ */ jsxRuntimeExports.jsx(
             ModelStep,
             {
               n: "C",
-              title: "Grok / Claude / ChatGPT",
-              body: "Add the same URL as a custom MCP connector, authorize, then run plans."
+              title: "Chat → Run now + Grok MCP",
+              body: "Run now executes safe ledger reads in-app. Copy for MCP → Grok for full cross-app agent actions."
             }
           )
         ]

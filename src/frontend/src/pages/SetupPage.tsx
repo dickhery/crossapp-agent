@@ -105,11 +105,12 @@ export function SetupPage() {
         </h1>
         <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">
           This app is the <strong className="text-foreground">planner</strong>{" "}
-          (plans, memory, workflows on-chain under your Internet Identity).{" "}
-          <strong className="text-foreground">Execution</strong> happens in an
-          AI chat (Grok, Claude, or ChatGPT) that has the official Internet
-          Computer MCP server connected — the agent then acts as <em>you</em> on
-          IC dApps you authorize.
+          and can <strong className="text-foreground">Run now</strong> for
+          read-only IC queries in your browser (e.g. ICP ledger balance for your
+          principal here). Full multi-app MCP actions (act as you at NNS and
+          other dApps) still need Grok/Claude with the IC MCP connector — remote
+          MCP OAuth only allows loopback or DFINITY-allowlisted redirect
+          domains, so this hosted SPA cannot complete the MCP login itself.
         </p>
       </header>
 
@@ -121,17 +122,17 @@ export function SetupPage() {
         <ModelStep
           n="A"
           title="This app"
-          body="Sign in with II. Save dApps, rules, and generate MCP-ready plans."
+          body="Sign in with II. Save dApps in Memory. Generate plans and Run now for ledger reads."
         />
         <ModelStep
           n="B"
-          title="Internet Identity"
-          body="Trust the MCP URL once so grants can mint app-specific principals."
+          title="Internet Identity + MCP trust"
+          body="Trust the MCP URL so Grok/Claude can mint app-specific principals for full agent runs."
         />
         <ModelStep
           n="C"
-          title="Grok / Claude / ChatGPT"
-          body="Add the same URL as a custom MCP connector, authorize, then run plans."
+          title="Chat → Run now + Grok MCP"
+          body="Run now executes safe ledger reads in-app. Copy for MCP → Grok for full cross-app agent actions."
         />
       </div>
 

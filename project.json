@@ -4,6 +4,7 @@
     "Log in with Internet Identity and see your principal",
     "Guided Setup for trusting the IC MCP server (mcp.beta.id.ai) with step-by-step Grok, Claude, and ChatGPT connector paths",
     "Grok recommended path via grok.com/connectors custom MCP (no business plan required)",
+    "Run now: execute read-only IC queries in the browser (e.g. ICP ledger balance) and show results in chat",
     "Describe cross-dApp goals in chat and get numbered plans with real MCP tool hints",
     "Offline template planner when the operator AI key is not set — still MCP-tool-aware",
     "Copy plans for MCP (clipboard preamble + connector URL) and save as reusable workflows",

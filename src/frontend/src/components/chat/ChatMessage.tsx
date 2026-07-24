@@ -13,7 +13,9 @@ type ChatMessageProps = {
   message: ChatMessage;
   onSavePlan?: () => void;
   onRetryPlan?: () => void;
+  onRunPlan?: () => void | Promise<void>;
   isSavingPlan?: boolean;
+  isRunningPlan?: boolean;
   isLastAssistant?: boolean;
 };
 
@@ -21,7 +23,9 @@ export function ChatMessageItem({
   message,
   onSavePlan,
   onRetryPlan,
+  onRunPlan,
   isSavingPlan = false,
+  isRunningPlan = false,
   isLastAssistant = false,
 }: ChatMessageProps) {
   const isUser = message.role === "user";
@@ -61,7 +65,11 @@ export function ChatMessageItem({
             planText={message.content}
             onSave={onSavePlan}
             onRetry={onRetryPlan ?? (() => {})}
+            onRun={
+              isLastAssistant && onRunPlan ? () => void onRunPlan() : undefined
+            }
             isSaving={isSavingPlan}
+            isRunning={isRunningPlan}
             canRetry={isLastAssistant && Boolean(onRetryPlan)}
           />
         ) : (
@@ -78,8 +86,12 @@ export function ChatMessageItem({
   );
 }
 
-// Loading bubble shown while the backend generates or refines a plan.
-export function ChatMessageLoading() {
+// Loading bubble shown while the backend generates a plan or the in-app runner works.
+export function ChatMessageLoading({
+  label = "Generating plan…",
+}: {
+  label?: string;
+}) {
   return (
     <div data-ocid="chat.message.loading" className="flex gap-3">
       <div
@@ -104,7 +116,7 @@ export function ChatMessageLoading() {
           />
         </div>
         <span className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground/70">
-          Generating plan…
+          {label}
         </span>
       </div>
     </div>

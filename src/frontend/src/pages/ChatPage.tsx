@@ -23,10 +23,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { useAuth } from "@/hooks/use-auth";
 import { useGeneratePlan, useRefinePlan } from "@/hooks/use-chat";
 import { useGetHistoryEntry } from "@/hooks/use-history";
+import { useGetPreferences } from "@/hooks/use-preferences";
 import { useCreateWorkflow } from "@/hooks/use-workflows";
-import type { ChatMessage as ChatMessageType, Conversation } from "@/types";
+import { executePlanInApp } from "@/lib/plan-executor";
+import type { Conversation } from "@/types";
 
 // ChatPage owns the single active conversation. A new goal clears the
 // conversation and starts fresh; refinement messages append to it. Plans are
@@ -50,6 +53,8 @@ const looksLikePlan = (text: string): boolean =>
 
 export function ChatPage() {
   const navigate = useNavigate();
+  const { identity, principal } = useAuth();
+  const preferencesQuery = useGetPreferences();
   const generatePlan = useGeneratePlan();
   const refinePlan = useRefinePlan();
   const createWorkflow = useCreateWorkflow();
@@ -76,11 +81,14 @@ export function ChatPage() {
   const [turns, setTurns] = useState<LocalTurn[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [saveTarget, setSaveTarget] = useState<LocalTurn | null>(null);
+  const [isRunning, setIsRunning] = useState(false);
+  /** Most recent user goal text — used when executing a plan. */
+  const lastGoalRef = useRef<string>("");
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // The active mutation (generate OR refine) — drives the loading bubble.
-  const isPending = generatePlan.isPending || refinePlan.isPending;
+  const isPending = generatePlan.isPending || refinePlan.isPending || isRunning;
 
   // Seed the conversation once when a plan is provided via search params.
   // `plan` seeds directly from the workflow text; `historyId` seeds from the
@@ -155,6 +163,7 @@ export function ChatPage() {
 
   const handleNewGoal = async (goal: string) => {
     setError(null);
+    lastGoalRef.current = goal;
     // A new goal clears the single active conversation per the product spec.
     setTurns([]);
     appendTurn({ role: ChatRole.user, content: goal, timestamp: nowNs() });
@@ -173,6 +182,45 @@ export function ChatPage() {
       const message =
         err instanceof Error ? err.message : "Failed to generate plan.";
       setError(message);
+    }
+  };
+
+  const handleRunPlan = async (planText: string) => {
+    setError(null);
+    setIsRunning(true);
+    try {
+      // Prefer the last user message as the goal; fall back to stored goal.
+      const lastUser = [...turns]
+        .reverse()
+        .find((t) => t.role === ChatRole.user);
+      const goal =
+        lastUser?.content ??
+        (lastGoalRef.current || "Execute the current plan");
+      lastGoalRef.current = goal;
+
+      const result = await executePlanInApp({
+        goal,
+        planText,
+        identity,
+        principal,
+        dApps: preferencesQuery.data?.dApps ?? [],
+      });
+
+      appendTurn({
+        role: ChatRole.assistant,
+        content: result.summary,
+        timestamp: nowNs(),
+      });
+      toast.success("Execution finished", {
+        description: "See the results message in the chat.",
+      });
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Failed to execute plan.";
+      setError(message);
+      toast.error("Execution failed", { description: message });
+    } finally {
+      setIsRunning(false);
     }
   };
 
@@ -317,13 +365,27 @@ export function ChatPage() {
                         ? handleRetry
                         : undefined
                     }
+                    onRunPlan={
+                      showPlanAffordances && isLastAssistant
+                        ? () => handleRunPlan(turn.content)
+                        : undefined
+                    }
                     isSavingPlan={createWorkflow.isPending}
+                    isRunningPlan={isRunning}
                     isLastAssistant={isLastAssistant}
                   />
                 );
               })}
 
-              {isPending && <ChatMessageLoading />}
+              {isPending && (
+                <ChatMessageLoading
+                  label={
+                    isRunning
+                      ? "Executing on the Internet Computer…"
+                      : undefined
+                  }
+                />
+              )}
 
               {error && !isPending && (
                 <Alert variant="destructive" data-ocid="chat.error_state">
@@ -357,8 +419,8 @@ export function ChatPage() {
             disabled={isPending}
             placeholder={
               turns.length === 0
-                ? "Describe a goal and I'll draft a numbered plan…"
-                : "Refine the plan — e.g. 'add a testing step' or 'make step 2 shorter'…"
+                ? "e.g. Check my ICP balance on the ledger…"
+                : "Refine the plan, or press Run now on the plan to execute…"
             }
           />
         </div>
@@ -376,8 +438,8 @@ export function ChatPage() {
 
 function EmptyState() {
   const examples = [
-    "Delist my NFTs on Marketplace X, vault the rare ones, re-list the rest on Y at +15%",
-    "Mirror last 30 days of OpenChat posts + follows onto another IC social app",
+    "Check the balance of ICP in the NNS ledger account",
+    "Look up my ICP ledger balance for this app principal",
     "Migrate my DeFi position between protocols while minimizing cycles spend",
   ];
   return (
@@ -390,13 +452,13 @@ function EmptyState() {
       </div>
       <div className="space-y-2">
         <h2 className="font-display text-xl font-semibold tracking-tight text-foreground">
-          Describe a cross-app goal. Get an MCP plan.
+          Plan here. Run reads here. Full MCP in Grok.
         </h2>
         <p className="mx-auto max-w-md text-sm text-muted-foreground">
-          We draft numbered steps with real IC MCP tool hints (canister_query,
-          canister_update_call, resolve_app, …). Copy for MCP, paste into Grok,
-          Claude, or ChatGPT with the connector enabled, and the agent acts as
-          you.
+          Describe a goal → get a plan → press <strong>Run now</strong> for
+          in-browser ICP queries (e.g. ledger balance). For true multi-app
+          actions under other dApp principals, use <strong>Copy for MCP</strong>{" "}
+          into Grok with the IC connector.
         </p>
       </div>
       <div className="flex flex-wrap justify-center gap-2">

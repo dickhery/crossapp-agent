@@ -1,4 +1,5 @@
 import { useInternetIdentity } from "@caffeineai/core-infrastructure";
+import type { Identity } from "@icp-sdk/core/agent";
 import type { Principal } from "@icp-sdk/core/principal";
 import { useMemo } from "react";
 
@@ -9,6 +10,8 @@ export type AuthState = {
   isLoginError: boolean;
   login: () => void;
   logout: () => void;
+  /** II identity for browser-side IC agent calls (in-app plan execution). */
+  identity: Identity | null | undefined;
   principal: Principal | null;
   principalText: string | null;
   // Short, display-friendly principal prefix, e.g. "r7x4...-a3"
@@ -16,8 +19,7 @@ export type AuthState = {
 };
 
 // Thin wrapper around the platform II hook that exposes a stable auth surface
-// to the rest of the app. The raw identity object is intentionally not leaked
-// — only the principal and its text forms.
+// to the rest of the app. Identity is available for the in-app executor only.
 export function useAuth(): AuthState {
   const {
     identity,
@@ -56,6 +58,7 @@ export function useAuth(): AuthState {
     isLoginError,
     login,
     logout: clear,
+    identity,
     principal,
     principalText,
     principalShort,

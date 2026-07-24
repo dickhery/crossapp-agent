@@ -45,14 +45,34 @@ module {
   // Pick a scenario template from simple keyword heuristics. Falls back to a
   // generic discovery + query + act sequence covering the MCP surface.
   func scenarioSteps(goal : Text, prefs : Core.Preferences) : [Text] {
+    let balance =
+      hasKeyword(goal, "balance") or hasKeyword(goal, "how much") or (hasKeyword(goal, "icp") and (hasKeyword(goal, "account") or hasKeyword(goal, "ledger") or hasKeyword(goal, "check")));
     let nftish =
-      hasKeyword(goal, "nft") or hasKeyword(goal, "marketplace") or hasKeyword(goal, "vault") or hasKeyword(goal, "list");
+      hasKeyword(goal, "nft") or hasKeyword(goal, "marketplace") or hasKeyword(goal, "vault") or (hasKeyword(goal, "list") and not balance);
     let social =
       hasKeyword(goal, "openchat") or hasKeyword(goal, "social") or hasKeyword(goal, "follow") or hasKeyword(goal, "post");
     let defi =
-      hasKeyword(goal, "defi") or hasKeyword(goal, "swap") or hasKeyword(goal, "liquidity") or hasKeyword(goal, "position") or hasKeyword(goal, "ledger");
+      hasKeyword(goal, "defi") or hasKeyword(goal, "swap") or hasKeyword(goal, "liquidity") or hasKeyword(goal, "position");
     let cycles =
-      hasKeyword(goal, "cycles") or hasKeyword(goal, "top-up") or hasKeyword(goal, "top up") or hasKeyword(goal, "canister");
+      hasKeyword(goal, "cycles") or hasKeyword(goal, "top-up") or hasKeyword(goal, "top up") or (hasKeyword(goal, "canister") and not balance);
+
+    // Balance / account checks first — "ledger" alone used to hit the DeFi
+    // template and produce swap/approve steps for a simple ICP balance goal.
+    if (balance) {
+      var balSteps : [Text] = [
+        "Identify the ICP ledger canister ryjl3-tyaaa-aaaaa-aaaba-cai (or the ledger in Memory).",
+        "In CrossApp Agent press Run now to query icrc1_balance_of for your principal at this app (browser → IC, no backend cycles).",
+        "For your NNS dapp principal balance, use Grok + IC MCP: resolve_app https://nns.ic0.app (MCP: resolve_app).",
+        "Get your principal at NNS (MCP: get_app_principal) and list accounts if needed (MCP: list_app_accounts).",
+        "Query ICP balance as that principal (MCP: canister_query on the ledger icrc1_balance_of) and report the amount in ICP.",
+      ];
+      if (prefs.dApps.size() > 0) {
+        balSteps := balSteps.concat([
+          "Also cross-check Memory dApps for any extra ledger principals the user registered.",
+        ]);
+      };
+      return balSteps;
+    };
 
     if (nftish) {
       return [

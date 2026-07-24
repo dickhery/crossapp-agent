@@ -5,13 +5,15 @@
 export const MCP_CONNECTOR_URL = "https://mcp.beta.id.ai/mcp-prod";
 export const II_TRUSTED_MCP_SETTINGS_URL = "https://id.ai/manage/settings";
 export const MCP_DOCS_URL = "https://mcp.beta.id.ai/";
+export const GROK_CONNECTORS_URL = "https://grok.com/connectors";
+export const GROK_CHAT_URL = "https://grok.com/";
 
 /** Where to add a custom MCP connector in each supported AI app. */
 export const AI_APPS = {
   grok: {
     name: "Grok",
     recommended: true,
-    connectorsUrl: "https://grok.com/connectors",
+    connectorsUrl: GROK_CONNECTORS_URL,
     docsUrl: "https://docs.x.ai/grok/connectors",
     planNote: "Works on personal Grok accounts — no business plan required.",
   },
