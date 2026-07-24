@@ -123,7 +123,7 @@ service : {
   generatePlan: (goal: text, conversation: Conversation) -> (PlanResult);
   getCallerUserRole: () -> (UserRole) query;
   getHistoryEntry: (id: HistoryId) -> (opt HistoryEntry) query;
-  getPreferences: () -> (opt Preferences) query;
+  getPreferences: () -> (Preferences) query;
   getWorkflow: (id: WorkflowId) -> (opt Workflow) query;
   isCallerAdmin: () -> (bool) query;
   isOpenAIConfigured: () -> (bool) query;

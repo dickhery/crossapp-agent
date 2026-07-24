@@ -5,15 +5,39 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 const preferencesKey = ["preferences"] as const;
 
+/** Empty preferences for first-time users (backend returns null until anything is saved). */
+export const EMPTY_PREFERENCES: Preferences = {
+  dApps: [],
+  rules: [],
+  notes: "",
+};
+
+function requireActor<T>(actor: T | null): asserts actor is T {
+  if (!actor) {
+    throw new Error(
+      "Backend connection not ready. Wait a moment, or sign out and sign in again.",
+    );
+  }
+}
+
 export function useGetPreferences() {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor, isFetching: actorFetching } = useActor(createActor);
   return useQuery({
     queryKey: preferencesKey,
-    queryFn: async (): Promise<Preferences | null> => {
-      if (!actor) return null;
-      return actor.getPreferences();
+    queryFn: async (): Promise<Preferences> => {
+      requireActor(actor);
+      // Backend always returns a Preferences record (empty defaults for
+      // first-time users). Keep a local fallback in case of partial data.
+      const prefs = await actor.getPreferences();
+      return {
+        dApps: prefs.dApps ?? [],
+        rules: prefs.rules ?? [],
+        notes: prefs.notes ?? "",
+      };
     },
-    enabled: !!actor && !isFetching,
+    enabled: !!actor && !actorFetching,
+    // Keep last good prefs visible while refetching after add/edit.
+    placeholderData: (previous) => previous,
   });
 }
 
@@ -26,10 +50,11 @@ export function useSavePreferences() {
   const { actor } = useActor(createActor);
   return useMutation({
     mutationFn: async (input: PreferencesInput) => {
-      if (!actor) throw new Error("Actor not ready");
+      requireActor(actor);
       return actor.savePreferences(input);
     },
-    onSuccess: () => {
+    onSuccess: (prefs) => {
+      qc.setQueryData(preferencesKey, prefs);
       void qc.invalidateQueries({ queryKey: preferencesKey });
     },
   });
@@ -42,10 +67,11 @@ export function useAddDApp() {
   const { actor } = useActor(createActor);
   return useMutation({
     mutationFn: async (input: DAppInput) => {
-      if (!actor) throw new Error("Actor not ready");
+      requireActor(actor);
       return actor.addDApp(...input);
     },
-    onSuccess: () => {
+    onSuccess: (prefs) => {
+      qc.setQueryData(preferencesKey, prefs);
       void qc.invalidateQueries({ queryKey: preferencesKey });
     },
   });
@@ -58,10 +84,11 @@ export function useUpdateDApp() {
   const { actor } = useActor(createActor);
   return useMutation({
     mutationFn: async (update: DAppUpdate) => {
-      if (!actor) throw new Error("Actor not ready");
+      requireActor(actor);
       return actor.updateDApp(update);
     },
-    onSuccess: () => {
+    onSuccess: (prefs) => {
+      qc.setQueryData(preferencesKey, prefs);
       void qc.invalidateQueries({ queryKey: preferencesKey });
     },
   });
@@ -72,10 +99,11 @@ export function useDeleteDApp() {
   const { actor } = useActor(createActor);
   return useMutation({
     mutationFn: async (id: PreferredDApp["id"]) => {
-      if (!actor) throw new Error("Actor not ready");
+      requireActor(actor);
       return actor.deleteDApp(id);
     },
-    onSuccess: () => {
+    onSuccess: (prefs) => {
+      qc.setQueryData(preferencesKey, prefs);
       void qc.invalidateQueries({ queryKey: preferencesKey });
     },
   });
@@ -88,10 +116,11 @@ export function useAddRule() {
   const { actor } = useActor(createActor);
   return useMutation({
     mutationFn: async (input: RuleInput) => {
-      if (!actor) throw new Error("Actor not ready");
+      requireActor(actor);
       return actor.addRule(input);
     },
-    onSuccess: () => {
+    onSuccess: (prefs) => {
+      qc.setQueryData(preferencesKey, prefs);
       void qc.invalidateQueries({ queryKey: preferencesKey });
     },
   });
@@ -104,10 +133,11 @@ export function useUpdateRule() {
   const { actor } = useActor(createActor);
   return useMutation({
     mutationFn: async (update: RuleUpdate) => {
-      if (!actor) throw new Error("Actor not ready");
+      requireActor(actor);
       return actor.updateRule(update);
     },
-    onSuccess: () => {
+    onSuccess: (prefs) => {
+      qc.setQueryData(preferencesKey, prefs);
       void qc.invalidateQueries({ queryKey: preferencesKey });
     },
   });
@@ -118,10 +148,11 @@ export function useDeleteRule() {
   const { actor } = useActor(createActor);
   return useMutation({
     mutationFn: async (id: Rule["id"]) => {
-      if (!actor) throw new Error("Actor not ready");
+      requireActor(actor);
       return actor.deleteRule(id);
     },
-    onSuccess: () => {
+    onSuccess: (prefs) => {
+      qc.setQueryData(preferencesKey, prefs);
       void qc.invalidateQueries({ queryKey: preferencesKey });
     },
   });
@@ -132,10 +163,11 @@ export function useSetNotes() {
   const { actor } = useActor(createActor);
   return useMutation({
     mutationFn: async (notes: string) => {
-      if (!actor) throw new Error("Actor not ready");
+      requireActor(actor);
       return actor.setNotes(notes);
     },
-    onSuccess: () => {
+    onSuccess: (prefs) => {
+      qc.setQueryData(preferencesKey, prefs);
       void qc.invalidateQueries({ queryKey: preferencesKey });
     },
   });

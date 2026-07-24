@@ -205,7 +205,7 @@ export interface backendInterface {
     generatePlan(goal: string, conversation: Conversation): Promise<PlanResult>;
     getCallerUserRole(): Promise<UserRole>;
     getHistoryEntry(id: HistoryId): Promise<HistoryEntry | null>;
-    getPreferences(): Promise<Preferences | null>;
+    getPreferences(): Promise<Preferences>;
     getWorkflow(id: WorkflowId): Promise<Workflow | null>;
     isCallerAdmin(): Promise<boolean>;
     isOpenAIConfigured(): Promise<boolean>;
@@ -222,7 +222,7 @@ export interface backendInterface {
     updateRule(rule: Rule): Promise<Preferences>;
     updateWorkflow(workflow: Workflow): Promise<Workflow | null>;
 }
-import type { Cell as _Cell, ChatMessage as _ChatMessage, ChatRole as _ChatRole, Conversation as _Conversation, Error as _Error, HistoryEntry as _HistoryEntry, Preferences as _Preferences, Result as _Result, Result__1 as _Result__1, Timestamp as _Timestamp, UserRole as _UserRole, Value as _Value, Workflow as _Workflow } from "./declarations/backend.did.d.ts";
+import type { Cell as _Cell, ChatMessage as _ChatMessage, ChatRole as _ChatRole, Conversation as _Conversation, Error as _Error, HistoryEntry as _HistoryEntry, Result as _Result, Result__1 as _Result__1, Timestamp as _Timestamp, UserRole as _UserRole, Value as _Value, Workflow as _Workflow } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
     async _initialize_access_control(): Promise<void> {
@@ -463,18 +463,18 @@ export class Backend implements backendInterface {
             return from_candid_opt_n26(this._uploadFile, this._downloadFile, result);
         }
     }
-    async getPreferences(): Promise<Preferences | null> {
+    async getPreferences(): Promise<Preferences> {
         if (this.processError) {
             try {
                 const result = await this.actor.getPreferences();
-                return from_candid_opt_n27(this._uploadFile, this._downloadFile, result);
+                return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getPreferences();
-            return from_candid_opt_n27(this._uploadFile, this._downloadFile, result);
+            return result;
         }
     }
     async getWorkflow(arg0: WorkflowId): Promise<Workflow | null> {
@@ -710,9 +710,6 @@ function from_candid_opt_n16(_uploadFile: (file: ExternalBlob) => Promise<Uint8A
     return value.length === 0 ? null : value[0];
 }
 function from_candid_opt_n26(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_HistoryEntry]): HistoryEntry | null {
-    return value.length === 0 ? null : value[0];
-}
-function from_candid_opt_n27(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_Preferences]): Preferences | null {
     return value.length === 0 ? null : value[0];
 }
 function from_candid_opt_n7(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_Workflow]): Workflow | null {

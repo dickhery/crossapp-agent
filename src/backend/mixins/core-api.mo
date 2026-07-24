@@ -106,9 +106,18 @@ mixin (
 
   // --- Preferences ---------------------------------------------------------
 
-  public query ({ caller }) func getPreferences() : async ?Core.Preferences {
+  // Always returns a Preferences record (empty defaults for first-time
+  // users). Returning null forced the frontend into a loading loop because
+  // `null` is falsy and was treated as "not yet loaded". Queries never write —
+  // the empty default is ephemeral until the user saves.
+  public query ({ caller }) func getPreferences() : async Core.Preferences {
     requireOwner(caller);
-    CoreLib.getPreferences(preferencesByOwner, caller);
+    switch (CoreLib.getPreferences(preferencesByOwner, caller)) {
+      case (?prefs) { prefs };
+      case null {
+        { dApps = []; rules = []; notes = "" };
+      };
+    };
   };
 
   public shared ({ caller }) func savePreferences(prefs : Core.Preferences) : async Core.Preferences {

@@ -48037,7 +48037,7 @@ Service({
   "generatePlan": Func([Text, Conversation], [PlanResult], []),
   "getCallerUserRole": Func([], [UserRole], ["query"]),
   "getHistoryEntry": Func([HistoryId], [Opt(HistoryEntry)], ["query"]),
-  "getPreferences": Func([], [Opt(Preferences)], ["query"]),
+  "getPreferences": Func([], [Preferences], ["query"]),
   "getWorkflow": Func([WorkflowId], [Opt(Workflow)], ["query"]),
   "isCallerAdmin": Func([], [Bool], ["query"]),
   "isOpenAIConfigured": Func([], [Bool], ["query"]),
@@ -48166,7 +48166,7 @@ const idlFactory = ({ IDL: IDL2 }) => {
       [IDL2.Opt(HistoryEntry2)],
       ["query"]
     ),
-    "getPreferences": IDL2.Func([], [IDL2.Opt(Preferences2)], ["query"]),
+    "getPreferences": IDL2.Func([], [Preferences2], ["query"]),
     "getWorkflow": IDL2.Func([WorkflowId2], [IDL2.Opt(Workflow2)], ["query"]),
     "isCallerAdmin": IDL2.Func([], [IDL2.Bool], ["query"]),
     "isOpenAIConfigured": IDL2.Func([], [IDL2.Bool], ["query"]),
@@ -48438,14 +48438,14 @@ class Backend {
     if (this.processError) {
       try {
         const result = await this.actor.getPreferences();
-        return from_candid_opt_n27(this._uploadFile, this._downloadFile, result);
+        return result;
       } catch (e) {
         this.processError(e);
         throw new Error("unreachable");
       }
     } else {
       const result = await this.actor.getPreferences();
-      return from_candid_opt_n27(this._uploadFile, this._downloadFile, result);
+      return result;
     }
   }
   async getWorkflow(arg0) {
@@ -48681,9 +48681,6 @@ function from_candid_opt_n16(_uploadFile, _downloadFile, value) {
   return value.length === 0 ? null : value[0];
 }
 function from_candid_opt_n26(_uploadFile, _downloadFile, value) {
-  return value.length === 0 ? null : value[0];
-}
-function from_candid_opt_n27(_uploadFile, _downloadFile, value) {
   return value.length === 0 ? null : value[0];
 }
 function from_candid_opt_n7(_uploadFile, _downloadFile, value) {
@@ -50528,15 +50525,34 @@ function useIsOpenAIConfigured() {
   });
 }
 const preferencesKey = ["preferences"];
+const EMPTY_PREFERENCES = {
+  dApps: [],
+  rules: [],
+  notes: ""
+};
+function requireActor(actor) {
+  if (!actor) {
+    throw new Error(
+      "Backend connection not ready. Wait a moment, or sign out and sign in again."
+    );
+  }
+}
 function useGetPreferences() {
-  const { actor, isFetching } = useActor(createActor);
+  const { actor, isFetching: actorFetching } = useActor(createActor);
   return useQuery({
     queryKey: preferencesKey,
     queryFn: async () => {
-      if (!actor) return null;
-      return actor.getPreferences();
+      requireActor(actor);
+      const prefs = await actor.getPreferences();
+      return {
+        dApps: prefs.dApps ?? [],
+        rules: prefs.rules ?? [],
+        notes: prefs.notes ?? ""
+      };
     },
-    enabled: !!actor && !isFetching
+    enabled: !!actor && !actorFetching,
+    // Keep last good prefs visible while refetching after add/edit.
+    placeholderData: (previous) => previous
   });
 }
 function useAddDApp() {
@@ -50544,10 +50560,11 @@ function useAddDApp() {
   const { actor } = useActor(createActor);
   return useMutation({
     mutationFn: async (input) => {
-      if (!actor) throw new Error("Actor not ready");
+      requireActor(actor);
       return actor.addDApp(...input);
     },
-    onSuccess: () => {
+    onSuccess: (prefs) => {
+      qc.setQueryData(preferencesKey, prefs);
       void qc.invalidateQueries({ queryKey: preferencesKey });
     }
   });
@@ -50557,10 +50574,11 @@ function useUpdateDApp() {
   const { actor } = useActor(createActor);
   return useMutation({
     mutationFn: async (update) => {
-      if (!actor) throw new Error("Actor not ready");
+      requireActor(actor);
       return actor.updateDApp(update);
     },
-    onSuccess: () => {
+    onSuccess: (prefs) => {
+      qc.setQueryData(preferencesKey, prefs);
       void qc.invalidateQueries({ queryKey: preferencesKey });
     }
   });
@@ -50570,10 +50588,11 @@ function useDeleteDApp() {
   const { actor } = useActor(createActor);
   return useMutation({
     mutationFn: async (id) => {
-      if (!actor) throw new Error("Actor not ready");
+      requireActor(actor);
       return actor.deleteDApp(id);
     },
-    onSuccess: () => {
+    onSuccess: (prefs) => {
+      qc.setQueryData(preferencesKey, prefs);
       void qc.invalidateQueries({ queryKey: preferencesKey });
     }
   });
@@ -50583,10 +50602,11 @@ function useAddRule() {
   const { actor } = useActor(createActor);
   return useMutation({
     mutationFn: async (input) => {
-      if (!actor) throw new Error("Actor not ready");
+      requireActor(actor);
       return actor.addRule(input);
     },
-    onSuccess: () => {
+    onSuccess: (prefs) => {
+      qc.setQueryData(preferencesKey, prefs);
       void qc.invalidateQueries({ queryKey: preferencesKey });
     }
   });
@@ -50596,10 +50616,11 @@ function useUpdateRule() {
   const { actor } = useActor(createActor);
   return useMutation({
     mutationFn: async (update) => {
-      if (!actor) throw new Error("Actor not ready");
+      requireActor(actor);
       return actor.updateRule(update);
     },
-    onSuccess: () => {
+    onSuccess: (prefs) => {
+      qc.setQueryData(preferencesKey, prefs);
       void qc.invalidateQueries({ queryKey: preferencesKey });
     }
   });
@@ -50609,10 +50630,11 @@ function useDeleteRule() {
   const { actor } = useActor(createActor);
   return useMutation({
     mutationFn: async (id) => {
-      if (!actor) throw new Error("Actor not ready");
+      requireActor(actor);
       return actor.deleteRule(id);
     },
-    onSuccess: () => {
+    onSuccess: (prefs) => {
+      qc.setQueryData(preferencesKey, prefs);
       void qc.invalidateQueries({ queryKey: preferencesKey });
     }
   });
@@ -50622,10 +50644,11 @@ function useSetNotes() {
   const { actor } = useActor(createActor);
   return useMutation({
     mutationFn: async (notes) => {
-      if (!actor) throw new Error("Actor not ready");
+      requireActor(actor);
       return actor.setNotes(notes);
     },
-    onSuccess: () => {
+    onSuccess: (prefs) => {
+      qc.setQueryData(preferencesKey, prefs);
       void qc.invalidateQueries({ queryKey: preferencesKey });
     }
   });
@@ -50669,6 +50692,7 @@ const QUICK_ACCESS = [
   }
 ];
 function DashboardPage() {
+  var _a2, _b2, _c2;
   const historyQuery = useListHistory();
   const workflowsQuery = useListWorkflows();
   const preferencesQuery = useGetPreferences();
@@ -50681,7 +50705,7 @@ function DashboardPage() {
   const preferencesLoading = preferencesQuery.isLoading;
   const workflowCount = (workflows == null ? void 0 : workflows.length) ?? 0;
   const historyCount = (history == null ? void 0 : history.length) ?? 0;
-  const hasPreferences = !!preferences && (preferences.dApps.length > 0 || preferences.rules.length > 0 || preferences.notes.trim().length > 0);
+  const hasPreferences = !!preferences && ((((_a2 = preferences.dApps) == null ? void 0 : _a2.length) ?? 0) > 0 || (((_b2 = preferences.rules) == null ? void 0 : _b2.length) ?? 0) > 0 || (((_c2 = preferences.notes) == null ? void 0 : _c2.trim().length) ?? 0) > 0);
   const isFirstTime = !historyLoading && !workflowsLoading && !preferencesLoading && historyCount === 0 && workflowCount === 0 && !hasPreferences;
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { "data-ocid": "dashboard.page", className: "space-y-8", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsxs("header", { className: "space-y-2", "data-ocid": "dashboard.header", children: [
@@ -51153,10 +51177,10 @@ function DAppEditor({ dApps }) {
             {
               id: "dapps-heading",
               className: "font-display text-lg font-semibold tracking-tight text-foreground",
-              children: "Preferred dApps"
+              children: "Apps the agent can control"
             }
           ),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground", children: "Pin the canisters and dApps your MCP-connected agent should know — friendly name plus principal (e.g. marketplace, vault, ledger)." })
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground", children: `Add each IC dApp or canister your agent should plan against. Use a clear name (e.g. "NFT vault") and the canister principal from the app's docs or MCP discovery.` })
         ] }) }),
         /* @__PURE__ */ jsxRuntimeExports.jsx(
           "div",
@@ -51170,7 +51194,7 @@ function DAppEditor({ dApps }) {
                   {
                     htmlFor: "dapp-name",
                     className: "text-xs text-muted-foreground",
-                    children: "Friendly name"
+                    children: "App name"
                   }
                 ),
                 /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -51178,7 +51202,7 @@ function DAppEditor({ dApps }) {
                   {
                     id: "dapp-name",
                     "data-ocid": "memory.dapps.name_input",
-                    placeholder: "e.g. Ledger",
+                    placeholder: "e.g. My NFT Vault",
                     value: addDraft.friendlyName,
                     onChange: (e) => setAddDraft((d2) => ({ ...d2, friendlyName: e.target.value })),
                     onKeyDown: (e) => {
@@ -51245,8 +51269,8 @@ function DAppEditor({ dApps }) {
             "data-ocid": "memory.dapps.empty_state",
             className: "rounded-lg border border-dashed border-border bg-card/50 px-4 py-10 text-center",
             children: [
-              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-display text-sm font-medium text-foreground", children: "No preferred dApps yet" }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-1 text-sm text-muted-foreground", children: "Add your first canister above to keep it one click away." })
+              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-display text-sm font-medium text-foreground", children: "No apps registered yet" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-1 text-sm text-muted-foreground", children: "Add a friendly name and canister ID above so plans can reference your vaults, markets, and ledgers by principal." })
             ]
           }
         ) : /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -51833,7 +51857,12 @@ function PreferencesSkeleton() {
   );
 }
 function MemoryPage() {
-  const { data, isLoading, isError, error, refetch, isFetching } = useGetPreferences();
+  const { actor, isFetching: actorFetching } = useActor(createActor);
+  const { data, isLoading, isError, error, refetch, isFetched, isFetching } = useGetPreferences();
+  const waitingForActor = actorFetching && !actor;
+  const waitingForPrefs = !!actor && !isError && !isFetched && (isLoading || isFetching);
+  const showLoading = waitingForActor || waitingForPrefs;
+  const prefs = data ?? EMPTY_PREFERENCES;
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(
     "section",
     {
@@ -51845,10 +51874,10 @@ function MemoryPage() {
           /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Brain, { className: "h-5 w-5", "aria-hidden": true }) }),
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "font-display text-2xl font-semibold tracking-tight text-foreground", children: "Memory & Preferences" }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground", children: "Manage the dApps, rules, and notes the agent carries across every plan. Stored on-chain, visible only to you." })
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm text-muted-foreground", children: "Register the IC dApps and canisters your agent may control, plus personal rules and notes. Stored on-chain under your Internet Identity only." })
           ] })
         ] }) }),
-        isLoading || isFetching && !data ? /* @__PURE__ */ jsxRuntimeExports.jsx(PreferencesSkeleton, {}) : isError ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+        showLoading ? /* @__PURE__ */ jsxRuntimeExports.jsx(PreferencesSkeleton, {}) : isError ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
           "div",
           {
             "data-ocid": "memory.error_state",
@@ -51856,28 +51885,54 @@ function MemoryPage() {
             role: "alert",
             children: [
               /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-display text-sm font-medium text-foreground", children: "Couldn't load your preferences" }),
-              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-1 text-sm text-muted-foreground", children: error instanceof Error ? error.message : "Something went wrong while fetching your on-chain data." }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-1 text-sm text-muted-foreground", children: error instanceof Error ? error.message : "Something went wrong while fetching your on-chain data. If this persists, sign out and sign in again." }),
               /* @__PURE__ */ jsxRuntimeExports.jsxs(
-                "button",
+                Button,
                 {
                   type: "button",
                   "data-ocid": "memory.retry_button",
                   onClick: () => void refetch(),
-                  className: "mt-4 inline-flex h-9 items-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                  className: "mt-4",
+                  size: "sm",
                   children: [
-                    /* @__PURE__ */ jsxRuntimeExports.jsx(LoaderCircle, { className: "h-4 w-4", "aria-hidden": true }),
+                    /* @__PURE__ */ jsxRuntimeExports.jsx(RefreshCw, { className: "h-4 w-4", "aria-hidden": true }),
                     "Try again"
                   ]
                 }
               )
             ]
           }
+        ) : !actor ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "div",
+          {
+            "data-ocid": "memory.actor_unavailable",
+            className: "rounded-lg border border-border bg-card p-6 text-center",
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-display text-sm font-medium text-foreground", children: "Connecting to the backend…" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mt-1 text-sm text-muted-foreground", children: "Your session is signed in, but the canister client is not ready yet. Wait a moment or refresh the page." }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-4 flex justify-center", children: /* @__PURE__ */ jsxRuntimeExports.jsx(
+                LoaderCircle,
+                {
+                  className: "h-5 w-5 animate-spin text-primary",
+                  "aria-hidden": true
+                }
+              ) })
+            ]
+          }
         ) : /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-10", children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx(DAppEditor, { dApps: (data == null ? void 0 : data.dApps) ?? [] }),
+          isFetching ? /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "p",
+            {
+              "data-ocid": "memory.refetch_hint",
+              className: "font-mono text-[11px] uppercase tracking-widest text-muted-foreground/70",
+              children: "Syncing with canister…"
+            }
+          ) : null,
+          /* @__PURE__ */ jsxRuntimeExports.jsx(DAppEditor, { dApps: prefs.dApps }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-px bg-border" }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(RulesEditor, { rules: (data == null ? void 0 : data.rules) ?? [] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(RulesEditor, { rules: prefs.rules }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "h-px bg-border" }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(NotesEditor, { notes: (data == null ? void 0 : data.notes) ?? "" })
+          /* @__PURE__ */ jsxRuntimeExports.jsx(NotesEditor, { notes: prefs.notes })
         ] })
       ]
     }

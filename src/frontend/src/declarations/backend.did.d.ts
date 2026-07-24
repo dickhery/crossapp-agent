@@ -101,7 +101,7 @@ export interface _SERVICE {
   'generatePlan' : ActorMethod<[string, Conversation], PlanResult>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
   'getHistoryEntry' : ActorMethod<[HistoryId], [] | [HistoryEntry]>,
-  'getPreferences' : ActorMethod<[], [] | [Preferences]>,
+  'getPreferences' : ActorMethod<[], Preferences>,
   'getWorkflow' : ActorMethod<[WorkflowId], [] | [Workflow]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
   'isOpenAIConfigured' : ActorMethod<[], boolean>,

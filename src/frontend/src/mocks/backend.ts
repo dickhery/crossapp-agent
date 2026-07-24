@@ -185,7 +185,8 @@ export const mockBackend: backendInterface = {
   },
 
   // --- Preferences -------------------------------------------------------
-  getPreferences: async () => preferences,
+  getPreferences: async () =>
+    preferences ?? { dApps: [], rules: [], notes: "" },
   savePreferences: async (prefs) => {
     preferences = prefs;
     return prefs;

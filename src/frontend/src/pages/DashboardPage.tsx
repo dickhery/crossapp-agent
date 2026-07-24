@@ -86,9 +86,9 @@ export default function DashboardPage() {
   const historyCount = history?.length ?? 0;
   const hasPreferences =
     !!preferences &&
-    (preferences.dApps.length > 0 ||
-      preferences.rules.length > 0 ||
-      preferences.notes.trim().length > 0);
+    ((preferences.dApps?.length ?? 0) > 0 ||
+      (preferences.rules?.length ?? 0) > 0 ||
+      (preferences.notes?.trim().length ?? 0) > 0);
 
   // First-time user: nothing saved anywhere yet.
   const isFirstTime =

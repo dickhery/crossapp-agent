@@ -156,7 +156,7 @@ export interface backendInterface {
     generatePlan(goal: string, conversation: Conversation): Promise<PlanResult>;
     getCallerUserRole(): Promise<UserRole>;
     getHistoryEntry(id: HistoryId): Promise<HistoryEntry | null>;
-    getPreferences(): Promise<Preferences | null>;
+    getPreferences(): Promise<Preferences>;
     getWorkflow(id: WorkflowId): Promise<Workflow | null>;
     isCallerAdmin(): Promise<boolean>;
     isOpenAIConfigured(): Promise<boolean>;

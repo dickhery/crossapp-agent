@@ -1,10 +1,13 @@
-import { Brain, Loader2 } from "lucide-react";
+import { useActor } from "@caffeineai/core-infrastructure";
+import { Brain, Loader2, RefreshCw } from "lucide-react";
 
+import { createActor } from "@/backend";
 import { DAppEditor } from "@/components/memory/DAppEditor";
 import { NotesEditor } from "@/components/memory/NotesEditor";
 import { RulesEditor } from "@/components/memory/RulesEditor";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useGetPreferences } from "@/hooks/use-preferences";
+import { EMPTY_PREFERENCES, useGetPreferences } from "@/hooks/use-preferences";
 
 function PreferencesSkeleton() {
   return (
@@ -31,8 +34,21 @@ function PreferencesSkeleton() {
 }
 
 export function MemoryPage() {
-  const { data, isLoading, isError, error, refetch, isFetching } =
+  const { actor, isFetching: actorFetching } = useActor(createActor);
+  const { data, isLoading, isError, error, refetch, isFetched, isFetching } =
     useGetPreferences();
+
+  // Only block the form on the *initial* load. Successful data is always a
+  // Preferences object (empty arrays for first-time users). Treating null as
+  // "no data" previously left the page in a permanent skeleton: useActor
+  // remount invalidation refetched prefs, `!null` stayed true, editors
+  // unmounted, and the loop never settled.
+  const waitingForActor = actorFetching && !actor;
+  const waitingForPrefs =
+    !!actor && !isError && !isFetched && (isLoading || isFetching);
+  const showLoading = waitingForActor || waitingForPrefs;
+
+  const prefs = data ?? EMPTY_PREFERENCES;
 
   return (
     <section
@@ -50,14 +66,15 @@ export function MemoryPage() {
               Memory &amp; Preferences
             </h1>
             <p className="text-sm text-muted-foreground">
-              Manage the dApps, rules, and notes the agent carries across every
-              plan. Stored on-chain, visible only to you.
+              Register the IC dApps and canisters your agent may control, plus
+              personal rules and notes. Stored on-chain under your Internet
+              Identity only.
             </p>
           </div>
         </div>
       </header>
 
-      {isLoading || (isFetching && !data) ? (
+      {showLoading ? (
         <PreferencesSkeleton />
       ) : isError ? (
         <div
@@ -71,25 +88,53 @@ export function MemoryPage() {
           <p className="mt-1 text-sm text-muted-foreground">
             {error instanceof Error
               ? error.message
-              : "Something went wrong while fetching your on-chain data."}
+              : "Something went wrong while fetching your on-chain data. If this persists, sign out and sign in again."}
           </p>
-          <button
+          <Button
             type="button"
             data-ocid="memory.retry_button"
             onClick={() => void refetch()}
-            className="mt-4 inline-flex h-9 items-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            className="mt-4"
+            size="sm"
           >
-            <Loader2 className="h-4 w-4" aria-hidden />
+            <RefreshCw className="h-4 w-4" aria-hidden />
             Try again
-          </button>
+          </Button>
+        </div>
+      ) : !actor ? (
+        <div
+          data-ocid="memory.actor_unavailable"
+          className="rounded-lg border border-border bg-card p-6 text-center"
+        >
+          <p className="font-display text-sm font-medium text-foreground">
+            Connecting to the backend…
+          </p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Your session is signed in, but the canister client is not ready yet.
+            Wait a moment or refresh the page.
+          </p>
+          <div className="mt-4 flex justify-center">
+            <Loader2
+              className="h-5 w-5 animate-spin text-primary"
+              aria-hidden
+            />
+          </div>
         </div>
       ) : (
         <div className="space-y-10">
-          <DAppEditor dApps={data?.dApps ?? []} />
+          {isFetching ? (
+            <p
+              data-ocid="memory.refetch_hint"
+              className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground/70"
+            >
+              Syncing with canister…
+            </p>
+          ) : null}
+          <DAppEditor dApps={prefs.dApps} />
           <div className="h-px bg-border" />
-          <RulesEditor rules={data?.rules ?? []} />
+          <RulesEditor rules={prefs.rules} />
           <div className="h-px bg-border" />
-          <NotesEditor notes={data?.notes ?? ""} />
+          <NotesEditor notes={prefs.notes} />
         </div>
       )}
     </section>

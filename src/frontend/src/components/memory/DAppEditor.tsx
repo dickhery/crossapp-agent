@@ -121,11 +121,12 @@ export function DAppEditor({ dApps }: DAppEditorProps) {
             id="dapps-heading"
             className="font-display text-lg font-semibold tracking-tight text-foreground"
           >
-            Preferred dApps
+            Apps the agent can control
           </h2>
           <p className="text-sm text-muted-foreground">
-            Pin the canisters and dApps your MCP-connected agent should know —
-            friendly name plus principal (e.g. marketplace, vault, ledger).
+            Add each IC dApp or canister your agent should plan against. Use a
+            clear name (e.g. &quot;NFT vault&quot;) and the canister principal
+            from the app&apos;s docs or MCP discovery.
           </p>
         </div>
       </div>
@@ -141,12 +142,12 @@ export function DAppEditor({ dApps }: DAppEditorProps) {
               htmlFor="dapp-name"
               className="text-xs text-muted-foreground"
             >
-              Friendly name
+              App name
             </Label>
             <Input
               id="dapp-name"
               data-ocid="memory.dapps.name_input"
-              placeholder="e.g. Ledger"
+              placeholder="e.g. My NFT Vault"
               value={addDraft.friendlyName}
               onChange={(e) =>
                 setAddDraft((d) => ({ ...d, friendlyName: e.target.value }))
@@ -213,10 +214,11 @@ export function DAppEditor({ dApps }: DAppEditorProps) {
           className="rounded-lg border border-dashed border-border bg-card/50 px-4 py-10 text-center"
         >
           <p className="font-display text-sm font-medium text-foreground">
-            No preferred dApps yet
+            No apps registered yet
           </p>
           <p className="mt-1 text-sm text-muted-foreground">
-            Add your first canister above to keep it one click away.
+            Add a friendly name and canister ID above so plans can reference
+            your vaults, markets, and ledgers by principal.
           </p>
         </div>
       ) : (
