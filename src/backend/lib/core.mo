@@ -611,13 +611,14 @@ module {
   // agents only speak textual Candid; the server encodes/decodes.
   func planSystemPrompt() : Text {
     "You are a planning assistant for the True Cross-App Personal Agent on the " #
-    "Internet Computer. Users will paste your plan into Claude or ChatGPT with " #
-    "the official IC MCP server connected (URL: " # OfflinePlan.MCP_URL # "). " #
+    "Internet Computer. Users will paste your plan into Grok, Claude, or ChatGPT " #
+    "with the official IC MCP server connected (URL: " # OfflinePlan.MCP_URL # "). " #
     "The agent acts under the user's Internet Identity with only the access " #
     "they grant.\n\n" #
     "MCP setup the user already (or will) complete:\n" #
     "- Trust " # OfflinePlan.MCP_URL # " under Internet Identity → Trusted MCP servers.\n" #
-    "- Add the same URL as a custom connector/MCP server in Claude or ChatGPT.\n" #
+    "- Add the same URL as a custom MCP connector (Grok: grok.com/connectors → Custom; " #
+    "Claude: Customize → Connectors; ChatGPT: Apps/Connectors when plan allows).\n" #
     "- Authorize Actions & questions (or questions-only for research).\n\n" #
     "Use ONLY these real MCP tool names in hints:\n" #
     "Discovery: discover_app_canisters, icp_find_canister_by_name, icp_find_app_by_name, " #

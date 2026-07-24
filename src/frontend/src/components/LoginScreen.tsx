@@ -85,15 +85,15 @@ export function LoginScreen() {
           <li className="flex gap-2">
             <Workflow className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
             <span>
-              Trust the IC MCP server once, then let Claude or ChatGPT act on IC
-              as you.
+              Trust the IC MCP server once, then let Grok, Claude, or ChatGPT
+              act on IC as you.
             </span>
           </li>
           <li className="flex gap-2">
             <ArrowRight className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
             <span>
-              After login, open Setup for the exact MCP URL and a 3-step
-              checklist.
+              After login, open Setup — Grok is the easiest path if Claude
+              Connectors or ChatGPT Apps are hard to find.
             </span>
           </li>
         </ul>

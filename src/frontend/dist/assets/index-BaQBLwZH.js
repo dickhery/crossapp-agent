@@ -38871,11 +38871,22 @@ const createLucideIcon = (iconName, iconNode) => {
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$A = [
+const __iconNode$B = [
   ["path", { d: "m12 19-7-7 7-7", key: "1l729n" }],
   ["path", { d: "M19 12H5", key: "x3x0zl" }]
 ];
-const ArrowLeft = createLucideIcon("arrow-left", __iconNode$A);
+const ArrowLeft = createLucideIcon("arrow-left", __iconNode$B);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$A = [
+  ["path", { d: "M5 12h14", key: "1ays0h" }],
+  ["path", { d: "m12 5 7 7-7 7", key: "xquz4c" }]
+];
+const ArrowRight = createLucideIcon("arrow-right", __iconNode$A);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -38883,10 +38894,10 @@ const ArrowLeft = createLucideIcon("arrow-left", __iconNode$A);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$z = [
-  ["path", { d: "M5 12h14", key: "1ays0h" }],
-  ["path", { d: "m12 5 7 7-7 7", key: "xquz4c" }]
+  ["path", { d: "m5 12 7-7 7 7", key: "hav0vg" }],
+  ["path", { d: "M12 19V5", key: "x0mq9r" }]
 ];
-const ArrowRight = createLucideIcon("arrow-right", __iconNode$z);
+const ArrowUp = createLucideIcon("arrow-up", __iconNode$z);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -38894,17 +38905,6 @@ const ArrowRight = createLucideIcon("arrow-right", __iconNode$z);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$y = [
-  ["path", { d: "m5 12 7-7 7 7", key: "hav0vg" }],
-  ["path", { d: "M12 19V5", key: "x0mq9r" }]
-];
-const ArrowUp = createLucideIcon("arrow-up", __iconNode$y);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$x = [
   ["path", { d: "M12 8V4H8", key: "hb8ula" }],
   ["rect", { width: "16", height: "12", x: "4", y: "8", rx: "2", key: "enze0r" }],
   ["path", { d: "M2 14h2", key: "vft8re" }],
@@ -38912,14 +38912,14 @@ const __iconNode$x = [
   ["path", { d: "M15 13v2", key: "1xurst" }],
   ["path", { d: "M9 13v2", key: "rq6x2g" }]
 ];
-const Bot = createLucideIcon("bot", __iconNode$x);
+const Bot = createLucideIcon("bot", __iconNode$y);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$w = [
+const __iconNode$x = [
   [
     "path",
     {
@@ -38942,15 +38942,27 @@ const __iconNode$w = [
   ["path", { d: "M6 18a4 4 0 0 1-1.967-.516", key: "2e4loj" }],
   ["path", { d: "M19.967 17.484A4 4 0 0 1 18 18", key: "159ez6" }]
 ];
-const Brain = createLucideIcon("brain", __iconNode$w);
+const Brain = createLucideIcon("brain", __iconNode$x);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$v = [["path", { d: "M20 6 9 17l-5-5", key: "1gmf2c" }]];
-const Check = createLucideIcon("check", __iconNode$v);
+const __iconNode$w = [["path", { d: "M20 6 9 17l-5-5", key: "1gmf2c" }]];
+const Check = createLucideIcon("check", __iconNode$w);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$v = [
+  ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
+  ["line", { x1: "12", x2: "12", y1: "8", y2: "12", key: "1pkeuh" }],
+  ["line", { x1: "12", x2: "12.01", y1: "16", y2: "16", key: "4dfq90" }]
+];
+const CircleAlert = createLucideIcon("circle-alert", __iconNode$v);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -38959,10 +38971,10 @@ const Check = createLucideIcon("check", __iconNode$v);
  */
 const __iconNode$u = [
   ["circle", { cx: "12", cy: "12", r: "10", key: "1mglay" }],
-  ["line", { x1: "12", x2: "12", y1: "8", y2: "12", key: "1pkeuh" }],
-  ["line", { x1: "12", x2: "12.01", y1: "16", y2: "16", key: "4dfq90" }]
+  ["path", { d: "M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3", key: "1u773s" }],
+  ["path", { d: "M12 17h.01", key: "p32p05" }]
 ];
-const CircleAlert = createLucideIcon("circle-alert", __iconNode$u);
+const CircleHelp = createLucideIcon("circle-help", __iconNode$u);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -39070,33 +39082,33 @@ const LayoutDashboard = createLucideIcon("layout-dashboard", __iconNode$m);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$l = [
-  ["path", { d: "M9 17H7A5 5 0 0 1 7 7h2", key: "8i5ue5" }],
-  ["path", { d: "M15 7h2a5 5 0 1 1 0 10h-2", key: "1b9ql8" }],
-  ["line", { x1: "8", x2: "16", y1: "12", y2: "12", key: "1jonct" }]
-];
-const Link2 = createLucideIcon("link-2", __iconNode$l);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$k = [
   ["path", { d: "m3 17 2 2 4-4", key: "1jhpwq" }],
   ["path", { d: "m3 7 2 2 4-4", key: "1obspn" }],
   ["path", { d: "M13 6h8", key: "15sg57" }],
   ["path", { d: "M13 12h8", key: "h98zly" }],
   ["path", { d: "M13 18h8", key: "oe0vm4" }]
 ];
-const ListChecks = createLucideIcon("list-checks", __iconNode$k);
+const ListChecks = createLucideIcon("list-checks", __iconNode$l);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$j = [["path", { d: "M21 12a9 9 0 1 1-6.219-8.56", key: "13zald" }]];
-const LoaderCircle = createLucideIcon("loader-circle", __iconNode$j);
+const __iconNode$k = [["path", { d: "M21 12a9 9 0 1 1-6.219-8.56", key: "13zald" }]];
+const LoaderCircle = createLucideIcon("loader-circle", __iconNode$k);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$j = [
+  ["path", { d: "m16 17 5-5-5-5", key: "1bji2h" }],
+  ["path", { d: "M21 12H9", key: "dn1m92" }],
+  ["path", { d: "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4", key: "1uf3rs" }]
+];
+const LogOut = createLucideIcon("log-out", __iconNode$j);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -39104,11 +39116,11 @@ const LoaderCircle = createLucideIcon("loader-circle", __iconNode$j);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$i = [
-  ["path", { d: "m16 17 5-5-5-5", key: "1bji2h" }],
-  ["path", { d: "M21 12H9", key: "dn1m92" }],
-  ["path", { d: "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4", key: "1uf3rs" }]
+  ["path", { d: "M4 12h16", key: "1lakjw" }],
+  ["path", { d: "M4 18h16", key: "19g7jn" }],
+  ["path", { d: "M4 6h16", key: "1o0s65" }]
 ];
-const LogOut = createLucideIcon("log-out", __iconNode$i);
+const Menu$1 = createLucideIcon("menu", __iconNode$i);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -39116,11 +39128,9 @@ const LogOut = createLucideIcon("log-out", __iconNode$i);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$h = [
-  ["path", { d: "M4 12h16", key: "1lakjw" }],
-  ["path", { d: "M4 18h16", key: "19g7jn" }],
-  ["path", { d: "M4 6h16", key: "1o0s65" }]
+  ["path", { d: "M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z", key: "1lielz" }]
 ];
-const Menu$1 = createLucideIcon("menu", __iconNode$h);
+const MessageSquare = createLucideIcon("message-square", __iconNode$h);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -39128,9 +39138,11 @@ const Menu$1 = createLucideIcon("menu", __iconNode$h);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$g = [
-  ["path", { d: "M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z", key: "1lielz" }]
+  ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", key: "afitv7" }],
+  ["path", { d: "M9 3v18", key: "fh3hqa" }],
+  ["path", { d: "m16 15-3-3 3-3", key: "14y99z" }]
 ];
-const MessageSquare = createLucideIcon("message-square", __iconNode$g);
+const PanelLeftClose = createLucideIcon("panel-left-close", __iconNode$g);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -39139,10 +39151,9 @@ const MessageSquare = createLucideIcon("message-square", __iconNode$g);
  */
 const __iconNode$f = [
   ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", key: "afitv7" }],
-  ["path", { d: "M9 3v18", key: "fh3hqa" }],
-  ["path", { d: "m16 15-3-3 3-3", key: "14y99z" }]
+  ["path", { d: "M9 3v18", key: "fh3hqa" }]
 ];
-const PanelLeftClose = createLucideIcon("panel-left-close", __iconNode$f);
+const PanelLeft = createLucideIcon("panel-left", __iconNode$f);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -39150,17 +39161,6 @@ const PanelLeftClose = createLucideIcon("panel-left-close", __iconNode$f);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$e = [
-  ["rect", { width: "18", height: "18", x: "3", y: "3", rx: "2", key: "afitv7" }],
-  ["path", { d: "M9 3v18", key: "fh3hqa" }]
-];
-const PanelLeft = createLucideIcon("panel-left", __iconNode$e);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$d = [
   [
     "path",
     {
@@ -39170,15 +39170,28 @@ const __iconNode$d = [
   ],
   ["path", { d: "m15 5 4 4", key: "1mk7zo" }]
 ];
-const Pencil = createLucideIcon("pencil", __iconNode$d);
+const Pencil = createLucideIcon("pencil", __iconNode$e);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$c = [["polygon", { points: "6 3 20 12 6 21 6 3", key: "1oa8hb" }]];
-const Play = createLucideIcon("play", __iconNode$c);
+const __iconNode$d = [["polygon", { points: "6 3 20 12 6 21 6 3", key: "1oa8hb" }]];
+const Play = createLucideIcon("play", __iconNode$d);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$c = [
+  ["path", { d: "M12 22v-5", key: "1ega77" }],
+  ["path", { d: "M9 8V2", key: "14iosj" }],
+  ["path", { d: "M15 8V2", key: "18g5xt" }],
+  ["path", { d: "M18 8v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V8Z", key: "osxo6l" }]
+];
+const Plug = createLucideIcon("plug", __iconNode$c);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -39186,12 +39199,10 @@ const Play = createLucideIcon("play", __iconNode$c);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$b = [
-  ["path", { d: "M12 22v-5", key: "1ega77" }],
-  ["path", { d: "M9 8V2", key: "14iosj" }],
-  ["path", { d: "M15 8V2", key: "18g5xt" }],
-  ["path", { d: "M18 8v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V8Z", key: "osxo6l" }]
+  ["path", { d: "M5 12h14", key: "1ays0h" }],
+  ["path", { d: "M12 5v14", key: "s699le" }]
 ];
-const Plug = createLucideIcon("plug", __iconNode$b);
+const Plus = createLucideIcon("plus", __iconNode$b);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -39199,10 +39210,12 @@ const Plug = createLucideIcon("plug", __iconNode$b);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$a = [
-  ["path", { d: "M5 12h14", key: "1ays0h" }],
-  ["path", { d: "M12 5v14", key: "s699le" }]
+  ["path", { d: "M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8", key: "v9h5vc" }],
+  ["path", { d: "M21 3v5h-5", key: "1q7to0" }],
+  ["path", { d: "M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16", key: "3uifl3" }],
+  ["path", { d: "M8 16H3v5", key: "1cv678" }]
 ];
-const Plus = createLucideIcon("plus", __iconNode$a);
+const RefreshCw = createLucideIcon("refresh-cw", __iconNode$a);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -39210,19 +39223,6 @@ const Plus = createLucideIcon("plus", __iconNode$a);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$9 = [
-  ["path", { d: "M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8", key: "v9h5vc" }],
-  ["path", { d: "M21 3v5h-5", key: "1q7to0" }],
-  ["path", { d: "M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16", key: "3uifl3" }],
-  ["path", { d: "M8 16H3v5", key: "1cv678" }]
-];
-const RefreshCw = createLucideIcon("refresh-cw", __iconNode$9);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$8 = [
   [
     "path",
     {
@@ -39233,7 +39233,18 @@ const __iconNode$8 = [
   ["path", { d: "M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7", key: "1ydtos" }],
   ["path", { d: "M7 3v4a1 1 0 0 0 1 1h7", key: "t51u73" }]
 ];
-const Save = createLucideIcon("save", __iconNode$8);
+const Save = createLucideIcon("save", __iconNode$9);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$8 = [
+  ["path", { d: "m21 21-4.34-4.34", key: "14j7rj" }],
+  ["circle", { cx: "11", cy: "11", r: "8", key: "4ej97u" }]
+];
+const Search = createLucideIcon("search", __iconNode$8);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -39241,17 +39252,6 @@ const Save = createLucideIcon("save", __iconNode$8);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$7 = [
-  ["path", { d: "m21 21-4.34-4.34", key: "14j7rj" }],
-  ["circle", { cx: "11", cy: "11", r: "8", key: "4ej97u" }]
-];
-const Search = createLucideIcon("search", __iconNode$7);
-/**
- * @license lucide-react v0.511.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */
-const __iconNode$6 = [
   [
     "path",
     {
@@ -39261,14 +39261,14 @@ const __iconNode$6 = [
   ],
   ["path", { d: "m9 12 2 2 4-4", key: "dzmm74" }]
 ];
-const ShieldCheck = createLucideIcon("shield-check", __iconNode$6);
+const ShieldCheck = createLucideIcon("shield-check", __iconNode$7);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$5 = [
+const __iconNode$6 = [
   [
     "path",
     {
@@ -39281,14 +39281,14 @@ const __iconNode$5 = [
   ["path", { d: "M4 17v2", key: "vumght" }],
   ["path", { d: "M5 18H3", key: "zchphs" }]
 ];
-const Sparkles = createLucideIcon("sparkles", __iconNode$5);
+const Sparkles = createLucideIcon("sparkles", __iconNode$6);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */
-const __iconNode$4 = [
+const __iconNode$5 = [
   [
     "path",
     {
@@ -39297,7 +39297,21 @@ const __iconNode$4 = [
     }
   ]
 ];
-const Star = createLucideIcon("star", __iconNode$4);
+const Star = createLucideIcon("star", __iconNode$5);
+/**
+ * @license lucide-react v0.511.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+const __iconNode$4 = [
+  ["path", { d: "M3 6h18", key: "d0wm0j" }],
+  ["path", { d: "M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6", key: "4alrt4" }],
+  ["path", { d: "M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2", key: "v07s0e" }],
+  ["line", { x1: "10", x2: "10", y1: "11", y2: "17", key: "1uufr5" }],
+  ["line", { x1: "14", x2: "14", y1: "11", y2: "17", key: "xtxkd" }]
+];
+const Trash2 = createLucideIcon("trash-2", __iconNode$4);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -39305,13 +39319,17 @@ const Star = createLucideIcon("star", __iconNode$4);
  * See the LICENSE file in the root directory of this source tree.
  */
 const __iconNode$3 = [
-  ["path", { d: "M3 6h18", key: "d0wm0j" }],
-  ["path", { d: "M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6", key: "4alrt4" }],
-  ["path", { d: "M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2", key: "v07s0e" }],
-  ["line", { x1: "10", x2: "10", y1: "11", y2: "17", key: "1uufr5" }],
-  ["line", { x1: "14", x2: "14", y1: "11", y2: "17", key: "xtxkd" }]
+  [
+    "path",
+    {
+      d: "m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3",
+      key: "wmoenq"
+    }
+  ],
+  ["path", { d: "M12 9v4", key: "juzpu7" }],
+  ["path", { d: "M12 17h.01", key: "p32p05" }]
 ];
-const Trash2 = createLucideIcon("trash-2", __iconNode$3);
+const TriangleAlert = createLucideIcon("triangle-alert", __iconNode$3);
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -48938,12 +48956,30 @@ function Badge({
 const MCP_CONNECTOR_URL = "https://mcp.beta.id.ai/mcp-prod";
 const II_TRUSTED_MCP_SETTINGS_URL = "https://id.ai/manage/settings";
 const MCP_DOCS_URL = "https://mcp.beta.id.ai/";
+const AI_APPS = {
+  grok: {
+    connectorsUrl: "https://grok.com/connectors",
+    docsUrl: "https://docs.x.ai/grok/connectors",
+    planNote: "Works on personal Grok accounts — no business plan required."
+  },
+  claude: {
+    /** Claude's Customize → Connectors surface (web + desktop). */
+    connectorsUrl: "https://claude.ai/customize/connectors",
+    docsUrl: "https://support.claude.com/en/articles/11176164-use-connectors-to-extend-claude-s-capabilities",
+    planNote: "Custom connectors work on Free (1 custom), Pro, Max, Team, and Enterprise. UI label is Customize → Connectors, not Settings → Connectors."
+  },
+  chatgpt: {
+    planNote: "Custom MCP / Apps usually needs Developer mode and is limited on consumer plans — Business or Enterprise is often required. Prefer Grok or Claude if you hit plan walls."
+  }
+};
 function planClipboardPayload(planText) {
   return [
-    "Execute this Internet Computer cross-app plan using the IC MCP server.",
+    "Execute this Internet Computer cross-app plan using the IC MCP connector.",
     `MCP URL: ${MCP_CONNECTOR_URL}`,
+    "If the IC MCP tools are not already connected in this chat, connect them first, then run the plan.",
     "Prefer read-only tools (canister_query, discovery, get_canister_candid) before any canister_update_call.",
     "Confirm write/delete actions with me. Respect every personal rule listed in the plan.",
+    "Be cycle-conscious: no redundant status loops; check icp_cycles_balance before create/top-up.",
     "",
     planText.trim()
   ].join("\n");
@@ -48961,7 +48997,9 @@ function PlanDisplay({
     try {
       await navigator.clipboard.writeText(planClipboardPayload(planText));
       setCopied(true);
-      ue.success("Plan copied — paste into Claude or ChatGPT with MCP");
+      ue.success(
+        "Plan copied — paste into Grok, Claude, or ChatGPT with MCP"
+      );
       window.setTimeout(() => setCopied(false), 2e3);
     } catch {
       ue.error("Clipboard unavailable — select the plan text manually");
@@ -50111,7 +50149,7 @@ function EmptyState$2() {
         /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Sparkles, { className: "h-7 w-7", "aria-hidden": true }) }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-2", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-display text-xl font-semibold tracking-tight text-foreground", children: "Describe a cross-app goal. Get an MCP plan." }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mx-auto max-w-md text-sm text-muted-foreground", children: "We draft numbered steps with real IC MCP tool hints (canister_query, canister_update_call, resolve_app, …). Copy for MCP, paste into Claude or ChatGPT with the connector enabled, and the agent acts as you." })
+          /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "mx-auto max-w-md text-sm text-muted-foreground", children: "We draft numbered steps with real IC MCP tool hints (canister_query, canister_update_call, resolve_app, …). Copy for MCP, paste into Grok, Claude, or ChatGPT with the connector enabled, and the agent acts as you." })
         ] }),
         /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex flex-wrap justify-center gap-2", children: examples.map((ex, i) => /* @__PURE__ */ jsxRuntimeExports.jsx(
           "span",
@@ -50596,7 +50634,7 @@ const QUICK_ACCESS = [
   {
     to: "/setup",
     label: "Setup",
-    description: "Trust the IC MCP server and connect Claude or ChatGPT.",
+    description: "Trust the IC MCP server and connect Grok, Claude, or ChatGPT.",
     icon: Plug,
     ocid: "dashboard.quick_access.setup",
     featured: true
@@ -50663,7 +50701,7 @@ function DashboardPage() {
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0 space-y-1", children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm font-medium text-foreground", children: "IC MCP connector" }),
             /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "truncate font-mono text-xs text-muted-foreground", children: MCP_CONNECTOR_URL }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-muted-foreground", children: openAiQuery.data === false ? "Template planner is active (operator AI key not set). Plans still target real MCP tools." : openAiQuery.data === true ? "AI-assisted plans enabled. Copy any plan into Claude/ChatGPT with MCP connected." : "Checking planner status…" })
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-muted-foreground", children: openAiQuery.data === false ? "Template planner is active (operator AI key not set). Plans still target real MCP tools — run them in Grok, Claude, or ChatGPT." : openAiQuery.data === true ? "AI-assisted plans enabled. Copy any plan into Grok, Claude, or ChatGPT with the IC MCP connector enabled." : "Checking planner status…" })
           ] }),
           /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { asChild: true, size: "sm", "data-ocid": "dashboard.setup_cta", children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Link, { to: "/setup", children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx(Plug, { className: "h-3.5 w-3.5", "aria-hidden": true }),
@@ -50678,7 +50716,7 @@ function DashboardPage() {
         ocid: "dashboard.onboarding.empty_state",
         icon: Sparkles,
         title: "Welcome — finish Setup, then plan",
-        description: "Trust the IC MCP server with your Internet Identity, connect Claude or ChatGPT, seed Memory with your dApps, then describe a cross-app goal in Chat. Plans are built to paste into your MCP-connected AI.",
+        description: "Trust the IC MCP server with your Internet Identity, connect Grok (recommended), Claude, or ChatGPT, seed Memory with your dApps, then describe a cross-app goal in Chat. Plans paste into your MCP-connected AI.",
         hint: "first-time · onboarding",
         actionLabel: "Start Setup",
         actionTo: "/setup"
@@ -51845,12 +51883,13 @@ function MemoryPage() {
     }
   );
 }
-const SETUP_CHECKLIST_KEY = "crossapp.setup.checklist.v1";
+const SETUP_CHECKLIST_KEY = "crossapp.setup.checklist.v2";
 const DEFAULT_CHECKLIST = {
   trustedMcp: false,
   connectedAi: false,
   authorizedGrant: false,
-  memorySeeded: false
+  memorySeeded: false,
+  smokeTested: false
 };
 function loadChecklist() {
   try {
@@ -51872,6 +51911,9 @@ function SetupPage() {
     () => loadChecklist()
   );
   const [copied, setCopied] = reactExports.useState(false);
+  const [activeApp, setActiveApp] = reactExports.useState(
+    "grok"
+  );
   const toggle = (key) => {
     setChecklist((prev) => {
       const next = { ...prev, [key]: !prev[key] };
@@ -51898,12 +51940,51 @@ function SetupPage() {
         /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-mono text-[11px] uppercase tracking-widest text-muted-foreground", children: "Onboarding" })
       ] }),
       /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl", children: "Set up your CrossApp Agent" }),
-      /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "max-w-2xl text-sm leading-relaxed text-muted-foreground", children: [
-        "This app stores your plans, dApp memory, and rules on-chain under your Internet Identity. Execution happens in Claude or ChatGPT through the official Internet Computer MCP server — acting as ",
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "max-w-3xl text-sm leading-relaxed text-muted-foreground", children: [
+        "This app is the ",
+        /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "planner" }),
+        " ",
+        "(plans, memory, workflows on-chain under your Internet Identity).",
+        " ",
+        /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "Execution" }),
+        " happens in an AI chat (Grok, Claude, or ChatGPT) that has the official Internet Computer MCP server connected — the agent then acts as ",
         /* @__PURE__ */ jsxRuntimeExports.jsx("em", { children: "you" }),
-        " on every dApp you authorize."
+        " on IC dApps you authorize."
       ] })
     ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "div",
+      {
+        "data-ocid": "setup.mental_model",
+        className: "grid gap-3 rounded-xl border border-border bg-card p-5 sm:grid-cols-3",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            ModelStep,
+            {
+              n: "A",
+              title: "This app",
+              body: "Sign in with II. Save dApps, rules, and generate MCP-ready plans."
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            ModelStep,
+            {
+              n: "B",
+              title: "Internet Identity",
+              body: "Trust the MCP URL once so grants can mint app-specific principals."
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            ModelStep,
+            {
+              n: "C",
+              title: "Grok / Claude / ChatGPT",
+              body: "Add the same URL as a custom MCP connector, authorize, then run plans."
+            }
+          )
+        ]
+      }
+    ),
     /* @__PURE__ */ jsxRuntimeExports.jsx(
       "div",
       {
@@ -51911,7 +51992,7 @@ function SetupPage() {
         className: "rounded-xl border border-primary/20 bg-primary/5 p-5",
         children: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap items-start justify-between gap-3", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0 space-y-1", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-mono text-[11px] uppercase tracking-widest text-muted-foreground", children: "IC MCP connector URL" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-mono text-[11px] uppercase tracking-widest text-muted-foreground", children: "Exact MCP connector URL (copy this)" }),
             /* @__PURE__ */ jsxRuntimeExports.jsx(
               "p",
               {
@@ -51921,7 +52002,9 @@ function SetupPage() {
               }
             ),
             /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-xs text-muted-foreground", children: [
-              "Beta server docs:",
+              "Must match character-for-character in II ",
+              /* @__PURE__ */ jsxRuntimeExports.jsx("em", { children: "and" }),
+              " your AI app. Docs:",
               " ",
               /* @__PURE__ */ jsxRuntimeExports.jsx(
                 "a",
@@ -51957,23 +52040,42 @@ function SetupPage() {
         {
           index: 1,
           icon: ShieldCheck,
-          title: "Trust the MCP server in Internet Identity",
-          description: /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
-            "Open",
-            " ",
-            /* @__PURE__ */ jsxRuntimeExports.jsx(
-              "a",
-              {
-                href: II_TRUSTED_MCP_SETTINGS_URL,
-                target: "_blank",
-                rel: "noreferrer",
-                className: "text-primary hover:underline",
-                children: "Internet Identity settings"
-              }
-            ),
-            ", sign in with the identity you want the agent to use, and add the connector URL under ",
-            /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { children: "Trusted MCP servers" }),
-            "."
+          title: "Trust the MCP server in Internet Identity (required first)",
+          description: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-2", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { children: "Without this step, authorization from Grok/Claude/ChatGPT will fail or never complete. Do it before adding the connector to an AI app." }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("ol", { className: "list-decimal space-y-1.5 pl-5", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { children: [
+                "Open",
+                " ",
+                /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  "a",
+                  {
+                    href: II_TRUSTED_MCP_SETTINGS_URL,
+                    target: "_blank",
+                    rel: "noreferrer",
+                    className: "text-primary hover:underline",
+                    children: "id.ai → Manage → Settings"
+                  }
+                ),
+                "."
+              ] }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { children: [
+                "Sign in with the ",
+                /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { children: "same" }),
+                " Internet Identity you use in this CrossApp Agent app."
+              ] }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { children: [
+                "Find ",
+                /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { children: "Trusted MCP servers" }),
+                " (wording may be “Trusted servers” / “MCP”)."
+              ] }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { children: [
+                "Add:",
+                " ",
+                /* @__PURE__ */ jsxRuntimeExports.jsx("code", { className: "rounded bg-muted px-1.5 py-0.5 font-mono text-[11px] text-foreground", children: MCP_CONNECTOR_URL })
+              ] }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("li", { children: "Save. Leave this tab open if you need to re-check later." })
+            ] })
           ] }),
           action: /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { asChild: true, variant: "outline", size: "sm", children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
             "a",
@@ -51994,14 +52096,44 @@ function SetupPage() {
         StepCard,
         {
           index: 2,
-          icon: Link2,
-          title: "Add the same URL to Claude or ChatGPT",
-          description: /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { children: "Claude:" }),
-            " Settings → Connectors → Add custom connector → paste the URL. Allow read-only tools; keep write/delete on Ask.",
-            /* @__PURE__ */ jsxRuntimeExports.jsx("br", {}),
-            /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { children: "ChatGPT:" }),
-            " enable Developer mode, then create an app/connector and paste the URL."
+          icon: Plug,
+          title: "Add the same URL to an AI app (pick one)",
+          description: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-4", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "Recommended: Grok" }),
+              " — personal accounts support custom MCP connectors at a fixed URL, with no Business plan required. Claude works well too if you know where Customize lives. ChatGPT often needs Developer mode and a higher plan."
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "div",
+              {
+                className: "flex flex-wrap gap-2",
+                role: "tablist",
+                "aria-label": "Choose AI app",
+                children: [
+                  ["grok", "Grok (recommended)"],
+                  ["claude", "Claude"],
+                  ["chatgpt", "ChatGPT"]
+                ].map(([id, label]) => /* @__PURE__ */ jsxRuntimeExports.jsx(
+                  "button",
+                  {
+                    type: "button",
+                    role: "tab",
+                    "aria-selected": activeApp === id,
+                    "data-ocid": `setup.ai_tab.${id}`,
+                    onClick: () => setActiveApp(id),
+                    className: cn(
+                      "rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors",
+                      activeApp === id ? "border-primary/40 bg-primary/10 text-primary" : "border-border bg-secondary/40 text-muted-foreground hover:bg-secondary hover:text-foreground"
+                    ),
+                    children: label
+                  },
+                  id
+                ))
+              }
+            ),
+            activeApp === "grok" && /* @__PURE__ */ jsxRuntimeExports.jsx(GrokGuide, { onCopyUrl: copyUrl }),
+            activeApp === "claude" && /* @__PURE__ */ jsxRuntimeExports.jsx(ClaudeGuide, { onCopyUrl: copyUrl }),
+            activeApp === "chatgpt" && /* @__PURE__ */ jsxRuntimeExports.jsx(ChatGptGuide, { onCopyUrl: copyUrl })
           ] })
         }
       ),
@@ -52010,12 +52142,26 @@ function SetupPage() {
         {
           index: 3,
           icon: KeyRound,
-          title: "Authorize the grant",
-          description: /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
-            "Your AI app will send you to Internet Identity. Pick the same identity, choose how long the grant lasts, and select",
-            " ",
-            /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { children: "Actions & questions" }),
-            " if you want the agent to call methods and manage canisters — or questions-only for research. Grants expire by design; re-approving later is normal."
+          title: "Authorize the Internet Identity grant",
+          description: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-2", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { children: "When you first use the connector (or after a grant expires), the AI app opens Internet Identity:" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("ol", { className: "list-decimal space-y-1.5 pl-5", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { children: [
+                "Choose the ",
+                /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { children: "same" }),
+                " identity you trusted in step 1."
+              ] }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("li", { children: "Pick how long the grant lasts (shorter is safer; re-approval is normal)." }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { children: [
+                "Choose ",
+                /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { children: "Actions & questions" }),
+                " if the agent should call methods and manage canisters, or",
+                " ",
+                /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { children: "Questions-only" }),
+                " for read-only research."
+              ] }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("li", { children: "Confirm. If nothing opens, allow pop-ups for the AI app domain and retry." })
+            ] })
           ] })
         }
       ),
@@ -52024,8 +52170,25 @@ function SetupPage() {
         {
           index: 4,
           icon: ListChecks,
-          title: "Seed Memory, then plan in Chat",
-          description: /* @__PURE__ */ jsxRuntimeExports.jsx(jsxRuntimeExports.Fragment, { children: "Add preferred dApps (friendly name + canister ID), personal rules (e.g. “never move more than 20% of my ICP”), and notes. Then open Chat, describe a cross-app goal, copy the plan, and paste it into Claude/ChatGPT with the MCP connector enabled." }),
+          title: "Smoke-test the connector, then use this app",
+          description: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-2", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { children: "In the AI chat (with the connector enabled for that conversation), try a cheap read-only prompt first:" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("ul", { className: "list-disc space-y-1 pl-5", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("li", { children: /* @__PURE__ */ jsxRuntimeExports.jsx("code", { className: "rounded bg-muted px-1 font-mono text-[11px]", children: "What's my cycles balance?" }) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("li", { children: /* @__PURE__ */ jsxRuntimeExports.jsx("code", { className: "rounded bg-muted px-1 font-mono text-[11px]", children: "Look up the ckUSDC ledger" }) }),
+              /* @__PURE__ */ jsxRuntimeExports.jsx("li", { children: /* @__PURE__ */ jsxRuntimeExports.jsx("code", { className: "rounded bg-muted px-1 font-mono text-[11px]", children: "What canisters run multidex.ai?" }) })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { children: [
+              "Then seed ",
+              /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { children: "Memory" }),
+              " here (dApps + rules), generate a plan in ",
+              /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { children: "Chat" }),
+              ", hit",
+              " ",
+              /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { children: "Copy for MCP" }),
+              ", and paste into the same AI conversation."
+            ] })
+          ] }),
           action: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap gap-2", children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { asChild: true, size: "sm", variant: "outline", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Link, { to: "/memory", "data-ocid": "setup.go_memory", children: "Open Memory" }) }),
             /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { asChild: true, size: "sm", children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
@@ -52047,6 +52210,107 @@ function SetupPage() {
     /* @__PURE__ */ jsxRuntimeExports.jsxs(
       "div",
       {
+        "data-ocid": "setup.troubleshooting",
+        className: "rounded-xl border border-border bg-card p-5",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "mb-3 flex items-center gap-2", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(CircleHelp, { className: "h-4 w-4 text-primary", "aria-hidden": true }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-display text-lg font-semibold tracking-tight", children: "Troubleshooting" })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("ul", { className: "space-y-3 text-sm text-muted-foreground", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              Trouble,
+              {
+                title: "I can't find “Connectors” in Claude Settings",
+                body: /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
+                  "Claude moved this under",
+                  " ",
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "Customize → Connectors" }),
+                  ", not the old Settings sidebar. Open",
+                  " ",
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    "a",
+                    {
+                      href: AI_APPS.claude.connectorsUrl,
+                      target: "_blank",
+                      rel: "noreferrer",
+                      className: "text-primary hover:underline",
+                      children: "claude.ai/customize/connectors"
+                    }
+                  ),
+                  ", click ",
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { children: "+" }),
+                  " next to Connectors, then",
+                  " ",
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { children: "Add custom connector" }),
+                  ". You can also open connectors from a chat: ",
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { children: "+" }),
+                  " → Connectors → Manage connectors."
+                ] })
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              Trouble,
+              {
+                title: "ChatGPT won't let me add an MCP / app",
+                body: /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
+                  "OpenAI gates custom connectors behind",
+                  " ",
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "Developer mode" }),
+                  " ",
+                  "(Settings → Advanced) and often",
+                  " ",
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "Business or Enterprise" }),
+                  ". Labels vary: Apps, Connectors, or Plugins. If your plan has no way to paste a remote MCP URL, use",
+                  " ",
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "Grok" }),
+                  " or",
+                  " ",
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "Claude" }),
+                  " instead — the IC MCP server is the same."
+                ] })
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              Trouble,
+              {
+                title: "Authorization never finishes / pops up blank",
+                body: /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
+                  "Confirm step 1 (Trusted MCP servers) used the ",
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("em", { children: "exact" }),
+                  " URL above. Allow pop-ups for",
+                  " ",
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("code", { className: "font-mono text-[11px]", children: "grok.com" }),
+                  ",",
+                  " ",
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("code", { className: "font-mono text-[11px]", children: "claude.ai" }),
+                  ", or",
+                  " ",
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("code", { className: "font-mono text-[11px]", children: "chatgpt.com" }),
+                  ". Use the same II anchor you trusted. Grants expire — re-approve when prompted."
+                ] })
+              }
+            ),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              Trouble,
+              {
+                title: "Connector connects but tools do nothing",
+                body: /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
+                  "In Claude, enable the connector for the current chat (+ → Connectors toggle). Prefer",
+                  " ",
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "read-only tools: Always allow" }),
+                  " ",
+                  "and write tools on Ask. Start with a simple cycles-balance question. This CrossApp app only plans — it does not call the MCP server itself (keeps canister cycles low)."
+                ] })
+              }
+            )
+          ] })
+        ]
+      }
+    ),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "div",
+      {
         "data-ocid": "setup.checklist",
         className: "rounded-xl border border-border bg-card p-5",
         children: [
@@ -52060,9 +52324,10 @@ function SetupPage() {
             ] })
           ] }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("ul", { className: "space-y-2", children: [
-            ["trustedMcp", "Trusted MCP server in Internet Identity"],
-            ["connectedAi", "Connected MCP URL in Claude or ChatGPT"],
+            ["trustedMcp", "Trusted MCP URL in Internet Identity"],
+            ["connectedAi", "Connected MCP URL in Grok, Claude, or ChatGPT"],
             ["authorizedGrant", "Authorized an II grant for the MCP server"],
+            ["smokeTested", "Smoke-tested with a read-only MCP question"],
             ["memorySeeded", "Added at least one dApp or rule in Memory"]
           ].map(([key, label]) => /* @__PURE__ */ jsxRuntimeExports.jsx("li", { children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
             "button",
@@ -52124,6 +52389,267 @@ function SetupPage() {
     )
   ] });
 }
+function ModelStep({
+  n,
+  title,
+  body
+}) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-1", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-mono text-[11px] uppercase tracking-widest text-primary", children: n }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm font-medium text-foreground", children: title }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs leading-relaxed text-muted-foreground", children: body })
+  ] });
+}
+function GrokGuide({ onCopyUrl }) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    "div",
+    {
+      "data-ocid": "setup.guide.grok",
+      className: "space-y-3 rounded-lg border border-primary/25 bg-primary/5 p-4",
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap items-center gap-2", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(Badge, { className: "bg-primary/15 text-primary hover:bg-primary/15", children: "Recommended" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "text-sm font-medium text-foreground", children: "Grok custom MCP connector" })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-muted-foreground", children: AI_APPS.grok.planNote }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("ol", { className: "list-decimal space-y-1.5 pl-5 text-sm text-muted-foreground", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { children: [
+            "Open",
+            " ",
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "a",
+              {
+                href: AI_APPS.grok.connectorsUrl,
+                target: "_blank",
+                rel: "noreferrer",
+                className: "text-primary hover:underline",
+                children: "grok.com/connectors"
+              }
+            ),
+            " ",
+            "while signed into Grok."
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { children: [
+            "Click ",
+            /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "New Connector" }),
+            ", then select ",
+            /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "Custom" }),
+            "."
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { children: [
+            "Paste the MCP URL",
+            " ",
+            /* @__PURE__ */ jsxRuntimeExports.jsx("code", { className: "rounded bg-muted px-1 font-mono text-[11px] text-foreground", children: MCP_CONNECTOR_URL }),
+            " ",
+            "(optional name: “Internet Computer MCP”)."
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("li", { children: "Save / connect. When prompted, complete Internet Identity authorization (step 3)." }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("li", { children: "Start a new Grok chat and ask a smoke-test question (step 4). Grok discovers IC MCP tools automatically." })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap gap-2 pt-1", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { asChild: true, size: "sm", variant: "outline", children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "a",
+            {
+              href: AI_APPS.grok.connectorsUrl,
+              target: "_blank",
+              rel: "noreferrer",
+              "data-ocid": "setup.open_grok_connectors",
+              children: [
+                "Open Grok connectors",
+                /* @__PURE__ */ jsxRuntimeExports.jsx(ExternalLink, { className: "h-3.5 w-3.5", "aria-hidden": true })
+              ]
+            }
+          ) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(Button, { type: "button", size: "sm", variant: "secondary", onClick: onCopyUrl, children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Copy, { className: "h-3.5 w-3.5", "aria-hidden": true }),
+            "Copy MCP URL"
+          ] })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-[11px] text-muted-foreground", children: [
+          "Official docs:",
+          " ",
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "a",
+            {
+              href: AI_APPS.grok.docsUrl,
+              target: "_blank",
+              rel: "noreferrer",
+              className: "text-primary hover:underline",
+              children: "docs.x.ai/grok/connectors"
+            }
+          ),
+          ". Business/Enterprise orgs may need an admin to provision connectors first."
+        ] })
+      ]
+    }
+  );
+}
+function ClaudeGuide({ onCopyUrl }) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    "div",
+    {
+      "data-ocid": "setup.guide.claude",
+      className: "space-y-3 rounded-lg border border-border bg-secondary/30 p-4",
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm font-medium text-foreground", children: "Claude custom connector (web or Desktop)" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-muted-foreground", children: AI_APPS.claude.planNote }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("ol", { className: "list-decimal space-y-1.5 pl-5 text-sm text-muted-foreground", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { children: [
+            "Go to",
+            " ",
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "a",
+              {
+                href: AI_APPS.claude.connectorsUrl,
+                target: "_blank",
+                rel: "noreferrer",
+                className: "text-primary hover:underline",
+                children: "Customize → Connectors"
+              }
+            ),
+            " ",
+            "(direct link preferred — avoid hunting under Settings)."
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { children: [
+            "Click the ",
+            /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "+" }),
+            " button next to ",
+            /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "Connectors" }),
+            "."
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { children: [
+            "Choose",
+            " ",
+            /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "Add custom connector" }),
+            "."
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { children: [
+            "Name: ",
+            /* @__PURE__ */ jsxRuntimeExports.jsx("em", { children: "Internet Computer MCP" }),
+            ". URL:",
+            " ",
+            /* @__PURE__ */ jsxRuntimeExports.jsx("code", { className: "rounded bg-muted px-1 font-mono text-[11px] text-foreground", children: MCP_CONNECTOR_URL }),
+            ". Leave OAuth client ID/secret empty unless your org requires them."
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { children: [
+            "Click ",
+            /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "Add" }),
+            ", then complete Internet Identity when prompted."
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { children: [
+            "In a chat, open ",
+            /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "+" }),
+            " → Connectors and enable this connector for the conversation. Prefer read-only tools Always allow; write/delete on Ask."
+          ] })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap gap-2 pt-1", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { asChild: true, size: "sm", variant: "outline", children: /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            "a",
+            {
+              href: AI_APPS.claude.connectorsUrl,
+              target: "_blank",
+              rel: "noreferrer",
+              "data-ocid": "setup.open_claude_connectors",
+              children: [
+                "Open Claude Connectors",
+                /* @__PURE__ */ jsxRuntimeExports.jsx(ExternalLink, { className: "h-3.5 w-3.5", "aria-hidden": true })
+              ]
+            }
+          ) }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(Button, { type: "button", size: "sm", variant: "secondary", onClick: onCopyUrl, children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Copy, { className: "h-3.5 w-3.5", "aria-hidden": true }),
+            "Copy MCP URL"
+          ] })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-[11px] text-muted-foreground", children: [
+          "Help article:",
+          " ",
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            "a",
+            {
+              href: AI_APPS.claude.docsUrl,
+              target: "_blank",
+              rel: "noreferrer",
+              className: "text-primary hover:underline",
+              children: "Use connectors to extend Claude"
+            }
+          ),
+          ". Free plan: one custom connector."
+        ] })
+      ]
+    }
+  );
+}
+function ChatGptGuide({ onCopyUrl }) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs(
+    "div",
+    {
+      "data-ocid": "setup.guide.chatgpt",
+      className: "space-y-3 rounded-lg border border-border bg-secondary/30 p-4",
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-start gap-2 rounded-md border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-muted-foreground", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(
+            TriangleAlert,
+            {
+              className: "mt-0.5 h-4 w-4 shrink-0 text-amber-500",
+              "aria-hidden": true
+            }
+          ),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { children: [
+            "Many personal ChatGPT accounts cannot add remote MCP servers. If you do not see Apps / Connectors / Developer mode, use",
+            " ",
+            /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "Grok" }),
+            " or",
+            " ",
+            /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "Claude" }),
+            " — same MCP URL."
+          ] })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm font-medium text-foreground", children: "ChatGPT (when your plan supports it)" }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-muted-foreground", children: AI_APPS.chatgpt.planNote }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs("ol", { className: "list-decimal space-y-1.5 pl-5 text-sm text-muted-foreground", children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { children: [
+            "Open ChatGPT settings. Under",
+            " ",
+            /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "Advanced" }),
+            " (or similar), enable ",
+            /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "Developer mode" }),
+            " if shown."
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { children: [
+            "Open ",
+            /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "Apps" }),
+            ",",
+            " ",
+            /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "Connectors" }),
+            ", or",
+            " ",
+            /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "Plugins" }),
+            " (label depends on plan)."
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { children: [
+            "Create app / add connector / add MCP server and paste",
+            " ",
+            /* @__PURE__ */ jsxRuntimeExports.jsx("code", { className: "rounded bg-muted px-1 font-mono text-[11px] text-foreground", children: MCP_CONNECTOR_URL }),
+            "."
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("li", { children: "Complete Internet Identity authorization when ChatGPT redirects you." }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("li", { children: "Start a new chat that can use the app/connector, then run a smoke-test question." })
+        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex flex-wrap gap-2 pt-1", children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Button, { type: "button", size: "sm", variant: "secondary", onClick: onCopyUrl, children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsx(Copy, { className: "h-3.5 w-3.5", "aria-hidden": true }),
+          "Copy MCP URL"
+        ] }) })
+      ]
+    }
+  );
+}
+function Trouble({ title, body }) {
+  return /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { className: "rounded-lg border border-border bg-secondary/20 p-3", children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-medium text-foreground", children: title }),
+    /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "mt-1 leading-relaxed", children: body })
+  ] });
+}
 function StepCard({
   index: index2,
   icon: Icon2,
@@ -52140,7 +52666,7 @@ function StepCard({
         /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 font-mono text-sm font-semibold text-primary", children: index2 }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0 flex-1 space-y-2", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx(Icon2, { className: "h-4 w-4 text-primary", "aria-hidden": true }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Icon2, { className: "h-4 w-4 shrink-0 text-primary", "aria-hidden": true }),
             /* @__PURE__ */ jsxRuntimeExports.jsx("h3", { className: "font-display text-base font-semibold tracking-tight text-foreground", children: title })
           ] }),
           /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "text-sm leading-relaxed text-muted-foreground", children: description }),
@@ -53114,11 +53640,11 @@ function LoginScreen() {
                 ] }),
                 /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { className: "flex gap-2", children: [
                   /* @__PURE__ */ jsxRuntimeExports.jsx(Workflow$1, { className: "mt-0.5 h-4 w-4 shrink-0 text-primary" }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "Trust the IC MCP server once, then let Claude or ChatGPT act on IC as you." })
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "Trust the IC MCP server once, then let Grok, Claude, or ChatGPT act on IC as you." })
                 ] }),
                 /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { className: "flex gap-2", children: [
                   /* @__PURE__ */ jsxRuntimeExports.jsx(ArrowRight, { className: "mt-0.5 h-4 w-4 shrink-0 text-primary" }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "After login, open Setup for the exact MCP URL and a 3-step checklist." })
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "After login, open Setup — Grok is the easiest path if Claude Connectors or ChatGPT Apps are hard to find." })
                 ] })
               ]
             }

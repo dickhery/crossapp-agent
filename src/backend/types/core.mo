@@ -60,6 +60,6 @@ module {
 
   // Result of a plan generation / refinement outcall.
   public type PlanResult = {
-    planText : Text;          // the structured, numbered, Claude-ready plan
+    planText : Text;          // the structured, numbered, MCP-ready plan
   };
 };

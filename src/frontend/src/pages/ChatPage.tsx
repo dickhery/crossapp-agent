@@ -394,8 +394,9 @@ function EmptyState() {
         </h2>
         <p className="mx-auto max-w-md text-sm text-muted-foreground">
           We draft numbered steps with real IC MCP tool hints (canister_query,
-          canister_update_call, resolve_app, …). Copy for MCP, paste into Claude
-          or ChatGPT with the connector enabled, and the agent acts as you.
+          canister_update_call, resolve_app, …). Copy for MCP, paste into Grok,
+          Claude, or ChatGPT with the connector enabled, and the agent acts as
+          you.
         </p>
       </div>
       <div className="flex flex-wrap justify-center gap-2">

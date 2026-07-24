@@ -34,7 +34,9 @@ export function PlanDisplay({
     try {
       await navigator.clipboard.writeText(planClipboardPayload(planText));
       setCopied(true);
-      toast.success("Plan copied — paste into Claude or ChatGPT with MCP");
+      toast.success(
+        "Plan copied — paste into Grok, Claude, or ChatGPT with MCP",
+      );
       window.setTimeout(() => setCopied(false), 2000);
     } catch {
       toast.error("Clipboard unavailable — select the plan text manually");

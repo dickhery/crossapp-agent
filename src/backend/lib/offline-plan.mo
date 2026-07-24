@@ -137,7 +137,7 @@ module {
 
     let header =
       "[Template plan — AI model not configured on this canister. " #
-      "Steps still target the official IC MCP tools so you can paste into Claude/ChatGPT.]\n\n" #
+      "Steps still target the official IC MCP tools so you can paste into Grok, Claude, or ChatGPT.]\n\n" #
       "Goal: " # goal # "\n\n" #
       prefsBlock(prefs) # "\n\n" #
       "MCP connector URL: " # MCP_URL # "\n" #

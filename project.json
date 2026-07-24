@@ -1,8 +1,9 @@
 {
-  "overview": "True Cross-App Personal Agent — plan multi-dApp Internet Computer workflows on-chain, configure Internet Identity + the official IC MCP server, and run plans from Claude/ChatGPT under your II.",
+  "overview": "True Cross-App Personal Agent — plan multi-dApp Internet Computer workflows on-chain, configure Internet Identity + the official IC MCP server, and run plans from Grok, Claude, or ChatGPT under your II.",
   "features": [
     "Log in with Internet Identity and see your principal",
-    "Guided Setup for trusting the IC MCP server (mcp.beta.id.ai) and connecting Claude or ChatGPT",
+    "Guided Setup for trusting the IC MCP server (mcp.beta.id.ai) with step-by-step Grok, Claude, and ChatGPT connector paths",
+    "Grok recommended path via grok.com/connectors custom MCP (no business plan required)",
     "Describe cross-dApp goals in chat and get numbered plans with real MCP tool hints",
     "Offline template planner when the operator AI key is not set — still MCP-tool-aware",
     "Copy plans for MCP (clipboard preamble + connector URL) and save as reusable workflows",

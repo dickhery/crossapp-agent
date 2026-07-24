@@ -23,7 +23,8 @@ const QUICK_ACCESS = [
   {
     to: "/setup",
     label: "Setup",
-    description: "Trust the IC MCP server and connect Claude or ChatGPT.",
+    description:
+      "Trust the IC MCP server and connect Grok, Claude, or ChatGPT.",
     icon: Plug,
     ocid: "dashboard.quick_access.setup",
     featured: true,
@@ -130,9 +131,9 @@ export default function DashboardPage() {
           </p>
           <p className="text-xs text-muted-foreground">
             {openAiQuery.data === false
-              ? "Template planner is active (operator AI key not set). Plans still target real MCP tools."
+              ? "Template planner is active (operator AI key not set). Plans still target real MCP tools — run them in Grok, Claude, or ChatGPT."
               : openAiQuery.data === true
-                ? "AI-assisted plans enabled. Copy any plan into Claude/ChatGPT with MCP connected."
+                ? "AI-assisted plans enabled. Copy any plan into Grok, Claude, or ChatGPT with the IC MCP connector enabled."
                 : "Checking planner status…"}
           </p>
         </div>
@@ -149,7 +150,7 @@ export default function DashboardPage() {
           ocid="dashboard.onboarding.empty_state"
           icon={Sparkles}
           title="Welcome — finish Setup, then plan"
-          description="Trust the IC MCP server with your Internet Identity, connect Claude or ChatGPT, seed Memory with your dApps, then describe a cross-app goal in Chat. Plans are built to paste into your MCP-connected AI."
+          description="Trust the IC MCP server with your Internet Identity, connect Grok (recommended), Claude, or ChatGPT, seed Memory with your dApps, then describe a cross-app goal in Chat. Plans paste into your MCP-connected AI."
           hint="first-time · onboarding"
           actionLabel="Start Setup"
           actionTo="/setup"
