@@ -1,0 +1,147 @@
+// Version: 4.0.0
+type AccessControlState__792201889 =
+  {
+    var adminAssigned : Bool;
+    userRoles : Map__222667396<Principal, UserRole__690129077>
+  };
+type Data__80296667<K, V> =
+  {var count : Nat__1040412405; kvs : [var ?(K, V)]};
+type HistoryEntry__21676137 =
+  {
+    createdAt : Int;
+    goal : Text;
+    id : Nat;
+    owner : Principal;
+    planText : Text
+  };
+type HistoryEntry__884137351 =
+  {
+    createdAt : Timestamp__301639476;
+    goal : Text;
+    id : HistoryId__837803635;
+    owner : Owner__432551029;
+    planText : Text
+  };
+type HistoryId__837803635 = Nat;
+type Internal__41346355<K, V> =
+  {children : [var ?Node__1000929467<K, V>]; data : Data__80296667<K, V>};
+type Leaf__712614010<K, V> = {data : Data__80296667<K, V>};
+type List__529703492<T> =
+  {
+    var blockIndex : Nat__1040412405;
+    var blocks : [var [var ?T]];
+    var elementIndex : Nat__1040412405
+  };
+type List__560604548<T> = List__529703492<T>;
+type Map__222667396<K, V> = Map__912772452<K, V>;
+type Map__709709801<K, V> =
+  {var root : Node__1000929467<K, V>; var size : Nat__1040412405};
+type Map__912772452<K, V> = Map__709709801<K, V>;
+type Nat__1040412405 = Nat__920180692;
+type Nat__920180692 = Nat;
+type NewActor__380078096 =
+  {
+    accessControlState : AccessControlState__792201889;
+    historyByOwner :
+      Map__222667396<Principal, List__560604548<HistoryEntry__21676137>>;
+    historyIdsByOwner : Map__222667396<Principal, NextHistoryId__986329403>;
+    openAIApiKey : {var value : ?Text};
+    preferencesByOwner : Map__222667396<Principal, Preferences__273479893>;
+    workflowIdsByOwner : Map__222667396<Principal, NextWorkflowId__818629449>;
+    workflowsByOwner :
+      Map__222667396<Principal, List__560604548<Workflow__292346919>>
+  };
+type NextHistoryId__986329403 = {var next : Nat};
+type NextWorkflowId__818629449 = {var next : Nat};
+type Node__1000929467<K, V> =
+  {#internal : Internal__41346355<K, V>; #leaf : Leaf__712614010<K, V>};
+type OldActor__1028436379 = {};
+type Owner__432551029 = Principal;
+type Preferences__273479893 =
+  {
+    dApps : [PreferredDApp__643643477];
+    notes : Text;
+    rules : [Rule__277570396]
+  };
+type Preferences__748046753 =
+  {
+    dApps : [PreferredDApp__246777288];
+    notes : Text;
+    rules : [Rule__450962524]
+  };
+type PreferredDApp__246777288 =
+  {canisterId : Text; friendlyName : Text; id : Nat};
+type PreferredDApp__643643477 =
+  {canisterId : Text; friendlyName : Text; id : Nat};
+type Rule__277570396 = {id : Nat; text : Text};
+type Rule__450962524 = {id : Nat; text : Text};
+type Timestamp__301639476 = Int;
+type UserRole__686137147 = {#admin; #guest; #user};
+type UserRole__690129077 = {#admin; #guest; #user};
+type WorkflowId__118771061 = Nat;
+type Workflow__292346919 =
+  {
+    createdAt : Int;
+    description : Text;
+    favorite : Bool;
+    id : Nat;
+    name : Text;
+    owner : Principal;
+    planText : Text;
+    tags : [Text];
+    updatedAt : Int
+  };
+type Workflow__582877400 =
+  {
+    createdAt : Timestamp__301639476;
+    description : Text;
+    favorite : Bool;
+    id : WorkflowId__118771061;
+    name : Text;
+    owner : Owner__432551029;
+    planText : Text;
+    tags : [Text];
+    updatedAt : Timestamp__301639476
+  };
+{
+  "20260724_104324" : (_old : OldActor__1028436379) -> NewActor__380078096
+}
+actor  {
+  stable accessControlState :
+    {
+      var adminAssigned : Bool;
+      userRoles : Map__222667396<Principal, UserRole__686137147>
+    };
+  stable historyByOwner :
+    {
+      var root :
+        Node__1000929467<Owner__432551029,
+                          List__560604548<HistoryEntry__884137351>>;
+      var size : Nat__1040412405
+    };
+  stable historyIdsByOwner :
+    {
+      var root :
+        Node__1000929467<Owner__432551029, {var next : HistoryId__837803635}>;
+      var size : Nat__1040412405
+    };
+  stable openAIApiKey : {var value : ?Text};
+  stable preferencesByOwner :
+    {
+      var root : Node__1000929467<Owner__432551029, Preferences__748046753>;
+      var size : Nat__1040412405
+    };
+  stable workflowIdsByOwner :
+    {
+      var root :
+        Node__1000929467<Owner__432551029, {var next : WorkflowId__118771061}>;
+      var size : Nat__1040412405
+    };
+  stable workflowsByOwner :
+    {
+      var root :
+        Node__1000929467<Owner__432551029,
+                          List__560604548<Workflow__582877400>>;
+      var size : Nat__1040412405
+    }
+};

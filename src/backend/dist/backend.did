@@ -1,0 +1,142 @@
+type WorkflowId = nat;
+type Workflow = 
+ record {
+   createdAt: Timestamp;
+   description: text;
+   favorite: bool;
+   id: WorkflowId;
+   name: text;
+   owner: Owner;
+   planText: text;
+   tags: vec text;
+   updatedAt: Timestamp;
+ };
+type Value = 
+ variant {
+   "bool": bool;
+   float: float64;
+   "int": int;
+   "nat": nat;
+   "null";
+   "text": text;
+ };
+type UserRole = 
+ variant {
+   admin;
+   guest;
+   user;
+ };
+type Timestamp = int;
+type Rule = 
+ record {
+   id: nat;
+   "text": text;
+ };
+type Result__1 = 
+ variant {
+   err: Error;
+   ok;
+ };
+type Result = 
+ record {
+   hasMore: bool;
+   rows: vec vec Cell;
+ };
+type PreferredDApp = 
+ record {
+   canisterId: text;
+   friendlyName: text;
+   id: nat;
+ };
+type Preferences = 
+ record {
+   dApps: vec PreferredDApp;
+   notes: text;
+   rules: vec Rule;
+ };
+type PlanResult = record {planText: text;};
+type Owner = principal;
+type HistoryId = nat;
+type HistoryEntry = 
+ record {
+   createdAt: Timestamp;
+   goal: text;
+   id: HistoryId;
+   owner: Owner;
+   planText: text;
+ };
+type Error = 
+ variant {
+   AmbiguousAttribute: record {
+                         field: text;
+                         sources: vec text;
+                       };
+   FrontendOriginMismatch: record {
+                             expected: vec text;
+                             got: text;
+                           };
+   FrontendOriginsNotConfigured;
+   MalformedCandid;
+   MissingField: text;
+   MixedSsoSources: record {
+                      otherKeys: vec text;
+                      ssoKeys: vec text;
+                    };
+   NoAttributes;
+   Stale: record {ageNs: nat;};
+   UnknownNonce;
+   UntrustedSsoSource: record {domain: text;};
+ };
+type Conversation = record {messages: vec ChatMessage;};
+type ChatRole = 
+ variant {
+   assistant;
+   user;
+ };
+type ChatMessage = 
+ record {
+   content: text;
+   role: ChatRole;
+   timestamp: Timestamp;
+ };
+type Cell = 
+ record {
+   name: text;
+   value: Value;
+ };
+service : {
+  _initialize_access_control: () -> ();
+  _internet_identity_sign_in_finish: () -> (Result__1);
+  _internet_identity_sign_in_start: () -> (blob);
+  addDApp: (friendlyName: text, canisterId: text) -> (Preferences);
+  addRule: ("text": text) -> (Preferences);
+  assignCallerUserRole: (user: principal, role: UserRole) -> ();
+  createWorkflow: (name: text, description: text, tags: vec text, planText:
+   text, favorite: bool) -> (Workflow);
+  deleteDApp: (id: nat) -> (Preferences);
+  deleteHistoryEntry: (id: HistoryId) -> (bool);
+  deleteRule: (id: nat) -> (Preferences);
+  deleteWorkflow: (id: WorkflowId) -> (bool);
+  duplicateWorkflow: (id: WorkflowId) -> (opt Workflow);
+  execute: (qJson: text) -> (Result) query;
+  exportWorkflowMarkdown: (id: WorkflowId) -> (opt text) query;
+  generatePlan: (goal: text, conversation: Conversation) -> (PlanResult);
+  getCallerUserRole: () -> (UserRole) query;
+  getHistoryEntry: (id: HistoryId) -> (opt HistoryEntry) query;
+  getPreferences: () -> (opt Preferences) query;
+  getWorkflow: (id: WorkflowId) -> (opt Workflow) query;
+  isCallerAdmin: () -> (bool) query;
+  isOpenAIConfigured: () -> (bool) query;
+  listHistory: () -> (vec HistoryEntry) query;
+  listWorkflows: () -> (vec Workflow) query;
+  refinePlan: (instruction: text, conversation: Conversation) -> (PlanResult);
+  savePreferences: (prefs: Preferences) -> (Preferences);
+  schema: () -> (text) query;
+  searchWorkflows: (searchText: text) -> (vec Workflow) query;
+  setNotes: (notes: text) -> (Preferences);
+  setOpenAIApiKey: (key: text) -> ();
+  toggleFavorite: (id: WorkflowId) -> (opt Workflow);
+  updateDApp: (dApp: PreferredDApp) -> (Preferences);
+  updateRule: (rule: Rule) -> (Preferences);
+  updateWorkflow: (workflow: Workflow) -> (opt Workflow);
+}

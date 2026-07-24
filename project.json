@@ -1,0 +1,23 @@
+{
+  "overview": "A personal control center for a cross-app AI agent on the Internet Computer — describe goals in chat, get Claude-optimized plans, save reusable workflows, and manage on-chain preferences.",
+  "features": [
+    "Log in with Internet Identity and see your principal",
+    "Describe cross-dApp goals in a chat and get structured plans optimized for Claude + ICP MCP",
+    "Refine plans through conversation and copy them to clipboard",
+    "Save plans as reusable workflows with tags and favorites",
+    "Search, edit, duplicate, delete, and export workflows as markdown",
+    "Store preferred dApps, canister IDs, personal rules, and persistent notes on-chain",
+    "Dashboard with recent plans, workflow count, and onboarding for new users",
+    "History log of all generated plans with timestamps and re-open support"
+  ],
+  "category": "productivity",
+  "tags": [
+    "ai-agent",
+    "internet-identity",
+    "workflow",
+    "planner",
+    "motoko",
+    "dark-mode"
+  ],
+  "last_updated": "2026-07-24T10:42:01.753Z"
+}

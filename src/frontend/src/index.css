@@ -1,0 +1,191 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "Space Grotesk";
+  src: url("/assets/fonts/SpaceGrotesk.woff2") format("woff2");
+  font-display: swap;
+  font-weight: 300 700;
+}
+
+@font-face {
+  font-family: "General Sans";
+  src: url("/assets/fonts/GeneralSans.woff2") format("woff2");
+  font-display: swap;
+  font-weight: 400 700;
+}
+
+@font-face {
+  font-family: "Geist Mono";
+  src: url("/assets/fonts/GeistMono.woff2") format("woff2");
+  font-display: swap;
+  font-weight: 400 600;
+}
+
+@layer base {
+  :root {
+    --font-display: "Space Grotesk";
+    --font-body: "General Sans";
+    --font-mono: "Geist Mono";
+    --radius: 0.5rem;
+
+    /* Light mode — neutral grayscale canvas, cyan accent reserved for primary/ring */
+    --background: 0.99 0.004 250;
+    --foreground: 0.16 0.01 250;
+    --card: 1.0 0.0 0;
+    --card-foreground: 0.16 0.01 250;
+    --popover: 1.0 0.0 0;
+    --popover-foreground: 0.16 0.01 250;
+
+    --primary: 0.55 0.18 200;
+    --primary-foreground: 0.985 0.004 200;
+
+    --secondary: 0.96 0.006 250;
+    --secondary-foreground: 0.22 0.01 250;
+    --muted: 0.96 0.006 250;
+    --muted-foreground: 0.5 0.01 250;
+
+    --accent: 0.55 0.18 200;
+    --accent-foreground: 0.985 0.004 200;
+
+    --destructive: 0.55 0.22 25;
+    --destructive-foreground: 0.985 0.004 25;
+
+    --success: 0.6 0.16 150;
+    --warning: 0.72 0.15 85;
+
+    --border: 0.9 0.006 250;
+    --input: 0.9 0.006 250;
+    --ring: 0.55 0.18 200;
+
+    --chart-1: 0.55 0.18 200;
+    --chart-2: 0.62 0.14 250;
+    --chart-3: 0.7 0.15 145;
+    --chart-4: 0.72 0.15 85;
+    --chart-5: 0.6 0.2 25;
+
+    --sidebar: 0.975 0.004 250;
+    --sidebar-foreground: 0.16 0.01 250;
+    --sidebar-primary: 0.55 0.18 200;
+    --sidebar-primary-foreground: 0.985 0.004 200;
+    --sidebar-accent: 0.94 0.006 250;
+    --sidebar-accent-foreground: 0.22 0.01 250;
+    --sidebar-border: 0.9 0.006 250;
+    --sidebar-ring: 0.55 0.18 200;
+
+    --gradient-subtle: linear-gradient(
+      180deg,
+      oklch(0.99 0.004 250) 0%,
+      oklch(0.96 0.006 250) 100%
+    );
+    --gradient-accent: linear-gradient(
+      135deg,
+      oklch(0.6 0.18 200) 0%,
+      oklch(0.5 0.16 220) 100%
+    );
+    --transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .dark {
+    /* Dark mode (primary) — near-pure neutral grayscale, electric cyan accent */
+    --background: 0.145 0.006 250;
+    --foreground: 0.93 0.008 250;
+    --card: 0.175 0.008 250;
+    --card-foreground: 0.93 0.008 250;
+    --popover: 0.19 0.008 250;
+    --popover-foreground: 0.93 0.008 250;
+
+    --primary: 0.78 0.16 200;
+    --primary-foreground: 0.145 0.006 250;
+
+    --secondary: 0.22 0.008 250;
+    --secondary-foreground: 0.88 0.008 250;
+    --muted: 0.2 0.008 250;
+    --muted-foreground: 0.58 0.008 250;
+
+    --accent: 0.78 0.16 200;
+    --accent-foreground: 0.145 0.006 250;
+
+    --destructive: 0.6 0.2 25;
+    --destructive-foreground: 0.145 0.006 25;
+
+    --success: 0.7 0.16 150;
+    --warning: 0.78 0.15 85;
+
+    --border: 0.27 0.008 250;
+    --input: 0.27 0.008 250;
+    --ring: 0.78 0.16 200;
+
+    --chart-1: 0.78 0.16 200;
+    --chart-2: 0.65 0.14 250;
+    --chart-3: 0.7 0.15 145;
+    --chart-4: 0.75 0.15 85;
+    --chart-5: 0.65 0.2 25;
+
+    --sidebar: 0.17 0.008 250;
+    --sidebar-foreground: 0.93 0.008 250;
+    --sidebar-primary: 0.78 0.16 200;
+    --sidebar-primary-foreground: 0.145 0.006 250;
+    --sidebar-accent: 0.21 0.008 250;
+    --sidebar-accent-foreground: 0.88 0.008 250;
+    --sidebar-border: 0.27 0.008 250;
+    --sidebar-ring: 0.78 0.16 200;
+
+    --gradient-subtle: linear-gradient(
+      180deg,
+      oklch(0.145 0.006 250) 0%,
+      oklch(0.175 0.008 250) 100%
+    );
+    --gradient-accent: linear-gradient(
+      135deg,
+      oklch(0.82 0.16 200) 0%,
+      oklch(0.7 0.14 220) 100%
+    );
+  }
+
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+    font-feature-settings: "cv11", "ss01";
+    font-variation-settings: "opsz" 32;
+  }
+  ::selection {
+    background-color: oklch(var(--primary) / 0.25);
+  }
+}
+
+@layer utilities {
+  .transition-smooth {
+    transition: var(--transition-smooth);
+  }
+  .bg-gradient-subtle {
+    background-image: var(--gradient-subtle);
+  }
+  .bg-gradient-accent {
+    background-image: var(--gradient-accent);
+  }
+  .text-gradient-accent {
+    background-image: var(--gradient-accent);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: oklch(var(--border)) transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: oklch(var(--border));
+    border-radius: 3px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
