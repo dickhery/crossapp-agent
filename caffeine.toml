@@ -2,7 +2,7 @@ manifest_version = "0.1.0"
 
 [project]
 id = "my-app"
-name = "CrossApp Agent"
+name = "ICP MCP Server Assistant"
 
 [workspace]
 include = ["src/**"]

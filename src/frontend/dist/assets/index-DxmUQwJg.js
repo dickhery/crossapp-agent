@@ -42053,6 +42053,9 @@ function Button({
     }
   );
 }
+const APP_NAME = "ICP MCP Server Assistant";
+const APP_TAGLINE = "setup · memory · workflows";
+const APP_SUBTITLE = "Configure the IC MCP connector, store on-chain memory, and copy workflows into Grok or Claude.";
 const NAV_ITEMS = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard, ocid: "nav.dashboard" },
   { to: "/setup", label: "Setup", icon: Plug, ocid: "nav.setup" },
@@ -42082,8 +42085,8 @@ function Sidebar() {
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex h-16 items-center gap-2 border-b border-border px-4", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Sparkles, { className: "h-4 w-4", "aria-hidden": true }) }),
           !collapsed && /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "truncate font-display text-sm font-semibold tracking-tight text-foreground", children: "CrossApp Agent" }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "truncate font-mono text-[10px] uppercase tracking-widest text-muted-foreground", children: "on-chain · icp" })
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "truncate font-display text-sm font-semibold tracking-tight text-foreground", children: APP_NAME }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "truncate font-mono text-[10px] uppercase tracking-widest text-muted-foreground", children: APP_TAGLINE })
           ] })
         ] }),
         /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -42186,7 +42189,7 @@ function MobileSidebar({
               /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex h-16 items-center justify-between border-b border-border px-4", children: [
                 /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
                   /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Sparkles, { className: "h-4 w-4", "aria-hidden": true }) }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-display text-sm font-semibold tracking-tight text-foreground", children: "CrossApp Agent" })
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-display text-sm font-semibold tracking-tight text-foreground", children: APP_NAME })
                 ] }),
                 /* @__PURE__ */ jsxRuntimeExports.jsx(
                   Button,
@@ -48955,6 +48958,8 @@ const II_TRUSTED_MCP_SETTINGS_URL = "https://id.ai/manage/settings";
 const MCP_DOCS_URL = "https://mcp.beta.id.ai/";
 const GROK_CONNECTORS_URL = "https://grok.com/connectors";
 const GROK_CHAT_URL = "https://grok.com/";
+const DEFAULT_CONNECTOR_DISPLAY_NAME = "Internet Computer MCP";
+const CONNECTOR_NAME_STORAGE_KEY = "icp-mcp-assistant.connectorDisplayName.v1";
 const AI_APPS = {
   grok: {
     connectorsUrl: GROK_CONNECTORS_URL,
@@ -48962,7 +48967,6 @@ const AI_APPS = {
     planNote: "Works on personal Grok accounts — no business plan required."
   },
   claude: {
-    /** Claude's Customize → Connectors surface (web + desktop). */
     connectorsUrl: "https://claude.ai/customize/connectors",
     docsUrl: "https://support.claude.com/en/articles/11176164-use-connectors-to-extend-claude-s-capabilities",
     planNote: "Custom connectors work on Free (1 custom), Pro, Max, Team, and Enterprise. UI label is Customize → Connectors, not Settings → Connectors."
@@ -48971,11 +48975,37 @@ const AI_APPS = {
     planNote: "Custom MCP / Apps usually needs Developer mode and is limited on consumer plans — Business or Enterprise is often required. Prefer Grok or Claude if you hit plan walls."
   }
 };
-function planClipboardPayload(planText) {
+function getConnectorDisplayName() {
+  try {
+    const raw = localStorage.getItem(CONNECTOR_NAME_STORAGE_KEY);
+    const trimmed = (raw == null ? void 0 : raw.trim()) ?? "";
+    return trimmed.length > 0 ? trimmed : DEFAULT_CONNECTOR_DISPLAY_NAME;
+  } catch {
+    return DEFAULT_CONNECTOR_DISPLAY_NAME;
+  }
+}
+function setConnectorDisplayName(name) {
+  const trimmed = name.trim();
+  try {
+    if (trimmed.length === 0) {
+      localStorage.removeItem(CONNECTOR_NAME_STORAGE_KEY);
+    } else {
+      const limited = trimmed.slice(0, 80);
+      localStorage.setItem(CONNECTOR_NAME_STORAGE_KEY, limited);
+      return limited;
+    }
+  } catch {
+  }
+  return getConnectorDisplayName();
+}
+function planClipboardPayload(planText, connectorDisplayName) {
+  const name = ((connectorDisplayName == null ? void 0 : connectorDisplayName.trim()) || getConnectorDisplayName()).trim();
+  const label = name.length > 0 ? name : DEFAULT_CONNECTOR_DISPLAY_NAME;
   return [
-    "You are my Internet Computer agent. Execute this workflow using the IC MCP connector.",
-    `MCP connector URL (must already be connected in this chat): ${MCP_CONNECTOR_URL}`,
-    "If IC MCP tools are missing, stop and tell me to connect the custom MCP server first.",
+    "You are my Internet Computer agent. Execute this workflow using my IC MCP connector.",
+    `Use the MCP connector named exactly: "${label}"`,
+    `That connector's server URL is: ${MCP_CONNECTOR_URL}`,
+    `In this chat, only use tools from "${label}". If that connector is not enabled for this conversation, stop and tell me to turn on "${label}" (or reconnect it) before continuing.`,
     "Prefer read-only tools first: canister_query, discovery, get_canister_candid, get_app_principal, resolve_app.",
     "Ask me before any write/delete (canister_update_call, top-up, install, delete).",
     "Respect every personal rule mentioned in the plan. Be cycle-conscious: no redundant loops; check icp_cycles_balance before create/top-up.",
@@ -48984,6 +49014,25 @@ function planClipboardPayload(planText) {
     "--- WORKFLOW ---",
     planText.trim()
   ].join("\n");
+}
+function useConnectorDisplayName() {
+  const [name, setNameState] = reactExports.useState(() => getConnectorDisplayName());
+  const save = reactExports.useCallback((next) => {
+    const saved = setConnectorDisplayName(next);
+    setNameState(saved);
+    return saved;
+  }, []);
+  const reset = reactExports.useCallback(() => {
+    const saved = setConnectorDisplayName("");
+    setNameState(saved);
+    return saved;
+  }, []);
+  return {
+    connectorName: name,
+    defaultName: DEFAULT_CONNECTOR_DISPLAY_NAME,
+    saveConnectorName: save,
+    resetConnectorName: reset
+  };
 }
 function PlanDisplay({
   planText,
@@ -48994,12 +49043,15 @@ function PlanDisplay({
   className
 }) {
   const [copied, setCopied] = reactExports.useState(false);
+  const { connectorName } = useConnectorDisplayName();
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(planClipboardPayload(planText));
+      await navigator.clipboard.writeText(
+        planClipboardPayload(planText, connectorName)
+      );
       setCopied(true);
       ue.success(
-        "Workflow copied — paste into Grok (or Claude) with the IC MCP connector on"
+        `Workflow copied — paste into Grok/Claude with "${connectorName}" enabled`
       );
       window.setTimeout(() => setCopied(false), 2e3);
     } catch {
@@ -49008,9 +49060,11 @@ function PlanDisplay({
   };
   const handleOpenGrok = async () => {
     try {
-      await navigator.clipboard.writeText(planClipboardPayload(planText));
+      await navigator.clipboard.writeText(
+        planClipboardPayload(planText, connectorName)
+      );
       ue.success(
-        "Copied to clipboard. Paste into Grok after the tab opens."
+        `Copied for "${connectorName}". Paste into Grok after the tab opens.`
       );
     } catch {
     }
@@ -49120,7 +49174,7 @@ function PlanDisplay({
                 /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { children: [
                   "Finish ",
                   /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "Setup" }),
-                  " once: trust the IC MCP URL in Internet Identity, then add the same URL in",
+                  " once: trust the IC MCP URL in Internet Identity, add it in",
                   " ",
                   /* @__PURE__ */ jsxRuntimeExports.jsx(
                     "a",
@@ -49133,21 +49187,39 @@ function PlanDisplay({
                     }
                   ),
                   " ",
-                  "(recommended) or Claude."
+                  "(or Claude), and save your connector display name if it differs from the default (yours:",
+                  " ",
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("strong", { className: "text-foreground", children: [
+                    '"',
+                    connectorName,
+                    '"'
+                  ] }),
+                  ")."
                 ] }),
                 /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { children: [
                   "Press ",
                   /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "Copy for MCP" }),
+                  " — the paste text tells the agent to use",
                   " ",
-                  "(includes the connector URL and safety rules)."
+                  /* @__PURE__ */ jsxRuntimeExports.jsxs("strong", { className: "text-foreground", children: [
+                    '"',
+                    connectorName,
+                    '"'
+                  ] }),
+                  "."
                 ] }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("li", { children: "Open a chat in that AI app with the IC MCP connector enabled for the conversation." }),
-                /* @__PURE__ */ jsxRuntimeExports.jsx("li", { children: "Paste the clipboard contents and send. The agent uses MCP tools under your Internet Identity grant." }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { children: [
+                  "Open a chat with",
+                  " ",
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: connectorName }),
+                  " enabled for that conversation."
+                ] }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("li", { children: "Paste and send. The agent uses MCP tools under your Internet Identity grant." }),
                 /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { children: [
                   "Optional: ",
                   /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "Save workflow" }),
                   " ",
-                  "here to reuse later from Workflows."
+                  "to reuse later from Workflows."
                 ] })
               ] })
             ]
@@ -50224,10 +50296,11 @@ function EmptyState$2() {
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-2", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-display text-xl font-semibold tracking-tight text-foreground", children: "Build workflows. Run them in your AI agent." }),
           /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "mx-auto max-w-lg text-sm text-muted-foreground", children: [
-            "CrossApp Agent helps you set up the IC MCP connector, store Memory (apps & rules), and draft numbered workflows with real MCP tool hints. Then ",
-            /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "Copy for MCP" }),
+            APP_NAME,
+            " helps you set up the IC MCP connector (with your custom connector name), store Memory (apps & rules), and draft numbered workflows with real MCP tool hints. Then",
             " ",
-            "and paste into Grok or Claude — the agent executes under your Internet Identity."
+            /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "Copy for MCP" }),
+            " and paste into Grok or Claude — the agent executes under your Internet Identity."
           ] }),
           /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-xs text-muted-foreground", children: [
             "New here? Complete",
@@ -50810,8 +50883,8 @@ function DashboardPage() {
         /* @__PURE__ */ jsxRuntimeExports.jsx(Sparkles, { className: "h-4 w-4", "aria-hidden": true }),
         /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-mono text-[11px] uppercase tracking-widest text-muted-foreground", children: "Overview" })
       ] }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl", children: "Setup, memory, and MCP workflows" }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "max-w-2xl text-sm leading-relaxed text-muted-foreground", children: "Configure the IC MCP connector, store the dApps your agent should know, and build numbered workflows to paste into Grok or Claude. This app plans and saves — your AI agent executes under your Internet Identity." })
+      /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl", children: APP_NAME }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "max-w-2xl text-sm leading-relaxed text-muted-foreground", children: "Configure the IC MCP connector (including the name you gave it in Grok/Claude), store the dApps your agent should know, and build numbered workflows to paste into your AI agent. This app plans and saves — execution happens under your Internet Identity in that agent." })
     ] }),
     /* @__PURE__ */ jsxRuntimeExports.jsxs(
       "div",
@@ -50821,8 +50894,17 @@ function DashboardPage() {
         children: [
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0 space-y-1", children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm font-medium text-foreground", children: "IC MCP connector" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-sm text-foreground", children: [
+              "Name for Copy for MCP:",
+              " ",
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "font-medium", children: [
+                '"',
+                getConnectorDisplayName(),
+                '"'
+              ] })
+            ] }),
             /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "truncate font-mono text-xs text-muted-foreground", children: MCP_CONNECTOR_URL }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-muted-foreground", children: openAiQuery.data === false ? "Template planner is active (no operator AI key). Workflows still use real MCP tool names — Copy for MCP into Grok/Claude." : openAiQuery.data === true ? "AI-assisted planning is on. Draft in Chat, then Copy for MCP into your connected AI agent." : "Checking planner status…" })
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-muted-foreground", children: openAiQuery.data === false ? "Template planner is active (no operator AI key). Set your connector name in Setup, then Copy for MCP into Grok/Claude." : openAiQuery.data === true ? "AI-assisted planning is on. Draft in Chat, then Copy for MCP (uses your connector name)." : "Checking planner status…" })
           ] }),
           /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { asChild: true, size: "sm", "data-ocid": "dashboard.setup_cta", children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Link, { to: "/setup", children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx(Plug, { className: "h-3.5 w-3.5", "aria-hidden": true }),
@@ -52035,7 +52117,7 @@ function MemoryPage() {
     }
   );
 }
-const SETUP_CHECKLIST_KEY = "crossapp.setup.checklist.v2";
+const SETUP_CHECKLIST_KEY = "icp-mcp-assistant.setup.checklist.v3";
 const DEFAULT_CHECKLIST = {
   trustedMcp: false,
   connectedAi: false,
@@ -52066,6 +52148,8 @@ function SetupPage() {
   const [activeApp, setActiveApp] = reactExports.useState(
     "grok"
   );
+  const { connectorName, defaultName, saveConnectorName, resetConnectorName } = useConnectorDisplayName();
+  const [nameDraft, setNameDraft] = reactExports.useState(connectorName);
   const toggle = (key) => {
     setChecklist((prev) => {
       const next = { ...prev, [key]: !prev[key] };
@@ -52083,6 +52167,13 @@ function SetupPage() {
       ue.error("Could not copy — select the URL and copy manually");
     }
   };
+  const saveName = () => {
+    const saved = saveConnectorName(nameDraft);
+    setNameDraft(saved);
+    ue.success("Connector name saved", {
+      description: `Copy for MCP will tell the agent to use "${saved}".`
+    });
+  };
   const doneCount = Object.values(checklist).filter(Boolean).length;
   const total = Object.keys(DEFAULT_CHECKLIST).length;
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("section", { "data-ocid": "setup.page", className: "space-y-8", children: [
@@ -52091,16 +52182,20 @@ function SetupPage() {
         /* @__PURE__ */ jsxRuntimeExports.jsx(Plug, { className: "h-4 w-4", "aria-hidden": true }),
         /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-mono text-[11px] uppercase tracking-widest text-muted-foreground", children: "Onboarding" })
       ] }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl", children: "Set up your CrossApp Agent" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsxs("h1", { className: "font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl", children: [
+        "Set up ",
+        APP_NAME
+      ] }),
       /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "max-w-3xl text-sm leading-relaxed text-muted-foreground", children: [
-        "CrossApp Agent is your",
+        APP_NAME,
+        " is your",
         " ",
         /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "setup + workflow studio" }),
         " ",
         "for the official Internet Computer MCP server. You configure Internet Identity, connect Grok or Claude to",
         " ",
         /* @__PURE__ */ jsxRuntimeExports.jsx("code", { className: "rounded bg-muted px-1 font-mono text-[11px]", children: MCP_CONNECTOR_URL }),
-        ", store Memory (apps & rules), then draft numbered workflows to",
+        ', optionally name that connector (e.g. "Agent Identity"), store Memory, then draft workflows to',
         " ",
         /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "copy and paste" }),
         " into your AI agent. This app does",
@@ -52191,6 +52286,91 @@ function SetupPage() {
         ] })
       }
     ),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "div",
+      {
+        "data-ocid": "setup.connector_name_card",
+        className: "space-y-3 rounded-xl border border-border bg-card p-5",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-1", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-display text-base font-semibold tracking-tight text-foreground", children: "Your connector name in Grok / Claude" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-sm text-muted-foreground", children: [
+              "When you add a custom MCP connector, the AI app lets you label it (e.g. ",
+              /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "Agent Identity" }),
+              "). Save that exact name here so",
+              " ",
+              /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "Copy for MCP" }),
+              " tells the agent to use that connector — not a generic label."
+            ] })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-3 sm:flex-row sm:items-end", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0 flex-1 space-y-1.5", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                Label,
+                {
+                  htmlFor: "connector-display-name",
+                  className: "text-xs text-muted-foreground",
+                  children: "Connector display name"
+                }
+              ),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                Input,
+                {
+                  id: "connector-display-name",
+                  "data-ocid": "setup.connector_name_input",
+                  value: nameDraft,
+                  onChange: (e) => setNameDraft(e.target.value),
+                  onKeyDown: (e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      saveName();
+                    }
+                  },
+                  placeholder: defaultName,
+                  maxLength: 80
+                }
+              ),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-[11px] text-muted-foreground", children: [
+                "Stored in this browser only (not on-chain). Current for copy:",
+                " ",
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "font-medium text-foreground", children: [
+                  '"',
+                  connectorName,
+                  '"'
+                ] })
+              ] })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex shrink-0 gap-2", children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                Button,
+                {
+                  type: "button",
+                  variant: "ghost",
+                  size: "sm",
+                  "data-ocid": "setup.connector_name_reset",
+                  onClick: () => {
+                    const saved = resetConnectorName();
+                    setNameDraft(saved);
+                    ue.message("Reset to default name");
+                  },
+                  children: "Reset"
+                }
+              ),
+              /* @__PURE__ */ jsxRuntimeExports.jsx(
+                Button,
+                {
+                  type: "button",
+                  size: "sm",
+                  "data-ocid": "setup.connector_name_save",
+                  onClick: saveName,
+                  children: "Save name"
+                }
+              )
+            ] })
+          ] })
+        ]
+      }
+    ),
     /* @__PURE__ */ jsxRuntimeExports.jsxs("ol", { className: "space-y-4", "data-ocid": "setup.steps", children: [
       /* @__PURE__ */ jsxRuntimeExports.jsx(
         StepCard,
@@ -52219,7 +52399,9 @@ function SetupPage() {
               /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { children: [
                 "Sign in with the ",
                 /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { children: "same" }),
-                " Internet Identity you use in this CrossApp Agent app."
+                " Internet Identity you use in ",
+                APP_NAME,
+                "."
               ] }),
               /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { children: [
                 "Find ",
@@ -52415,9 +52597,16 @@ function SetupPage() {
             /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { children: [
               "Press ",
               /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "Copy for MCP" }),
-              ". The clipboard includes the MCP URL, safety rules, and the step list."
+              ". The clipboard names your connector (",
+              /* @__PURE__ */ jsxRuntimeExports.jsx("em", { children: connectorName }),
+              "), includes the MCP URL, safety rules, and the step list."
             ] }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx("li", { children: "Open Grok (or Claude), enable the IC MCP connector for that chat, paste, and send. The AI agent calls MCP tools as you." }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { children: [
+              "Open Grok (or Claude), enable",
+              " ",
+              /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: connectorName }),
+              " for that chat, paste, and send. The AI agent calls MCP tools as you."
+            ] }),
             /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { children: [
               "Optional: press",
               " ",
@@ -52538,7 +52727,9 @@ function SetupPage() {
                   " ",
                   /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "read-only tools: Always allow" }),
                   " ",
-                  "and write tools on Ask. Start with a simple cycles-balance question. This CrossApp app only plans — it does not call the MCP server itself (keeps canister cycles low)."
+                  "and write tools on Ask. Start with a simple cycles-balance question. ",
+                  APP_NAME,
+                  " only plans — it does not call the MCP server itself (keeps canister cycles low)."
                 ] })
               }
             )
@@ -53855,7 +54046,7 @@ function LoginScreen() {
             {
               className: "font-display text-3xl font-semibold tracking-tight text-foreground",
               "data-ocid": "login.title",
-              children: "CrossApp Agent"
+              children: APP_NAME
             }
           ),
           /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -53863,7 +54054,7 @@ function LoginScreen() {
             {
               className: "mt-3 text-sm leading-relaxed text-muted-foreground",
               "data-ocid": "login.subtitle",
-              children: "Set up the IC MCP connector, store on-chain memory, and build workflows you copy into Grok or Claude — your AI agent executes under your Internet Identity."
+              children: APP_SUBTITLE
             }
           ),
           /* @__PURE__ */ jsxRuntimeExports.jsxs(

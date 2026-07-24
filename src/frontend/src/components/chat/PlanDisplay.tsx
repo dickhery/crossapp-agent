@@ -4,6 +4,7 @@ import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useConnectorDisplayName } from "@/hooks/use-connector-name";
 import {
   GROK_CHAT_URL,
   GROK_CONNECTORS_URL,
@@ -31,13 +32,16 @@ export function PlanDisplay({
   className,
 }: PlanDisplayProps) {
   const [copied, setCopied] = useState(false);
+  const { connectorName } = useConnectorDisplayName();
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(planClipboardPayload(planText));
+      await navigator.clipboard.writeText(
+        planClipboardPayload(planText, connectorName),
+      );
       setCopied(true);
       toast.success(
-        "Workflow copied — paste into Grok (or Claude) with the IC MCP connector on",
+        `Workflow copied — paste into Grok/Claude with "${connectorName}" enabled`,
       );
       window.setTimeout(() => setCopied(false), 2000);
     } catch {
@@ -47,9 +51,11 @@ export function PlanDisplay({
 
   const handleOpenGrok = async () => {
     try {
-      await navigator.clipboard.writeText(planClipboardPayload(planText));
+      await navigator.clipboard.writeText(
+        planClipboardPayload(planText, connectorName),
+      );
       toast.success(
-        "Copied to clipboard. Paste into Grok after the tab opens.",
+        `Copied for "${connectorName}". Paste into Grok after the tab opens.`,
       );
     } catch {
       // still open Grok
@@ -151,7 +157,7 @@ export function PlanDisplay({
         <ol className="list-decimal space-y-1 pl-4">
           <li>
             Finish <strong className="text-foreground">Setup</strong> once:
-            trust the IC MCP URL in Internet Identity, then add the same URL in{" "}
+            trust the IC MCP URL in Internet Identity, add it in{" "}
             <a
               href={GROK_CONNECTORS_URL}
               target="_blank"
@@ -160,23 +166,33 @@ export function PlanDisplay({
             >
               Grok connectors
             </a>{" "}
-            (recommended) or Claude.
+            (or Claude), and save your connector display name if it differs from
+            the default (yours:{" "}
+            <strong className="text-foreground">
+              &quot;{connectorName}&quot;
+            </strong>
+            ).
           </li>
           <li>
-            Press <strong className="text-foreground">Copy for MCP</strong>{" "}
-            (includes the connector URL and safety rules).
+            Press <strong className="text-foreground">Copy for MCP</strong> —
+            the paste text tells the agent to use{" "}
+            <strong className="text-foreground">
+              &quot;{connectorName}&quot;
+            </strong>
+            .
           </li>
           <li>
-            Open a chat in that AI app with the IC MCP connector enabled for the
-            conversation.
+            Open a chat with{" "}
+            <strong className="text-foreground">{connectorName}</strong> enabled
+            for that conversation.
           </li>
           <li>
-            Paste the clipboard contents and send. The agent uses MCP tools
-            under your Internet Identity grant.
+            Paste and send. The agent uses MCP tools under your Internet
+            Identity grant.
           </li>
           <li>
             Optional: <strong className="text-foreground">Save workflow</strong>{" "}
-            here to reuse later from Workflows.
+            to reuse later from Workflows.
           </li>
         </ol>
       </div>

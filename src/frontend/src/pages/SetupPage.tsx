@@ -16,6 +16,10 @@ import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useConnectorDisplayName } from "@/hooks/use-connector-name";
+import { APP_NAME } from "@/lib/brand";
 import {
   AI_APPS,
   II_TRUSTED_MCP_SETTINGS_URL,
@@ -24,7 +28,7 @@ import {
 } from "@/lib/mcp";
 import { cn } from "@/lib/utils";
 
-const SETUP_CHECKLIST_KEY = "crossapp.setup.checklist.v2";
+const SETUP_CHECKLIST_KEY = "icp-mcp-assistant.setup.checklist.v3";
 
 type ChecklistState = {
   trustedMcp: boolean;
@@ -68,6 +72,9 @@ export function SetupPage() {
   const [activeApp, setActiveApp] = useState<"grok" | "claude" | "chatgpt">(
     "grok",
   );
+  const { connectorName, defaultName, saveConnectorName, resetConnectorName } =
+    useConnectorDisplayName();
+  const [nameDraft, setNameDraft] = useState(connectorName);
 
   const toggle = (key: keyof ChecklistState) => {
     setChecklist((prev) => {
@@ -88,6 +95,14 @@ export function SetupPage() {
     }
   };
 
+  const saveName = () => {
+    const saved = saveConnectorName(nameDraft);
+    setNameDraft(saved);
+    toast.success("Connector name saved", {
+      description: `Copy for MCP will tell the agent to use "${saved}".`,
+    });
+  };
+
   const doneCount = Object.values(checklist).filter(Boolean).length;
   const total = Object.keys(DEFAULT_CHECKLIST).length;
 
@@ -101,17 +116,18 @@ export function SetupPage() {
           </span>
         </div>
         <h1 className="font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-          Set up your CrossApp Agent
+          Set up {APP_NAME}
         </h1>
         <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">
-          CrossApp Agent is your{" "}
+          {APP_NAME} is your{" "}
           <strong className="text-foreground">setup + workflow studio</strong>{" "}
           for the official Internet Computer MCP server. You configure Internet
           Identity, connect Grok or Claude to{" "}
           <code className="rounded bg-muted px-1 font-mono text-[11px]">
             {MCP_CONNECTOR_URL}
           </code>
-          , store Memory (apps &amp; rules), then draft numbered workflows to{" "}
+          , optionally name that connector (e.g. &quot;Agent Identity&quot;),
+          store Memory, then draft workflows to{" "}
           <strong className="text-foreground">copy and paste</strong> into your
           AI agent. This app does{" "}
           <strong className="text-foreground">not</strong> execute MCP tools
@@ -186,6 +202,78 @@ export function SetupPage() {
         </div>
       </div>
 
+      {/* Connector display name — used in Copy for MCP payloads */}
+      <div
+        data-ocid="setup.connector_name_card"
+        className="space-y-3 rounded-xl border border-border bg-card p-5"
+      >
+        <div className="space-y-1">
+          <h2 className="font-display text-base font-semibold tracking-tight text-foreground">
+            Your connector name in Grok / Claude
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            When you add a custom MCP connector, the AI app lets you label it
+            (e.g. <strong className="text-foreground">Agent Identity</strong>
+            ). Save that exact name here so{" "}
+            <strong className="text-foreground">Copy for MCP</strong> tells the
+            agent to use that connector — not a generic label.
+          </p>
+        </div>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+          <div className="min-w-0 flex-1 space-y-1.5">
+            <Label
+              htmlFor="connector-display-name"
+              className="text-xs text-muted-foreground"
+            >
+              Connector display name
+            </Label>
+            <Input
+              id="connector-display-name"
+              data-ocid="setup.connector_name_input"
+              value={nameDraft}
+              onChange={(e) => setNameDraft(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  saveName();
+                }
+              }}
+              placeholder={defaultName}
+              maxLength={80}
+            />
+            <p className="text-[11px] text-muted-foreground">
+              Stored in this browser only (not on-chain). Current for copy:{" "}
+              <span className="font-medium text-foreground">
+                &quot;{connectorName}&quot;
+              </span>
+            </p>
+          </div>
+          <div className="flex shrink-0 gap-2">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              data-ocid="setup.connector_name_reset"
+              onClick={() => {
+                const saved = resetConnectorName();
+                setNameDraft(saved);
+                toast.message("Reset to default name");
+              }}
+            >
+              Reset
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              data-ocid="setup.connector_name_save"
+              onClick={saveName}
+            >
+              Save name
+            </Button>
+          </div>
+        </div>
+      </div>
+
       {/* Step 1 — II */}
       <ol className="space-y-4" data-ocid="setup.steps">
         <StepCard
@@ -214,7 +302,7 @@ export function SetupPage() {
                 </li>
                 <li>
                   Sign in with the <strong>same</strong> Internet Identity you
-                  use in this CrossApp Agent app.
+                  use in {APP_NAME}.
                 </li>
                 <li>
                   Find <strong>Trusted MCP servers</strong> (wording may be
@@ -442,11 +530,13 @@ export function SetupPage() {
           </li>
           <li>
             Press <strong className="text-foreground">Copy for MCP</strong>. The
-            clipboard includes the MCP URL, safety rules, and the step list.
+            clipboard names your connector (<em>{connectorName}</em>), includes
+            the MCP URL, safety rules, and the step list.
           </li>
           <li>
-            Open Grok (or Claude), enable the IC MCP connector for that chat,
-            paste, and send. The AI agent calls MCP tools as you.
+            Open Grok (or Claude), enable{" "}
+            <strong className="text-foreground">{connectorName}</strong> for
+            that chat, paste, and send. The AI agent calls MCP tools as you.
           </li>
           <li>
             Optional: press{" "}
@@ -549,8 +639,8 @@ export function SetupPage() {
                   read-only tools: Always allow
                 </strong>{" "}
                 and write tools on Ask. Start with a simple cycles-balance
-                question. This CrossApp app only plans — it does not call the
-                MCP server itself (keeps canister cycles low).
+                question. {APP_NAME} only plans — it does not call the MCP
+                server itself (keeps canister cycles low).
               </>
             }
           />

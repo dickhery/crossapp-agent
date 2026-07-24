@@ -13,6 +13,7 @@ import {
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { APP_NAME, APP_TAGLINE } from "@/lib/brand";
 import { cn } from "@/lib/utils";
 
 type NavItem = {
@@ -58,10 +59,10 @@ export function Sidebar() {
         {!collapsed && (
           <div className="min-w-0">
             <p className="truncate font-display text-sm font-semibold tracking-tight text-foreground">
-              CrossApp Agent
+              {APP_NAME}
             </p>
             <p className="truncate font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-              on-chain · icp
+              {APP_TAGLINE}
             </p>
           </div>
         )}
@@ -173,7 +174,7 @@ export function MobileSidebar({
                 <Sparkles className="h-4 w-4" aria-hidden />
               </div>
               <span className="font-display text-sm font-semibold tracking-tight text-foreground">
-                CrossApp Agent
+                {APP_NAME}
               </span>
             </div>
             <Button

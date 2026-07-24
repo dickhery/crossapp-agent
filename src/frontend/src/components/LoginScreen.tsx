@@ -11,6 +11,7 @@ import { useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
+import { APP_NAME, APP_SUBTITLE } from "@/lib/brand";
 
 export function LoginScreen() {
   const { login, isLoggingIn, isLoginError, isAuthenticated, isInitializing } =
@@ -61,15 +62,13 @@ export function LoginScreen() {
           className="font-display text-3xl font-semibold tracking-tight text-foreground"
           data-ocid="login.title"
         >
-          CrossApp Agent
+          {APP_NAME}
         </h1>
         <p
           className="mt-3 text-sm leading-relaxed text-muted-foreground"
           data-ocid="login.subtitle"
         >
-          Set up the IC MCP connector, store on-chain memory, and build
-          workflows you copy into Grok or Claude — your AI agent executes under
-          your Internet Identity.
+          {APP_SUBTITLE}
         </p>
 
         <ul

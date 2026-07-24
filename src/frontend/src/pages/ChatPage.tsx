@@ -26,6 +26,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useGeneratePlan, useRefinePlan } from "@/hooks/use-chat";
 import { useGetHistoryEntry } from "@/hooks/use-history";
 import { useCreateWorkflow } from "@/hooks/use-workflows";
+import { APP_NAME } from "@/lib/brand";
 import type { Conversation } from "@/types";
 
 // ChatPage owns the single active conversation. Plans are MCP-ready workflows
@@ -371,11 +372,11 @@ function EmptyState() {
           Build workflows. Run them in your AI agent.
         </h2>
         <p className="mx-auto max-w-lg text-sm text-muted-foreground">
-          CrossApp Agent helps you set up the IC MCP connector, store Memory
-          (apps &amp; rules), and draft numbered workflows with real MCP tool
-          hints. Then <strong className="text-foreground">Copy for MCP</strong>{" "}
-          and paste into Grok or Claude — the agent executes under your Internet
-          Identity.
+          {APP_NAME} helps you set up the IC MCP connector (with your custom
+          connector name), store Memory (apps &amp; rules), and draft numbered
+          workflows with real MCP tool hints. Then{" "}
+          <strong className="text-foreground">Copy for MCP</strong> and paste
+          into Grok or Claude — the agent executes under your Internet Identity.
         </p>
         <p className="text-xs text-muted-foreground">
           New here? Complete{" "}

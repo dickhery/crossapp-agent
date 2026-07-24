@@ -17,7 +17,8 @@ import { useListHistory } from "@/hooks/use-history";
 import { useIsOpenAIConfigured } from "@/hooks/use-openai-status";
 import { useGetPreferences } from "@/hooks/use-preferences";
 import { useListWorkflows } from "@/hooks/use-workflows";
-import { MCP_CONNECTOR_URL } from "@/lib/mcp";
+import { APP_NAME } from "@/lib/brand";
+import { MCP_CONNECTOR_URL, getConnectorDisplayName } from "@/lib/mcp";
 
 const QUICK_ACCESS = [
   {
@@ -109,13 +110,13 @@ export default function DashboardPage() {
           </span>
         </div>
         <h1 className="font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-          Setup, memory, and MCP workflows
+          {APP_NAME}
         </h1>
         <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
-          Configure the IC MCP connector, store the dApps your agent should
-          know, and build numbered workflows to paste into Grok or Claude. This
-          app plans and saves — your AI agent executes under your Internet
-          Identity.
+          Configure the IC MCP connector (including the name you gave it in
+          Grok/Claude), store the dApps your agent should know, and build
+          numbered workflows to paste into your AI agent. This app plans and
+          saves — execution happens under your Internet Identity in that agent.
         </p>
       </header>
 
@@ -127,14 +128,20 @@ export default function DashboardPage() {
           <p className="text-sm font-medium text-foreground">
             IC MCP connector
           </p>
+          <p className="text-sm text-foreground">
+            Name for Copy for MCP:{" "}
+            <span className="font-medium">
+              &quot;{getConnectorDisplayName()}&quot;
+            </span>
+          </p>
           <p className="truncate font-mono text-xs text-muted-foreground">
             {MCP_CONNECTOR_URL}
           </p>
           <p className="text-xs text-muted-foreground">
             {openAiQuery.data === false
-              ? "Template planner is active (no operator AI key). Workflows still use real MCP tool names — Copy for MCP into Grok/Claude."
+              ? "Template planner is active (no operator AI key). Set your connector name in Setup, then Copy for MCP into Grok/Claude."
               : openAiQuery.data === true
-                ? "AI-assisted planning is on. Draft in Chat, then Copy for MCP into your connected AI agent."
+                ? "AI-assisted planning is on. Draft in Chat, then Copy for MCP (uses your connector name)."
                 : "Checking planner status…"}
           </p>
         </div>

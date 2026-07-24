@@ -31,4 +31,6 @@
 - Keep Caffeine import shape: root `caffeine.toml` with `[workspace]`, single Motoko canister named `backend`, generated `backend.ts`/`declarations/` only via bindgen, `env.json` + `copy:env`, and `skipIfMissing = true` on check-stable.
 - Prefer offline template plans when OpenAI is unset so plan generation does not require HTTPS outcalls (cycles + operability).
 - Never treat a successful `null`/empty preferences response as "still loading". Memory page used `isFetching && !data` while `getPreferences` returned null for first-time users; combined with `useActor`'s invalidate-on-mount, that caused an infinite skeleton loop. Return empty Preferences defaults from the backend query and only skeleton when `data === undefined` before first fetch.
-- CrossApp Agent is a **setup + workflow studio**, not an MCP executor. Users connect Grok/Claude to `https://mcp.beta.id.ai/mcp-prod`, draft plans here, then **Copy for MCP**. Do not reintroduce in-app MCP OAuth execution unless DFINITY allow-lists the hosted origin.
+- Product name in UI: **ICP MCP Server Assistant** (`src/frontend/src/lib/brand.ts`). Backend canister stays `backend`.
+- Users may name their Grok/Claude connector (e.g. "Agent Identity"). That label is stored in **localStorage** via `getConnectorDisplayName` / `setConnectorDisplayName` and embedded in **Copy for MCP** payloads — no canister state, zero cycles.
+- This app is a **setup + workflow studio**, not an MCP executor. Users connect Grok/Claude to `https://mcp.beta.id.ai/mcp-prod`, draft plans here, then **Copy for MCP**.

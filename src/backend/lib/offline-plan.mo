@@ -61,11 +61,11 @@ module {
     if (balance) {
       var balSteps : [Text] = [
         "Confirm the IC MCP connector is trusted in Internet Identity and connected in Grok or Claude.",
-        "Identify the ICP ledger canister ryjl3-tyaaa-aaaaa-aaaba-cai (or the ledger registered in CrossApp Memory).",
+        "Identify the ICP ledger canister ryjl3-tyaaa-aaaaa-aaaba-cai (or the ledger registered in ICP MCP Server Assistant Memory).",
         "Resolve the NNS app (MCP: resolve_app https://nns.ic0.app or icp_find_app_by_name).",
         "Get your principal at NNS (MCP: get_app_principal) and list accounts if needed (MCP: list_app_accounts).",
         "Query ICP balance as that principal (MCP: canister_query on the ledger icrc1_balance_of) and report the amount in ICP.",
-        "If the user only wants this CrossApp app principal's balance, query the same ledger with that principal instead and say so clearly.",
+        "If the user only wants their principal at the assistant app origin, query the same ledger with that principal instead and say so clearly.",
       ];
       if (prefs.dApps.size() > 0) {
         balSteps := balSteps.concat([
