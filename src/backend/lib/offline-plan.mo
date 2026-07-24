@@ -60,11 +60,12 @@ module {
     // template and produce swap/approve steps for a simple ICP balance goal.
     if (balance) {
       var balSteps : [Text] = [
-        "Identify the ICP ledger canister ryjl3-tyaaa-aaaaa-aaaba-cai (or the ledger in Memory).",
-        "In CrossApp Agent press Run now to query icrc1_balance_of for your principal at this app (browser → IC, no backend cycles).",
-        "For your NNS dapp principal balance, use Grok + IC MCP: resolve_app https://nns.ic0.app (MCP: resolve_app).",
+        "Confirm the IC MCP connector is trusted in Internet Identity and connected in Grok or Claude.",
+        "Identify the ICP ledger canister ryjl3-tyaaa-aaaaa-aaaba-cai (or the ledger registered in CrossApp Memory).",
+        "Resolve the NNS app (MCP: resolve_app https://nns.ic0.app or icp_find_app_by_name).",
         "Get your principal at NNS (MCP: get_app_principal) and list accounts if needed (MCP: list_app_accounts).",
         "Query ICP balance as that principal (MCP: canister_query on the ledger icrc1_balance_of) and report the amount in ICP.",
+        "If the user only wants this CrossApp app principal's balance, query the same ledger with that principal instead and say so clearly.",
       ];
       if (prefs.dApps.size() > 0) {
         balSteps := balSteps.concat([

@@ -67,8 +67,9 @@ export function LoginScreen() {
           className="mt-3 text-sm leading-relaxed text-muted-foreground"
           data-ocid="login.subtitle"
         >
-          One agent, every IC dApp. Plan cross-app moves on-chain, then run them
-          through the Internet Computer MCP server under your Internet Identity.
+          Set up the IC MCP connector, store on-chain memory, and build
+          workflows you copy into Grok or Claude — your AI agent executes under
+          your Internet Identity.
         </p>
 
         <ul
@@ -78,22 +79,22 @@ export function LoginScreen() {
           <li className="flex gap-2">
             <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
             <span>
-              Sign in here to store plans, memory, and preferences under your II
+              Sign in to store Memory, plans, and workflows under your II
               principal.
             </span>
           </li>
           <li className="flex gap-2">
             <Workflow className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
             <span>
-              Trust the IC MCP server once, then let Grok, Claude, or ChatGPT
-              act on IC as you.
+              Trust the IC MCP URL once, connect it in Grok (recommended) or
+              Claude.
             </span>
           </li>
           <li className="flex gap-2">
             <ArrowRight className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
             <span>
-              After login, open Setup — Grok is the easiest path if Claude
-              Connectors or ChatGPT Apps are hard to find.
+              After login: Setup → Memory → Chat → Copy for MCP into your AI
+              agent.
             </span>
           </li>
         </ul>

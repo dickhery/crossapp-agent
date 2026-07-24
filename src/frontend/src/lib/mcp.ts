@@ -42,13 +42,15 @@ export type AiAppId = keyof typeof AI_APPS;
 /** Prefix pasted into Grok / Claude / ChatGPT so the agent executes via IC MCP. */
 export function planClipboardPayload(planText: string): string {
   return [
-    "Execute this Internet Computer cross-app plan using the IC MCP connector.",
-    `MCP URL: ${MCP_CONNECTOR_URL}`,
-    "If the IC MCP tools are not already connected in this chat, connect them first, then run the plan.",
-    "Prefer read-only tools (canister_query, discovery, get_canister_candid) before any canister_update_call.",
-    "Confirm write/delete actions with me. Respect every personal rule listed in the plan.",
-    "Be cycle-conscious: no redundant status loops; check icp_cycles_balance before create/top-up.",
+    "You are my Internet Computer agent. Execute this workflow using the IC MCP connector.",
+    `MCP connector URL (must already be connected in this chat): ${MCP_CONNECTOR_URL}`,
+    "If IC MCP tools are missing, stop and tell me to connect the custom MCP server first.",
+    "Prefer read-only tools first: canister_query, discovery, get_canister_candid, get_app_principal, resolve_app.",
+    "Ask me before any write/delete (canister_update_call, top-up, install, delete).",
+    "Respect every personal rule mentioned in the plan. Be cycle-conscious: no redundant loops; check icp_cycles_balance before create/top-up.",
+    "When done, summarize results clearly (balances, principals, what changed).",
     "",
+    "--- WORKFLOW ---",
     planText.trim(),
   ].join("\n");
 }

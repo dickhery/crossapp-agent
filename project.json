@@ -1,13 +1,13 @@
 {
-  "overview": "True Cross-App Personal Agent — plan multi-dApp Internet Computer workflows on-chain, configure Internet Identity + the official IC MCP server, and run plans from Grok, Claude, or ChatGPT under your II.",
+  "overview": "CrossApp Agent — set up the official IC MCP connector, store on-chain memory (dApps, rules, notes), and draft MCP-ready workflows to copy into Grok or Claude under your Internet Identity.",
   "features": [
     "Log in with Internet Identity and see your principal",
-    "Guided Setup for trusting the IC MCP server (mcp.beta.id.ai) with step-by-step Grok, Claude, and ChatGPT connector paths",
-    "Grok recommended path via grok.com/connectors custom MCP (no business plan required)",
-    "Run now: execute read-only IC queries in the browser (e.g. ICP ledger balance) and show results in chat",
+    "Guided Setup for trusting the IC MCP server (mcp.beta.id.ai) with Grok, Claude, and ChatGPT paths",
+    "Thorough how-to for creating workflows and running them in an external AI agent",
+    "Grok recommended path via grok.com/connectors custom MCP",
     "Describe cross-dApp goals in chat and get numbered plans with real MCP tool hints",
     "Offline template planner when the operator AI key is not set — still MCP-tool-aware",
-    "Copy plans for MCP (clipboard preamble + connector URL) and save as reusable workflows",
+    "Copy for MCP (clipboard preamble + connector URL) and save reusable workflows on-chain",
     "Store preferred dApps, canister IDs, personal rules, and notes on-chain",
     "Dashboard with MCP status, recent plans, and first-time onboarding",
     "History log of generated plans with re-open support",
@@ -24,5 +24,5 @@
     "motoko",
     "dark-mode"
   ],
-  "last_updated": "2026-07-24T12:00:00.000Z"
+  "last_updated": "2026-07-24T16:00:00.000Z"
 }

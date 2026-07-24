@@ -104,13 +104,18 @@ export function SetupPage() {
           Set up your CrossApp Agent
         </h1>
         <p className="max-w-3xl text-sm leading-relaxed text-muted-foreground">
-          This app is the <strong className="text-foreground">planner</strong>{" "}
-          and can <strong className="text-foreground">Run now</strong> for
-          read-only IC queries in your browser (e.g. ICP ledger balance for your
-          principal here). Full multi-app MCP actions (act as you at NNS and
-          other dApps) still need Grok/Claude with the IC MCP connector — remote
-          MCP OAuth only allows loopback or DFINITY-allowlisted redirect
-          domains, so this hosted SPA cannot complete the MCP login itself.
+          CrossApp Agent is your{" "}
+          <strong className="text-foreground">setup + workflow studio</strong>{" "}
+          for the official Internet Computer MCP server. You configure Internet
+          Identity, connect Grok or Claude to{" "}
+          <code className="rounded bg-muted px-1 font-mono text-[11px]">
+            {MCP_CONNECTOR_URL}
+          </code>
+          , store Memory (apps &amp; rules), then draft numbered workflows to{" "}
+          <strong className="text-foreground">copy and paste</strong> into your
+          AI agent. This app does{" "}
+          <strong className="text-foreground">not</strong> execute MCP tools
+          itself — execution happens in the AI app under your II grant.
         </p>
       </header>
 
@@ -122,17 +127,17 @@ export function SetupPage() {
         <ModelStep
           n="A"
           title="This app"
-          body="Sign in with II. Save dApps in Memory. Generate plans and Run now for ledger reads."
+          body="Sign in with II. Seed Memory. Draft and save MCP-ready workflows on-chain."
         />
         <ModelStep
           n="B"
-          title="Internet Identity + MCP trust"
-          body="Trust the MCP URL so Grok/Claude can mint app-specific principals for full agent runs."
+          title="Internet Identity + MCP"
+          body="Trust the MCP URL once so Grok/Claude can act as you on IC dApps you authorize."
         />
         <ModelStep
           n="C"
-          title="Chat → Run now + Grok MCP"
-          body="Run now executes safe ledger reads in-app. Copy for MCP → Grok for full cross-app agent actions."
+          title="Your AI agent"
+          body="Copy for MCP → paste into Grok/Claude with the connector on. The agent runs the steps."
         />
       </div>
 
@@ -331,12 +336,12 @@ export function SetupPage() {
         <StepCard
           index={4}
           icon={ListChecks}
-          title="Smoke-test the connector, then use this app"
+          title="Smoke-test MCP, then build a workflow in this app"
           description={
             <div className="space-y-2">
               <p>
-                In the AI chat (with the connector enabled for that
-                conversation), try a cheap read-only prompt first:
+                In the AI chat (connector enabled for that conversation), try a
+                cheap read-only prompt first:
               </p>
               <ul className="list-disc space-y-1 pl-5">
                 <li>
@@ -356,10 +361,10 @@ export function SetupPage() {
                 </li>
               </ul>
               <p>
-                Then seed <strong>Memory</strong> here (dApps + rules), generate
-                a plan in <strong>Chat</strong>, hit{" "}
-                <strong>Copy for MCP</strong>, and paste into the same AI
-                conversation.
+                When that works, come back here: seed Memory, draft a plan in
+                Chat, save it as a Workflow, then{" "}
+                <strong className="text-foreground">Copy for MCP</strong>{" "}
+                whenever you want the agent to run it.
               </p>
             </div>
           }
@@ -384,6 +389,87 @@ export function SetupPage() {
           }
         />
       </ol>
+
+      {/* Thorough workflow guide */}
+      <div
+        data-ocid="setup.workflow_guide"
+        className="space-y-4 rounded-xl border border-border bg-card p-5"
+      >
+        <div className="flex items-center gap-2">
+          <Sparkles className="h-4 w-4 text-primary" aria-hidden />
+          <h2 className="font-display text-lg font-semibold tracking-tight">
+            How to create and run a workflow (start to finish)
+          </h2>
+        </div>
+        <ol className="list-decimal space-y-3 pl-5 text-sm leading-relaxed text-muted-foreground">
+          <li>
+            <strong className="text-foreground">Finish steps 1–3 above</strong>{" "}
+            so Internet Identity trusts the MCP URL and Grok (or Claude) has the
+            same URL as a custom connector with a valid grant.
+          </li>
+          <li>
+            <strong className="text-foreground">Open Memory</strong> and add
+            every dApp or canister the agent should know:
+            <ul className="mt-1 list-disc space-y-1 pl-5">
+              <li>
+                <em>App name</em> — human label (e.g. “ICP Ledger”, “NNS
+                Governance”).
+              </li>
+              <li>
+                <em>Canister ID</em> — principal text (e.g.{" "}
+                <code className="rounded bg-muted px-1 font-mono text-[11px]">
+                  ryjl3-tyaaa-aaaaa-aaaba-cai
+                </code>
+                ).
+              </li>
+              <li>
+                Optional: personal <em>rules</em> (risk caps) and <em>notes</em>{" "}
+                so every plan respects your constraints.
+              </li>
+            </ul>
+          </li>
+          <li>
+            <strong className="text-foreground">Open Chat</strong> and describe
+            one concrete goal in plain language. Examples: “Check my ICP balance
+            at the NNS ledger via MCP”, “Delist NFTs on X and vault the rare
+            ones.”
+          </li>
+          <li>
+            Wait for the numbered{" "}
+            <strong className="text-foreground">workflow plan</strong>. Refine
+            with follow-ups if needed (“use my vault canister from Memory”, “add
+            a dry-run before any update”).
+          </li>
+          <li>
+            Press <strong className="text-foreground">Copy for MCP</strong>. The
+            clipboard includes the MCP URL, safety rules, and the step list.
+          </li>
+          <li>
+            Open Grok (or Claude), enable the IC MCP connector for that chat,
+            paste, and send. The AI agent calls MCP tools as you.
+          </li>
+          <li>
+            Optional: press{" "}
+            <strong className="text-foreground">Save workflow</strong>, give it
+            a name and tags, then reopen anytime from{" "}
+            <strong className="text-foreground">Workflows</strong> → Copy for
+            MCP again.
+          </li>
+        </ol>
+        <p className="text-xs text-muted-foreground">
+          Tip: prefer Grok for personal accounts (
+          <a
+            href={AI_APPS.grok.connectorsUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="text-primary hover:underline"
+          >
+            grok.com/connectors
+          </a>
+          ). Claude uses Customize → Connectors. ChatGPT often needs Business /
+          Developer mode.
+        </p>
+      </div>
 
       {/* Troubleshooting */}
       <div

@@ -6,16 +6,14 @@ import type { ChatMessage } from "@/types";
 
 // ChatMessage renders a single turn in the conversation. User turns are
 // right-aligned cyan bubbles; assistant turns are left-aligned neutral cards.
-// When an assistant turn carries a plan (planText), it renders the structured
-// PlanDisplay with copy + save affordances instead of plain prose.
+// When an assistant turn looks like a plan, it renders PlanDisplay with
+// copy/save affordances for MCP-connected AI agents.
 
 type ChatMessageProps = {
   message: ChatMessage;
   onSavePlan?: () => void;
   onRetryPlan?: () => void;
-  onRunPlan?: () => void | Promise<void>;
   isSavingPlan?: boolean;
-  isRunningPlan?: boolean;
   isLastAssistant?: boolean;
 };
 
@@ -23,9 +21,7 @@ export function ChatMessageItem({
   message,
   onSavePlan,
   onRetryPlan,
-  onRunPlan,
   isSavingPlan = false,
-  isRunningPlan = false,
   isLastAssistant = false,
 }: ChatMessageProps) {
   const isUser = message.role === "user";
@@ -48,7 +44,6 @@ export function ChatMessageItem({
     );
   }
 
-  // Assistant turn — either a structured plan or conversational prose.
   const looksLikePlan = /(^|\n)\s*\d+[\.)]\s/m.test(message.content);
 
   return (
@@ -65,11 +60,7 @@ export function ChatMessageItem({
             planText={message.content}
             onSave={onSavePlan}
             onRetry={onRetryPlan ?? (() => {})}
-            onRun={
-              isLastAssistant && onRunPlan ? () => void onRunPlan() : undefined
-            }
             isSaving={isSavingPlan}
-            isRunning={isRunningPlan}
             canRetry={isLastAssistant && Boolean(onRetryPlan)}
           />
         ) : (
@@ -86,9 +77,8 @@ export function ChatMessageItem({
   );
 }
 
-// Loading bubble shown while the backend generates a plan or the in-app runner works.
 export function ChatMessageLoading({
-  label = "Generating plan…",
+  label = "Drafting your workflow plan…",
 }: {
   label?: string;
 }) {

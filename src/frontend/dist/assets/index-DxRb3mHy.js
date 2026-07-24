@@ -38761,7 +38761,6 @@ function useAuth() {
     isLoginError,
     login,
     logout: clear,
-    identity,
     principal,
     principalText,
     principalShort
@@ -48055,7 +48054,7 @@ Service({
   "updateRule": Func([Rule], [Preferences], []),
   "updateWorkflow": Func([Workflow], [Opt(Workflow)], [])
 });
-const idlFactory$1 = ({ IDL: IDL2 }) => {
+const idlFactory = ({ IDL: IDL2 }) => {
   const Error2 = IDL2.Variant({
     "FrontendOriginsNotConfigured": IDL2.Null,
     "MixedSsoSources": IDL2.Record({
@@ -48821,7 +48820,7 @@ function createActor(canisterId, _uploadFile, _downloadFile, options = {}) {
   if (options.agent && options.agentOptions) {
     console.warn("Detected both agent and agentOptions passed to createActor. Ignoring agentOptions and proceeding with the provided agent.");
   }
-  const actor = Actor.createActor(idlFactory$1, {
+  const actor = Actor.createActor(idlFactory, {
     agent,
     canisterId,
     ...options.actorOptions
@@ -48974,13 +48973,15 @@ const AI_APPS = {
 };
 function planClipboardPayload(planText) {
   return [
-    "Execute this Internet Computer cross-app plan using the IC MCP connector.",
-    `MCP URL: ${MCP_CONNECTOR_URL}`,
-    "If the IC MCP tools are not already connected in this chat, connect them first, then run the plan.",
-    "Prefer read-only tools (canister_query, discovery, get_canister_candid) before any canister_update_call.",
-    "Confirm write/delete actions with me. Respect every personal rule listed in the plan.",
-    "Be cycle-conscious: no redundant status loops; check icp_cycles_balance before create/top-up.",
+    "You are my Internet Computer agent. Execute this workflow using the IC MCP connector.",
+    `MCP connector URL (must already be connected in this chat): ${MCP_CONNECTOR_URL}`,
+    "If IC MCP tools are missing, stop and tell me to connect the custom MCP server first.",
+    "Prefer read-only tools first: canister_query, discovery, get_canister_candid, get_app_principal, resolve_app.",
+    "Ask me before any write/delete (canister_update_call, top-up, install, delete).",
+    "Respect every personal rule mentioned in the plan. Be cycle-conscious: no redundant loops; check icp_cycles_balance before create/top-up.",
+    "When done, summarize results clearly (balances, principals, what changed).",
     "",
+    "--- WORKFLOW ---",
     planText.trim()
   ].join("\n");
 }
@@ -48988,9 +48989,7 @@ function PlanDisplay({
   planText,
   onSave,
   onRetry,
-  onRun,
   isSaving = false,
-  isRunning = false,
   canRetry = false,
   className
 }) {
@@ -49000,7 +48999,7 @@ function PlanDisplay({
       await navigator.clipboard.writeText(planClipboardPayload(planText));
       setCopied(true);
       ue.success(
-        "Plan copied — paste into Grok with the IC MCP connector enabled"
+        "Workflow copied — paste into Grok (or Claude) with the IC MCP connector on"
       );
       window.setTimeout(() => setCopied(false), 2e3);
     } catch {
@@ -49011,7 +49010,7 @@ function PlanDisplay({
     try {
       await navigator.clipboard.writeText(planClipboardPayload(planText));
       ue.success(
-        "Plan copied — paste it into the Grok chat that just opened"
+        "Copied to clipboard. Paste into Grok after the tab opens."
       );
     } catch {
     }
@@ -49037,7 +49036,7 @@ function PlanDisplay({
                 variant: "secondary",
                 className: "border-primary/20 bg-primary/10 text-primary",
                 "data-ocid": "plan_display.badge",
-                children: "Plan"
+                children: "Workflow plan"
               }
             ),
             /* @__PURE__ */ jsxRuntimeExports.jsxs("span", { className: "font-mono text-[11px] uppercase tracking-widest text-muted-foreground/70", children: [
@@ -49055,7 +49054,6 @@ function PlanDisplay({
                 "data-ocid": "plan_display.retry_button",
                 "aria-label": "Regenerate plan",
                 onClick: onRetry,
-                disabled: isRunning,
                 className: "h-8 text-muted-foreground hover:text-foreground",
                 children: [
                   /* @__PURE__ */ jsxRuntimeExports.jsx(RefreshCw, { className: "h-3.5 w-3.5", "aria-hidden": true }),
@@ -49066,15 +49064,14 @@ function PlanDisplay({
             /* @__PURE__ */ jsxRuntimeExports.jsxs(
               Button,
               {
-                variant: "ghost",
+                variant: "default",
                 size: "sm",
                 "data-ocid": "plan_display.copy_button",
-                "aria-label": "Copy plan for MCP",
+                "aria-label": "Copy workflow for MCP",
                 onClick: () => void handleCopy(),
-                disabled: isRunning,
-                className: "h-8 text-muted-foreground hover:text-foreground",
+                className: "h-8",
                 children: [
-                  copied ? /* @__PURE__ */ jsxRuntimeExports.jsx(Check, { className: "h-3.5 w-3.5 text-success", "aria-hidden": true }) : /* @__PURE__ */ jsxRuntimeExports.jsx(Copy, { className: "h-3.5 w-3.5", "aria-hidden": true }),
+                  copied ? /* @__PURE__ */ jsxRuntimeExports.jsx(Check, { className: "h-3.5 w-3.5", "aria-hidden": true }) : /* @__PURE__ */ jsxRuntimeExports.jsx(Copy, { className: "h-3.5 w-3.5", "aria-hidden": true }),
                   /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hidden sm:inline", children: copied ? "Copied" : "Copy for MCP" })
                 ]
               }
@@ -49085,9 +49082,8 @@ function PlanDisplay({
                 variant: "outline",
                 size: "sm",
                 "data-ocid": "plan_display.grok_button",
-                "aria-label": "Open Grok to run with MCP",
+                "aria-label": "Open Grok to paste the workflow",
                 onClick: () => void handleOpenGrok(),
-                disabled: isRunning,
                 className: "h-8",
                 children: [
                   /* @__PURE__ */ jsxRuntimeExports.jsx(ExternalLink, { className: "h-3.5 w-3.5", "aria-hidden": true }),
@@ -49095,22 +49091,6 @@ function PlanDisplay({
                 ]
               }
             ),
-            onRun ? /* @__PURE__ */ jsxRuntimeExports.jsxs(
-              Button,
-              {
-                variant: "default",
-                size: "sm",
-                "data-ocid": "plan_display.run_button",
-                "aria-label": "Run plan in this app",
-                onClick: () => void onRun(),
-                disabled: isRunning || isSaving,
-                className: "h-8",
-                children: [
-                  isRunning ? /* @__PURE__ */ jsxRuntimeExports.jsx(LoaderCircle, { className: "h-3.5 w-3.5 animate-spin", "aria-hidden": true }) : /* @__PURE__ */ jsxRuntimeExports.jsx(Play, { className: "h-3.5 w-3.5", "aria-hidden": true }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hidden sm:inline", children: isRunning ? "Running…" : "Run now" })
-                ]
-              }
-            ) : null,
             /* @__PURE__ */ jsxRuntimeExports.jsxs(
               Button,
               {
@@ -49119,23 +49099,60 @@ function PlanDisplay({
                 "data-ocid": "plan_display.save_button",
                 "aria-label": "Save plan as workflow",
                 onClick: onSave,
-                disabled: isSaving || isRunning,
+                disabled: isSaving,
                 className: "h-8",
                 children: [
                   /* @__PURE__ */ jsxRuntimeExports.jsx(Save, { className: "h-3.5 w-3.5", "aria-hidden": true }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hidden sm:inline", children: isSaving ? "Saving…" : "Save" })
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "hidden sm:inline", children: isSaving ? "Saving…" : "Save workflow" })
                 ]
               }
             )
           ] })
         ] }),
-        /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "mb-3 text-xs leading-relaxed text-muted-foreground", children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "Run now" }),
-          " executes read-only IC queries in this browser (e.g. ICP balance for your CrossApp principal). Full cross-app MCP actions need",
-          " ",
-          /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "Copy for MCP → Grok" }),
-          " with the connector connected."
-        ] }),
+        /* @__PURE__ */ jsxRuntimeExports.jsxs(
+          "div",
+          {
+            "data-ocid": "plan_display.howto",
+            className: "mb-4 space-y-2 rounded-lg border border-border bg-secondary/30 p-3 text-xs leading-relaxed text-muted-foreground",
+            children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "font-medium text-foreground", children: "How to run this with your AI agent" }),
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("ol", { className: "list-decimal space-y-1 pl-4", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { children: [
+                  "Finish ",
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "Setup" }),
+                  " once: trust the IC MCP URL in Internet Identity, then add the same URL in",
+                  " ",
+                  /* @__PURE__ */ jsxRuntimeExports.jsx(
+                    "a",
+                    {
+                      href: GROK_CONNECTORS_URL,
+                      target: "_blank",
+                      rel: "noreferrer",
+                      className: "text-primary hover:underline",
+                      children: "Grok connectors"
+                    }
+                  ),
+                  " ",
+                  "(recommended) or Claude."
+                ] }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { children: [
+                  "Press ",
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "Copy for MCP" }),
+                  " ",
+                  "(includes the connector URL and safety rules)."
+                ] }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("li", { children: "Open a chat in that AI app with the IC MCP connector enabled for the conversation." }),
+                /* @__PURE__ */ jsxRuntimeExports.jsx("li", { children: "Paste the clipboard contents and send. The agent uses MCP tools under your Internet Identity grant." }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { children: [
+                  "Optional: ",
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "Save workflow" }),
+                  " ",
+                  "here to reuse later from Workflows."
+                ] })
+              ] })
+            ]
+          }
+        ),
         /* @__PURE__ */ jsxRuntimeExports.jsx("ol", { className: "space-y-2.5", "data-ocid": "plan_display.steps", children: displayLines.map((line, index2) => /* @__PURE__ */ jsxRuntimeExports.jsxs(
           "li",
           {
@@ -49156,9 +49173,7 @@ function ChatMessageItem({
   message,
   onSavePlan,
   onRetryPlan,
-  onRunPlan,
   isSavingPlan = false,
-  isRunningPlan = false,
   isLastAssistant = false
 }) {
   const isUser = message.role === "user";
@@ -49192,9 +49207,7 @@ function ChatMessageItem({
         onSave: onSavePlan,
         onRetry: onRetryPlan ?? (() => {
         }),
-        onRun: isLastAssistant && onRunPlan ? () => void onRunPlan() : void 0,
         isSaving: isSavingPlan,
-        isRunning: isRunningPlan,
         canRetry: isLastAssistant && Boolean(onRetryPlan)
       }
     ) : /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -49209,7 +49222,7 @@ function ChatMessageItem({
   ] });
 }
 function ChatMessageLoading({
-  label = "Generating plan…"
+  label = "Drafting your workflow plan…"
 }) {
   return /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { "data-ocid": "chat.message.loading", className: "flex gap-3", children: [
     /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -49833,135 +49846,6 @@ function useDeleteHistoryEntry() {
     }
   });
 }
-const preferencesKey = ["preferences"];
-const EMPTY_PREFERENCES = {
-  dApps: [],
-  rules: [],
-  notes: ""
-};
-function requireActor(actor) {
-  if (!actor) {
-    throw new Error(
-      "Backend connection not ready. Wait a moment, or sign out and sign in again."
-    );
-  }
-}
-function useGetPreferences() {
-  const { actor, isFetching: actorFetching } = useActor(createActor);
-  return useQuery({
-    queryKey: preferencesKey,
-    queryFn: async () => {
-      requireActor(actor);
-      const prefs = await actor.getPreferences();
-      return {
-        dApps: prefs.dApps ?? [],
-        rules: prefs.rules ?? [],
-        notes: prefs.notes ?? ""
-      };
-    },
-    enabled: !!actor && !actorFetching,
-    // Keep last good prefs visible while refetching after add/edit.
-    placeholderData: (previous) => previous
-  });
-}
-function useAddDApp() {
-  const qc = useQueryClient();
-  const { actor } = useActor(createActor);
-  return useMutation({
-    mutationFn: async (input) => {
-      requireActor(actor);
-      return actor.addDApp(...input);
-    },
-    onSuccess: (prefs) => {
-      qc.setQueryData(preferencesKey, prefs);
-      void qc.invalidateQueries({ queryKey: preferencesKey });
-    }
-  });
-}
-function useUpdateDApp() {
-  const qc = useQueryClient();
-  const { actor } = useActor(createActor);
-  return useMutation({
-    mutationFn: async (update) => {
-      requireActor(actor);
-      return actor.updateDApp(update);
-    },
-    onSuccess: (prefs) => {
-      qc.setQueryData(preferencesKey, prefs);
-      void qc.invalidateQueries({ queryKey: preferencesKey });
-    }
-  });
-}
-function useDeleteDApp() {
-  const qc = useQueryClient();
-  const { actor } = useActor(createActor);
-  return useMutation({
-    mutationFn: async (id) => {
-      requireActor(actor);
-      return actor.deleteDApp(id);
-    },
-    onSuccess: (prefs) => {
-      qc.setQueryData(preferencesKey, prefs);
-      void qc.invalidateQueries({ queryKey: preferencesKey });
-    }
-  });
-}
-function useAddRule() {
-  const qc = useQueryClient();
-  const { actor } = useActor(createActor);
-  return useMutation({
-    mutationFn: async (input) => {
-      requireActor(actor);
-      return actor.addRule(input);
-    },
-    onSuccess: (prefs) => {
-      qc.setQueryData(preferencesKey, prefs);
-      void qc.invalidateQueries({ queryKey: preferencesKey });
-    }
-  });
-}
-function useUpdateRule() {
-  const qc = useQueryClient();
-  const { actor } = useActor(createActor);
-  return useMutation({
-    mutationFn: async (update) => {
-      requireActor(actor);
-      return actor.updateRule(update);
-    },
-    onSuccess: (prefs) => {
-      qc.setQueryData(preferencesKey, prefs);
-      void qc.invalidateQueries({ queryKey: preferencesKey });
-    }
-  });
-}
-function useDeleteRule() {
-  const qc = useQueryClient();
-  const { actor } = useActor(createActor);
-  return useMutation({
-    mutationFn: async (id) => {
-      requireActor(actor);
-      return actor.deleteRule(id);
-    },
-    onSuccess: (prefs) => {
-      qc.setQueryData(preferencesKey, prefs);
-      void qc.invalidateQueries({ queryKey: preferencesKey });
-    }
-  });
-}
-function useSetNotes() {
-  const qc = useQueryClient();
-  const { actor } = useActor(createActor);
-  return useMutation({
-    mutationFn: async (notes) => {
-      requireActor(actor);
-      return actor.setNotes(notes);
-    },
-    onSuccess: (prefs) => {
-      qc.setQueryData(preferencesKey, prefs);
-      void qc.invalidateQueries({ queryKey: preferencesKey });
-    }
-  });
-}
 const workflowsKey = ["workflows"];
 const workflowKey = (id) => ["workflows", id];
 function useListWorkflows() {
@@ -50072,217 +49956,11 @@ function useExportWorkflowMarkdown() {
     }
   });
 }
-const IC_HOST = "https://icp-api.io";
-async function createMainnetAgent(identity) {
-  const agent = await HttpAgent.create({
-    host: IC_HOST,
-    ...identity ? { identity } : {}
-  });
-  return agent;
-}
-const idlFactory = ({ IDL: IDL2 }) => {
-  const Account = IDL2.Record({
-    owner: IDL2.Principal,
-    subaccount: IDL2.Opt(IDL2.Vec(IDL2.Nat8))
-  });
-  return IDL2.Service({
-    icrc1_name: IDL2.Func([], [IDL2.Text], ["query"]),
-    icrc1_symbol: IDL2.Func([], [IDL2.Text], ["query"]),
-    icrc1_decimals: IDL2.Func([], [IDL2.Nat8], ["query"]),
-    icrc1_balance_of: IDL2.Func([Account], [IDL2.Nat], ["query"])
-  });
-};
-function formatUnits(raw, decimals) {
-  const base = 10n ** BigInt(decimals);
-  const whole = raw / base;
-  const frac = raw % base;
-  if (frac === 0n) return whole.toString();
-  const fracStr = frac.toString().padStart(decimals, "0").replace(/0+$/, "");
-  return `${whole.toString()}.${fracStr}`;
-}
-function createIcrc1Actor(agent, canisterId) {
-  return Actor.createActor(idlFactory, { agent, canisterId });
-}
-async function fetchIcrc1Balance(agent, canisterId, owner) {
-  const actor = createIcrc1Actor(agent, canisterId);
-  const [name, symbol, decimals, raw] = await Promise.all([
-    actor.icrc1_name().catch(() => "Token"),
-    actor.icrc1_symbol().catch(() => "TOKEN"),
-    actor.icrc1_decimals().catch(() => 8),
-    actor.icrc1_balance_of({ owner, subaccount: [] })
-  ]);
-  const dec = Number(decimals);
-  return {
-    canisterId,
-    name,
-    symbol,
-    decimals: dec,
-    raw,
-    formatted: formatUnits(raw, dec),
-    owner: owner.toText()
-  };
-}
-const ICP_LEDGER_CANISTER_ID = "ryjl3-tyaaa-aaaaa-aaaba-cai";
-const CYCLES_LEDGER_CANISTER_ID = "um5iw-rqaaa-aaaaq-qaaba-cai";
-const NNS_APP_URL = "https://nns.ic0.app";
-function lower(s) {
-  return s.toLowerCase();
-}
-function isBalanceGoal(goal) {
-  const g2 = lower(goal);
-  return g2.includes("balance") || g2.includes("how much") || g2.includes("check my") || g2.includes("icp") && (g2.includes("account") || g2.includes("ledger"));
-}
-function pickLedgerCanisterIds(goal, dApps) {
-  const ids = /* @__PURE__ */ new Set();
-  const g2 = lower(goal);
-  if (g2.includes("icp") || g2.includes("nns") || g2.includes("ledger") || isBalanceGoal(goal)) {
-    ids.add(ICP_LEDGER_CANISTER_ID);
-  }
-  for (const d2 of dApps) {
-    const name = lower(d2.friendlyName);
-    const id = d2.canisterId.trim();
-    if (!id) continue;
-    if (name.includes("ledger") || name.includes("icp") || id === ICP_LEDGER_CANISTER_ID || id === CYCLES_LEDGER_CANISTER_ID) {
-      ids.add(id);
-    }
-  }
-  if (ids.size === 0) ids.add(ICP_LEDGER_CANISTER_ID);
-  return [...ids];
-}
-function formatBalanceLine(b2, label) {
-  const head = label ? `${label}: ` : "";
-  return `${head}${b2.formatted} ${b2.symbol} (${b2.name})
-  raw=${b2.raw.toString()} · decimals=${b2.decimals}
-  ledger=${b2.canisterId}
-  owner principal=${b2.owner}`;
-}
-async function executePlanInApp(input) {
-  var _a2;
-  const steps = [];
-  const { goal, planText, identity, principal, dApps } = input;
-  if (!identity || !principal) {
-    return {
-      summary: "Cannot execute: you are not signed in with Internet Identity in this app.",
-      steps: [
-        {
-          title: "Authenticate",
-          ok: false,
-          detail: "Sign in, then press Run now again."
-        }
-      ],
-      mcpFollowUp: planClipboardPayload(planText)
-    };
-  }
-  steps.push({
-    title: "Session",
-    ok: true,
-    detail: `Signed in as ${principal.toText()} (principal at *this* app origin).`
-  });
-  const agent = await createMainnetAgent(identity);
-  if (isBalanceGoal(goal) || lower(goal).includes("ledger")) {
-    const ledgers = pickLedgerCanisterIds(goal, dApps);
-    const balances = [];
-    for (const canisterId of ledgers) {
-      try {
-        const bal = await fetchIcrc1Balance(agent, canisterId, principal);
-        balances.push(bal);
-        const label = ((_a2 = dApps.find((d2) => d2.canisterId.trim() === canisterId)) == null ? void 0 : _a2.friendlyName) ?? (canisterId === ICP_LEDGER_CANISTER_ID ? "ICP Ledger" : canisterId);
-        steps.push({
-          title: `Balance · ${label}`,
-          ok: true,
-          detail: formatBalanceLine(bal, label)
-        });
-      } catch (e) {
-        steps.push({
-          title: `Balance · ${canisterId}`,
-          ok: false,
-          detail: e instanceof Error ? e.message : "Query failed (canister may not be ICRC-1)."
-        });
-      }
-    }
-    const icp = balances.find((b2) => b2.canisterId === ICP_LEDGER_CANISTER_ID);
-    const summaryLines = [
-      "## Execution results (in-app)",
-      "",
-      icp ? `**ICP balance at this app's principal:** ${icp.formatted} ${icp.symbol}` : "**ICP balance:** could not read (see step details).",
-      "",
-      "### Principal note (important)",
-      "Internet Identity gives you a **different principal per app**.",
-      `The balance above is for your principal at **CrossApp Agent**, not automatically your principal at [${NNS_APP_URL}](${NNS_APP_URL}).`,
-      "To check the balance of your **NNS dapp** principal, run the same goal in **Grok** (or Claude) with the IC MCP connector authorized for Actions & questions — MCP will call `get_app_principal` / `canister_query` under the NNS derivation origin.",
-      "",
-      "### How to finish via MCP (full cross-app agent)",
-      `1. Trust MCP at Internet Identity if you have not: add \`${MCP_CONNECTOR_URL}\`.`,
-      `2. Connect Grok: ${GROK_CONNECTORS_URL} → New Connector → Custom → paste that URL.`,
-      "3. Press **Copy for MCP** below (or use the button on the plan), paste into Grok, and ask it to execute.",
-      "",
-      "### Step log",
-      ...steps.map(
-        (s, i) => `${i + 1}. ${s.ok ? "✓" : "✗"} **${s.title}**
-${s.detail}`
-      )
-    ];
-    return {
-      summary: summaryLines.join("\n"),
-      steps,
-      mcpFollowUp: planClipboardPayload(
-        [
-          goal,
-          "",
-          "Use IC MCP tools. Preferred canisters from CrossApp Agent memory:",
-          ...dApps.map((d2) => `- ${d2.friendlyName}: ${d2.canisterId}`),
-          "",
-          "Suggested MCP steps:",
-          "1. resolve_app for https://nns.ic0.app",
-          "2. get_app_principal for that app",
-          "3. canister_query on ryjl3-tyaaa-aaaaa-aaaba-cai icrc1_balance_of for that principal",
-          "4. Report the ICP balance clearly",
-          "",
-          planText
-        ].join("\n")
-      )
-    };
-  }
-  steps.push({
-    title: "In-app scope",
-    ok: true,
-    detail: "This goal needs discovery or write tools that the hosted SPA cannot open through MCP OAuth (redirect allow-list). Use Grok/Claude MCP for full execution."
-  });
-  if (dApps.length > 0) {
-    steps.push({
-      title: "Memory apps",
-      ok: true,
-      detail: dApps.map((d2) => `- ${d2.friendlyName}: ${d2.canisterId}`).join("\n")
-    });
-  }
-  return {
-    summary: [
-      "## Execution results (in-app)",
-      "",
-      "This goal is beyond the **read-only, same-origin principal** executor built into CrossApp Agent.",
-      "",
-      "**What this app can run in-browser (no backend cycles):** ICRC-1 balance queries as your CrossApp principal.",
-      "**What requires Grok/Claude + IC MCP:** act-as-you at NNS and other apps, updates, cycles management, multi-dApp migrations.",
-      "",
-      "Use **Copy for MCP** and paste into Grok with the connector enabled to execute the full plan.",
-      "",
-      "### Step log",
-      ...steps.map(
-        (s, i) => `${i + 1}. ${s.ok ? "✓" : "✗"} **${s.title}**
-${s.detail}`
-      )
-    ].join("\n"),
-    steps,
-    mcpFollowUp: planClipboardPayload(planText)
-  };
-}
 const nowNs = () => BigInt(Date.now() * 1e6);
 const newId = () => `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 const looksLikePlan = (text) => /(^|\n)\s*\d+[\.)]\s/m.test(text);
 function ChatPage() {
   const navigate = useNavigate();
-  const { identity, principal } = useAuth();
-  const preferencesQuery = useGetPreferences();
   const generatePlan = useGeneratePlan();
   const refinePlan = useRefinePlan();
   const createWorkflow = useCreateWorkflow();
@@ -50301,10 +49979,8 @@ function ChatPage() {
   const [turns, setTurns] = reactExports.useState([]);
   const [error, setError] = reactExports.useState(null);
   const [saveTarget, setSaveTarget] = reactExports.useState(null);
-  const [isRunning, setIsRunning] = reactExports.useState(false);
-  const lastGoalRef = reactExports.useRef("");
   const scrollRef = reactExports.useRef(null);
-  const isPending = generatePlan.isPending || refinePlan.isPending || isRunning;
+  const isPending = generatePlan.isPending || refinePlan.isPending;
   const seedKey = planParam ?? (historyIdParam ? `history:${historyIdParam}` : null);
   const consumedSeedRef = reactExports.useRef(null);
   reactExports.useEffect(() => {
@@ -50362,7 +50038,6 @@ function ChatPage() {
   };
   const handleNewGoal = async (goal) => {
     setError(null);
-    lastGoalRef.current = goal;
     setTurns([]);
     appendTurn({ role: ChatRole.user, content: goal, timestamp: nowNs() });
     try {
@@ -50378,37 +50053,6 @@ function ChatPage() {
     } catch (err) {
       const message = err instanceof Error ? err.message : "Failed to generate plan.";
       setError(message);
-    }
-  };
-  const handleRunPlan = async (planText) => {
-    var _a2;
-    setError(null);
-    setIsRunning(true);
-    try {
-      const lastUser = [...turns].reverse().find((t) => t.role === ChatRole.user);
-      const goal = (lastUser == null ? void 0 : lastUser.content) ?? (lastGoalRef.current || "Execute the current plan");
-      lastGoalRef.current = goal;
-      const result = await executePlanInApp({
-        goal,
-        planText,
-        identity,
-        principal,
-        dApps: ((_a2 = preferencesQuery.data) == null ? void 0 : _a2.dApps) ?? []
-      });
-      appendTurn({
-        role: ChatRole.assistant,
-        content: result.summary,
-        timestamp: nowNs()
-      });
-      ue.success("Execution finished", {
-        description: "See the results message in the chat."
-      });
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Failed to execute plan.";
-      setError(message);
-      ue.error("Execution failed", { description: message });
-    } finally {
-      setIsRunning(false);
     }
   };
   const handleRefine = async (instruction) => {
@@ -50484,7 +50128,7 @@ function ChatPage() {
       ]);
       setSaveTarget(null);
       ue.success("Workflow saved", {
-        description: `"${name}" is now in your Workflows library.`
+        description: `"${name}" is in Workflows — open it anytime and Copy for MCP.`
       });
       void navigate({ to: "/workflows" });
       return wf;
@@ -50514,20 +50158,13 @@ function ChatPage() {
                 message: turn,
                 onSavePlan: showPlanAffordances ? () => setSaveTarget(turn) : void 0,
                 onRetryPlan: showPlanAffordances && (error || isLastAssistant) ? handleRetry : void 0,
-                onRunPlan: showPlanAffordances && isLastAssistant ? () => handleRunPlan(turn.content) : void 0,
                 isSavingPlan: createWorkflow.isPending,
-                isRunningPlan: isRunning,
                 isLastAssistant
               },
               turn.id
             );
           }),
-          isPending && /* @__PURE__ */ jsxRuntimeExports.jsx(
-            ChatMessageLoading,
-            {
-              label: isRunning ? "Executing on the Internet Computer…" : void 0
-            }
-          ),
+          isPending && /* @__PURE__ */ jsxRuntimeExports.jsx(ChatMessageLoading, {}),
           error && !isPending && /* @__PURE__ */ jsxRuntimeExports.jsxs(Alert, { variant: "destructive", "data-ocid": "chat.error_state", children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx(CircleAlert, { className: "h-4 w-4", "aria-hidden": true }),
             /* @__PURE__ */ jsxRuntimeExports.jsx(AlertTitle, { children: "Something went wrong" }),
@@ -50557,7 +50194,7 @@ function ChatPage() {
         onSubmit: handleSubmit,
         isPending,
         disabled: isPending,
-        placeholder: turns.length === 0 ? "e.g. Check my ICP balance on the ledger…" : "Refine the plan, or press Run now on the plan to execute…"
+        placeholder: turns.length === 0 ? "Describe a goal — e.g. check ICP balance, migrate NFTs…" : "Refine the plan — e.g. 'add a dry-run step' or 'use my vault canister'…"
       }
     ) }) }),
     /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -50573,9 +50210,9 @@ function ChatPage() {
 }
 function EmptyState$2() {
   const examples = [
-    "Check the balance of ICP in the NNS ledger account",
-    "Look up my ICP ledger balance for this app principal",
-    "Migrate my DeFi position between protocols while minimizing cycles spend"
+    "Check my ICP balance on the NNS ledger via MCP",
+    "Move rare NFTs from Marketplace X into my vault, re-list the rest on Y",
+    "Migrate my DeFi position while staying cycle-conscious"
   ];
   return /* @__PURE__ */ jsxRuntimeExports.jsxs(
     "div",
@@ -50585,14 +50222,22 @@ function EmptyState$2() {
       children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary", children: /* @__PURE__ */ jsxRuntimeExports.jsx(Sparkles, { className: "h-7 w-7", "aria-hidden": true }) }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-2", children: [
-          /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-display text-xl font-semibold tracking-tight text-foreground", children: "Plan here. Run reads here. Full MCP in Grok." }),
-          /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "mx-auto max-w-md text-sm text-muted-foreground", children: [
-            "Describe a goal → get a plan → press ",
-            /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { children: "Run now" }),
-            " for in-browser ICP queries (e.g. ledger balance). For true multi-app actions under other dApp principals, use ",
-            /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { children: "Copy for MCP" }),
+          /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-display text-xl font-semibold tracking-tight text-foreground", children: "Build workflows. Run them in your AI agent." }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "mx-auto max-w-lg text-sm text-muted-foreground", children: [
+            "CrossApp Agent helps you set up the IC MCP connector, store Memory (apps & rules), and draft numbered workflows with real MCP tool hints. Then ",
+            /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "Copy for MCP" }),
             " ",
-            "into Grok with the IC connector."
+            "and paste into Grok or Claude — the agent executes under your Internet Identity."
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-xs text-muted-foreground", children: [
+            "New here? Complete",
+            " ",
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Link, { to: "/setup", className: "text-primary hover:underline", children: "Setup" }),
+            " ",
+            "first, then seed",
+            " ",
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Link, { to: "/memory", className: "text-primary hover:underline", children: "Memory" }),
+            "."
           ] })
         ] }),
         /* @__PURE__ */ jsxRuntimeExports.jsx("div", { className: "flex flex-wrap justify-center gap-2", children: examples.map((ex, i) => /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -50645,7 +50290,12 @@ function SaveWorkflowDialog({
       children: /* @__PURE__ */ jsxRuntimeExports.jsxs("form", { onSubmit: handleSave, children: [
         /* @__PURE__ */ jsxRuntimeExports.jsxs(DialogHeader, { children: [
           /* @__PURE__ */ jsxRuntimeExports.jsx(DialogTitle, { children: "Save as Workflow" }),
-          /* @__PURE__ */ jsxRuntimeExports.jsx(DialogDescription, { children: "Persist this plan to your on-chain workflow library. You can edit and reuse it later from the Workflows page." })
+          /* @__PURE__ */ jsxRuntimeExports.jsxs(DialogDescription, { children: [
+            "Store this MCP-ready plan on-chain under your Internet Identity. From Workflows you can reopen it, edit steps, and",
+            " ",
+            /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { children: "Copy for MCP" }),
+            " again anytime."
+          ] })
         ] }),
         /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-4 py-2", children: [
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-2", children: [
@@ -50664,7 +50314,7 @@ function SaveWorkflowDialog({
                 "data-ocid": "chat.save_workflow.name_input",
                 value: name,
                 onChange: (e) => setName(e.target.value),
-                placeholder: "e.g. Token-gated community launch",
+                placeholder: "e.g. Check NNS ICP balance via MCP",
                 autoFocus: true,
                 required: true
               }
@@ -50690,7 +50340,7 @@ function SaveWorkflowDialog({
                 "data-ocid": "chat.save_workflow.description_input",
                 value: description,
                 onChange: (e) => setDescription(e.target.value),
-                placeholder: "A short summary of what this workflow does…",
+                placeholder: "When to use this workflow and which dApps it touches…",
                 rows: 2
               }
             )
@@ -50715,7 +50365,7 @@ function SaveWorkflowDialog({
                 "data-ocid": "chat.save_workflow.tags_input",
                 value: tagsRaw,
                 onChange: (e) => setTagsRaw(e.target.value),
-                placeholder: "launch, community, token"
+                placeholder: "nns, icp, balance, mcp"
               }
             )
           ] })
@@ -50971,6 +50621,135 @@ function useIsOpenAIConfigured() {
     staleTime: 6e4
   });
 }
+const preferencesKey = ["preferences"];
+const EMPTY_PREFERENCES = {
+  dApps: [],
+  rules: [],
+  notes: ""
+};
+function requireActor(actor) {
+  if (!actor) {
+    throw new Error(
+      "Backend connection not ready. Wait a moment, or sign out and sign in again."
+    );
+  }
+}
+function useGetPreferences() {
+  const { actor, isFetching: actorFetching } = useActor(createActor);
+  return useQuery({
+    queryKey: preferencesKey,
+    queryFn: async () => {
+      requireActor(actor);
+      const prefs = await actor.getPreferences();
+      return {
+        dApps: prefs.dApps ?? [],
+        rules: prefs.rules ?? [],
+        notes: prefs.notes ?? ""
+      };
+    },
+    enabled: !!actor && !actorFetching,
+    // Keep last good prefs visible while refetching after add/edit.
+    placeholderData: (previous) => previous
+  });
+}
+function useAddDApp() {
+  const qc = useQueryClient();
+  const { actor } = useActor(createActor);
+  return useMutation({
+    mutationFn: async (input) => {
+      requireActor(actor);
+      return actor.addDApp(...input);
+    },
+    onSuccess: (prefs) => {
+      qc.setQueryData(preferencesKey, prefs);
+      void qc.invalidateQueries({ queryKey: preferencesKey });
+    }
+  });
+}
+function useUpdateDApp() {
+  const qc = useQueryClient();
+  const { actor } = useActor(createActor);
+  return useMutation({
+    mutationFn: async (update) => {
+      requireActor(actor);
+      return actor.updateDApp(update);
+    },
+    onSuccess: (prefs) => {
+      qc.setQueryData(preferencesKey, prefs);
+      void qc.invalidateQueries({ queryKey: preferencesKey });
+    }
+  });
+}
+function useDeleteDApp() {
+  const qc = useQueryClient();
+  const { actor } = useActor(createActor);
+  return useMutation({
+    mutationFn: async (id) => {
+      requireActor(actor);
+      return actor.deleteDApp(id);
+    },
+    onSuccess: (prefs) => {
+      qc.setQueryData(preferencesKey, prefs);
+      void qc.invalidateQueries({ queryKey: preferencesKey });
+    }
+  });
+}
+function useAddRule() {
+  const qc = useQueryClient();
+  const { actor } = useActor(createActor);
+  return useMutation({
+    mutationFn: async (input) => {
+      requireActor(actor);
+      return actor.addRule(input);
+    },
+    onSuccess: (prefs) => {
+      qc.setQueryData(preferencesKey, prefs);
+      void qc.invalidateQueries({ queryKey: preferencesKey });
+    }
+  });
+}
+function useUpdateRule() {
+  const qc = useQueryClient();
+  const { actor } = useActor(createActor);
+  return useMutation({
+    mutationFn: async (update) => {
+      requireActor(actor);
+      return actor.updateRule(update);
+    },
+    onSuccess: (prefs) => {
+      qc.setQueryData(preferencesKey, prefs);
+      void qc.invalidateQueries({ queryKey: preferencesKey });
+    }
+  });
+}
+function useDeleteRule() {
+  const qc = useQueryClient();
+  const { actor } = useActor(createActor);
+  return useMutation({
+    mutationFn: async (id) => {
+      requireActor(actor);
+      return actor.deleteRule(id);
+    },
+    onSuccess: (prefs) => {
+      qc.setQueryData(preferencesKey, prefs);
+      void qc.invalidateQueries({ queryKey: preferencesKey });
+    }
+  });
+}
+function useSetNotes() {
+  const qc = useQueryClient();
+  const { actor } = useActor(createActor);
+  return useMutation({
+    mutationFn: async (notes) => {
+      requireActor(actor);
+      return actor.setNotes(notes);
+    },
+    onSuccess: (prefs) => {
+      qc.setQueryData(preferencesKey, prefs);
+      void qc.invalidateQueries({ queryKey: preferencesKey });
+    }
+  });
+}
 const QUICK_ACCESS = [
   {
     to: "/setup",
@@ -50983,21 +50762,21 @@ const QUICK_ACCESS = [
   {
     to: "/chat",
     label: "Chat",
-    description: "Describe a cross-app goal and get an MCP-ready plan.",
+    description: "Describe a goal and draft an MCP-ready workflow to copy.",
     icon: MessageSquare,
     ocid: "dashboard.quick_access.chat"
   },
   {
     to: "/workflows",
     label: "Workflows",
-    description: "Browse, edit, and reuse your saved plans.",
+    description: "Saved plans — reopen and Copy for MCP anytime.",
     icon: Workflow$1,
     ocid: "dashboard.quick_access.workflows"
   },
   {
     to: "/memory",
     label: "Memory",
-    description: "Tune preferences, rules, and trusted dApps.",
+    description: "Apps, canister IDs, rules, and notes for planning.",
     icon: Brain,
     ocid: "dashboard.quick_access.memory"
   },
@@ -51031,8 +50810,8 @@ function DashboardPage() {
         /* @__PURE__ */ jsxRuntimeExports.jsx(Sparkles, { className: "h-4 w-4", "aria-hidden": true }),
         /* @__PURE__ */ jsxRuntimeExports.jsx("span", { className: "font-mono text-[11px] uppercase tracking-widest text-muted-foreground", children: "Overview" })
       ] }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl", children: "One agent, every app" }),
-      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "max-w-2xl text-sm leading-relaxed text-muted-foreground", children: "Plan cross-dApp moves on the Internet Computer, store memory on-chain, then run plans through the IC MCP server under your Internet Identity — no tab-switching." })
+      /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl", children: "Setup, memory, and MCP workflows" }),
+      /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "max-w-2xl text-sm leading-relaxed text-muted-foreground", children: "Configure the IC MCP connector, store the dApps your agent should know, and build numbered workflows to paste into Grok or Claude. This app plans and saves — your AI agent executes under your Internet Identity." })
     ] }),
     /* @__PURE__ */ jsxRuntimeExports.jsxs(
       "div",
@@ -51043,7 +50822,7 @@ function DashboardPage() {
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "min-w-0 space-y-1", children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-sm font-medium text-foreground", children: "IC MCP connector" }),
             /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "truncate font-mono text-xs text-muted-foreground", children: MCP_CONNECTOR_URL }),
-            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-muted-foreground", children: openAiQuery.data === false ? "Template planner is active (operator AI key not set). Plans still target real MCP tools — run them in Grok, Claude, or ChatGPT." : openAiQuery.data === true ? "AI-assisted plans enabled. Copy any plan into Grok, Claude, or ChatGPT with the IC MCP connector enabled." : "Checking planner status…" })
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { className: "text-xs text-muted-foreground", children: openAiQuery.data === false ? "Template planner is active (no operator AI key). Workflows still use real MCP tool names — Copy for MCP into Grok/Claude." : openAiQuery.data === true ? "AI-assisted planning is on. Draft in Chat, then Copy for MCP into your connected AI agent." : "Checking planner status…" })
           ] }),
           /* @__PURE__ */ jsxRuntimeExports.jsx(Button, { asChild: true, size: "sm", "data-ocid": "dashboard.setup_cta", children: /* @__PURE__ */ jsxRuntimeExports.jsxs(Link, { to: "/setup", children: [
             /* @__PURE__ */ jsxRuntimeExports.jsx(Plug, { className: "h-3.5 w-3.5", "aria-hidden": true }),
@@ -51057,8 +50836,8 @@ function DashboardPage() {
       {
         ocid: "dashboard.onboarding.empty_state",
         icon: Sparkles,
-        title: "Welcome — finish Setup, then plan",
-        description: "Trust the IC MCP server with your Internet Identity, connect Grok (recommended), Claude, or ChatGPT, seed Memory with your dApps, then describe a cross-app goal in Chat. Plans paste into your MCP-connected AI.",
+        title: "Welcome — set up MCP, then build a workflow",
+        description: "1) Setup: trust the IC MCP URL and connect Grok. 2) Memory: add canister IDs. 3) Chat: describe a goal. 4) Copy for MCP and paste into your AI agent. This app does not run MCP tools itself.",
         hint: "first-time · onboarding",
         actionLabel: "Start Setup",
         actionTo: "/setup"
@@ -52314,12 +52093,20 @@ function SetupPage() {
       ] }),
       /* @__PURE__ */ jsxRuntimeExports.jsx("h1", { className: "font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl", children: "Set up your CrossApp Agent" }),
       /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "max-w-3xl text-sm leading-relaxed text-muted-foreground", children: [
-        "This app is the ",
-        /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "planner" }),
+        "CrossApp Agent is your",
         " ",
-        "and can ",
-        /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "Run now" }),
-        " for read-only IC queries in your browser (e.g. ICP ledger balance for your principal here). Full multi-app MCP actions (act as you at NNS and other dApps) still need Grok/Claude with the IC MCP connector — remote MCP OAuth only allows loopback or DFINITY-allowlisted redirect domains, so this hosted SPA cannot complete the MCP login itself."
+        /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "setup + workflow studio" }),
+        " ",
+        "for the official Internet Computer MCP server. You configure Internet Identity, connect Grok or Claude to",
+        " ",
+        /* @__PURE__ */ jsxRuntimeExports.jsx("code", { className: "rounded bg-muted px-1 font-mono text-[11px]", children: MCP_CONNECTOR_URL }),
+        ", store Memory (apps & rules), then draft numbered workflows to",
+        " ",
+        /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "copy and paste" }),
+        " into your AI agent. This app does",
+        " ",
+        /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "not" }),
+        " execute MCP tools itself — execution happens in the AI app under your II grant."
       ] })
     ] }),
     /* @__PURE__ */ jsxRuntimeExports.jsxs(
@@ -52333,23 +52120,23 @@ function SetupPage() {
             {
               n: "A",
               title: "This app",
-              body: "Sign in with II. Save dApps in Memory. Generate plans and Run now for ledger reads."
+              body: "Sign in with II. Seed Memory. Draft and save MCP-ready workflows on-chain."
             }
           ),
           /* @__PURE__ */ jsxRuntimeExports.jsx(
             ModelStep,
             {
               n: "B",
-              title: "Internet Identity + MCP trust",
-              body: "Trust the MCP URL so Grok/Claude can mint app-specific principals for full agent runs."
+              title: "Internet Identity + MCP",
+              body: "Trust the MCP URL once so Grok/Claude can act as you on IC dApps you authorize."
             }
           ),
           /* @__PURE__ */ jsxRuntimeExports.jsx(
             ModelStep,
             {
               n: "C",
-              title: "Chat → Run now + Grok MCP",
-              body: "Run now executes safe ledger reads in-app. Copy for MCP → Grok for full cross-app agent actions."
+              title: "Your AI agent",
+              body: "Copy for MCP → paste into Grok/Claude with the connector on. The agent runs the steps."
             }
           )
         ]
@@ -52540,23 +52327,20 @@ function SetupPage() {
         {
           index: 4,
           icon: ListChecks,
-          title: "Smoke-test the connector, then use this app",
+          title: "Smoke-test MCP, then build a workflow in this app",
           description: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-2", children: [
-            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { children: "In the AI chat (with the connector enabled for that conversation), try a cheap read-only prompt first:" }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("p", { children: "In the AI chat (connector enabled for that conversation), try a cheap read-only prompt first:" }),
             /* @__PURE__ */ jsxRuntimeExports.jsxs("ul", { className: "list-disc space-y-1 pl-5", children: [
               /* @__PURE__ */ jsxRuntimeExports.jsx("li", { children: /* @__PURE__ */ jsxRuntimeExports.jsx("code", { className: "rounded bg-muted px-1 font-mono text-[11px]", children: "What's my cycles balance?" }) }),
               /* @__PURE__ */ jsxRuntimeExports.jsx("li", { children: /* @__PURE__ */ jsxRuntimeExports.jsx("code", { className: "rounded bg-muted px-1 font-mono text-[11px]", children: "Look up the ckUSDC ledger" }) }),
               /* @__PURE__ */ jsxRuntimeExports.jsx("li", { children: /* @__PURE__ */ jsxRuntimeExports.jsx("code", { className: "rounded bg-muted px-1 font-mono text-[11px]", children: "What canisters run multidex.ai?" }) })
             ] }),
             /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { children: [
-              "Then seed ",
-              /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { children: "Memory" }),
-              " here (dApps + rules), generate a plan in ",
-              /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { children: "Chat" }),
-              ", hit",
+              "When that works, come back here: seed Memory, draft a plan in Chat, save it as a Workflow, then",
               " ",
-              /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { children: "Copy for MCP" }),
-              ", and paste into the same AI conversation."
+              /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "Copy for MCP" }),
+              " ",
+              "whenever you want the agent to run it."
             ] })
           ] }),
           action: /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-wrap gap-2", children: [
@@ -52577,6 +52361,90 @@ function SetupPage() {
         }
       )
     ] }),
+    /* @__PURE__ */ jsxRuntimeExports.jsxs(
+      "div",
+      {
+        "data-ocid": "setup.workflow_guide",
+        className: "space-y-4 rounded-xl border border-border bg-card p-5",
+        children: [
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-2", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsx(Sparkles, { className: "h-4 w-4 text-primary", "aria-hidden": true }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("h2", { className: "font-display text-lg font-semibold tracking-tight", children: "How to create and run a workflow (start to finish)" })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("ol", { className: "list-decimal space-y-3 pl-5 text-sm leading-relaxed text-muted-foreground", children: [
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "Finish steps 1–3 above" }),
+              " ",
+              "so Internet Identity trusts the MCP URL and Grok (or Claude) has the same URL as a custom connector with a valid grant."
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "Open Memory" }),
+              " and add every dApp or canister the agent should know:",
+              /* @__PURE__ */ jsxRuntimeExports.jsxs("ul", { className: "mt-1 list-disc space-y-1 pl-5", children: [
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("em", { children: "App name" }),
+                  " — human label (e.g. “ICP Ledger”, “NNS Governance”)."
+                ] }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { children: [
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("em", { children: "Canister ID" }),
+                  " — principal text (e.g.",
+                  " ",
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("code", { className: "rounded bg-muted px-1 font-mono text-[11px]", children: "ryjl3-tyaaa-aaaaa-aaaba-cai" }),
+                  ")."
+                ] }),
+                /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { children: [
+                  "Optional: personal ",
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("em", { children: "rules" }),
+                  " (risk caps) and ",
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("em", { children: "notes" }),
+                  " ",
+                  "so every plan respects your constraints."
+                ] })
+              ] })
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { children: [
+              /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "Open Chat" }),
+              " and describe one concrete goal in plain language. Examples: “Check my ICP balance at the NNS ledger via MCP”, “Delist NFTs on X and vault the rare ones.”"
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { children: [
+              "Wait for the numbered",
+              " ",
+              /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "workflow plan" }),
+              ". Refine with follow-ups if needed (“use my vault canister from Memory”, “add a dry-run before any update”)."
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { children: [
+              "Press ",
+              /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "Copy for MCP" }),
+              ". The clipboard includes the MCP URL, safety rules, and the step list."
+            ] }),
+            /* @__PURE__ */ jsxRuntimeExports.jsx("li", { children: "Open Grok (or Claude), enable the IC MCP connector for that chat, paste, and send. The AI agent calls MCP tools as you." }),
+            /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { children: [
+              "Optional: press",
+              " ",
+              /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "Save workflow" }),
+              ", give it a name and tags, then reopen anytime from",
+              " ",
+              /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { className: "text-foreground", children: "Workflows" }),
+              " → Copy for MCP again."
+            ] })
+          ] }),
+          /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-xs text-muted-foreground", children: [
+            "Tip: prefer Grok for personal accounts (",
+            /* @__PURE__ */ jsxRuntimeExports.jsx(
+              "a",
+              {
+                href: AI_APPS.grok.connectorsUrl,
+                target: "_blank",
+                rel: "noreferrer",
+                className: "text-primary hover:underline",
+                children: "grok.com/connectors"
+              }
+            ),
+            "). Claude uses Customize → Connectors. ChatGPT often needs Business / Developer mode."
+          ] })
+        ]
+      }
+    ),
     /* @__PURE__ */ jsxRuntimeExports.jsxs(
       "div",
       {
@@ -53995,7 +53863,7 @@ function LoginScreen() {
             {
               className: "mt-3 text-sm leading-relaxed text-muted-foreground",
               "data-ocid": "login.subtitle",
-              children: "One agent, every IC dApp. Plan cross-app moves on-chain, then run them through the Internet Computer MCP server under your Internet Identity."
+              children: "Set up the IC MCP connector, store on-chain memory, and build workflows you copy into Grok or Claude — your AI agent executes under your Internet Identity."
             }
           ),
           /* @__PURE__ */ jsxRuntimeExports.jsxs(
@@ -54006,15 +53874,15 @@ function LoginScreen() {
               children: [
                 /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { className: "flex gap-2", children: [
                   /* @__PURE__ */ jsxRuntimeExports.jsx(ShieldCheck, { className: "mt-0.5 h-4 w-4 shrink-0 text-primary" }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "Sign in here to store plans, memory, and preferences under your II principal." })
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "Sign in to store Memory, plans, and workflows under your II principal." })
                 ] }),
                 /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { className: "flex gap-2", children: [
                   /* @__PURE__ */ jsxRuntimeExports.jsx(Workflow$1, { className: "mt-0.5 h-4 w-4 shrink-0 text-primary" }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "Trust the IC MCP server once, then let Grok, Claude, or ChatGPT act on IC as you." })
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "Trust the IC MCP URL once, connect it in Grok (recommended) or Claude." })
                 ] }),
                 /* @__PURE__ */ jsxRuntimeExports.jsxs("li", { className: "flex gap-2", children: [
                   /* @__PURE__ */ jsxRuntimeExports.jsx(ArrowRight, { className: "mt-0.5 h-4 w-4 shrink-0 text-primary" }),
-                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "After login, open Setup — Grok is the easiest path if Claude Connectors or ChatGPT Apps are hard to find." })
+                  /* @__PURE__ */ jsxRuntimeExports.jsx("span", { children: "After login: Setup → Memory → Chat → Copy for MCP into your AI agent." })
                 ] })
               ]
             }

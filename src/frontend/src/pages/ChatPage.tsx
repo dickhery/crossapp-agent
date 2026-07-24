@@ -1,4 +1,4 @@
-import { useNavigate, useSearch } from "@tanstack/react-router";
+import { Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { AlertCircle, RefreshCw, Sparkles } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -23,18 +23,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useAuth } from "@/hooks/use-auth";
 import { useGeneratePlan, useRefinePlan } from "@/hooks/use-chat";
 import { useGetHistoryEntry } from "@/hooks/use-history";
-import { useGetPreferences } from "@/hooks/use-preferences";
 import { useCreateWorkflow } from "@/hooks/use-workflows";
-import { executePlanInApp } from "@/lib/plan-executor";
 import type { Conversation } from "@/types";
 
-// ChatPage owns the single active conversation. A new goal clears the
-// conversation and starts fresh; refinement messages append to it. Plans are
-// detected by numbered-line structure and rendered with copy/save affordances.
-// "Save as Workflow" opens a dialog to name + tag the plan before persisting.
+// ChatPage owns the single active conversation. Plans are MCP-ready workflows
+// to copy into Grok/Claude — this app does not execute them on-chain.
 
 type LocalTurn = {
   id: string;
@@ -53,16 +48,10 @@ const looksLikePlan = (text: string): boolean =>
 
 export function ChatPage() {
   const navigate = useNavigate();
-  const { identity, principal } = useAuth();
-  const preferencesQuery = useGetPreferences();
   const generatePlan = useGeneratePlan();
   const refinePlan = useRefinePlan();
   const createWorkflow = useCreateWorkflow();
 
-  // Read the validated search params from the /chat route. `plan` carries a
-  // workflow's plan text (from "Use this workflow"); `historyId` carries a
-  // history entry id (from History / Dashboard recent plans). Either seeds the
-  // single active conversation with the loaded plan as an assistant message.
   const { historyId: historyIdParam, plan: planParam } = useSearch({
     from: "/protected/chat",
   });
@@ -81,19 +70,11 @@ export function ChatPage() {
   const [turns, setTurns] = useState<LocalTurn[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [saveTarget, setSaveTarget] = useState<LocalTurn | null>(null);
-  const [isRunning, setIsRunning] = useState(false);
-  /** Most recent user goal text — used when executing a plan. */
-  const lastGoalRef = useRef<string>("");
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // The active mutation (generate OR refine) — drives the loading bubble.
-  const isPending = generatePlan.isPending || refinePlan.isPending || isRunning;
+  const isPending = generatePlan.isPending || refinePlan.isPending;
 
-  // Seed the conversation once when a plan is provided via search params.
-  // `plan` seeds directly from the workflow text; `historyId` seeds from the
-  // fetched historical entry. We track the consumed key so re-navigation with
-  // the same params doesn't re-seed (and a new key does).
   const seedKey =
     planParam ?? (historyIdParam ? `history:${historyIdParam}` : null);
   const consumedSeedRef = useRef<string | null>(null);
@@ -134,8 +115,6 @@ export function ChatPage() {
     }
   }, [seedKey, planParam, historyIdParam, historyEntry.data]);
 
-  // Auto-scroll to the latest turn whenever the conversation grows or a
-  // request starts/finishes.
   // biome-ignore lint/correctness/useExhaustiveDependencies: scroll targets the latest turn only
   useEffect(() => {
     const el = scrollRef.current;
@@ -143,7 +122,6 @@ export function ChatPage() {
     el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
   }, [turns, isPending]);
 
-  // Build the Conversation payload sent to the backend from local turns.
   const conversation: Conversation = useMemo(
     () => ({
       messages: turns.map((t) => ({
@@ -163,8 +141,6 @@ export function ChatPage() {
 
   const handleNewGoal = async (goal: string) => {
     setError(null);
-    lastGoalRef.current = goal;
-    // A new goal clears the single active conversation per the product spec.
     setTurns([]);
     appendTurn({ role: ChatRole.user, content: goal, timestamp: nowNs() });
 
@@ -182,45 +158,6 @@ export function ChatPage() {
       const message =
         err instanceof Error ? err.message : "Failed to generate plan.";
       setError(message);
-    }
-  };
-
-  const handleRunPlan = async (planText: string) => {
-    setError(null);
-    setIsRunning(true);
-    try {
-      // Prefer the last user message as the goal; fall back to stored goal.
-      const lastUser = [...turns]
-        .reverse()
-        .find((t) => t.role === ChatRole.user);
-      const goal =
-        lastUser?.content ??
-        (lastGoalRef.current || "Execute the current plan");
-      lastGoalRef.current = goal;
-
-      const result = await executePlanInApp({
-        goal,
-        planText,
-        identity,
-        principal,
-        dApps: preferencesQuery.data?.dApps ?? [],
-      });
-
-      appendTurn({
-        role: ChatRole.assistant,
-        content: result.summary,
-        timestamp: nowNs(),
-      });
-      toast.success("Execution finished", {
-        description: "See the results message in the chat.",
-      });
-    } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Failed to execute plan.";
-      setError(message);
-      toast.error("Execution failed", { description: message });
-    } finally {
-      setIsRunning(false);
     }
   };
 
@@ -250,8 +187,6 @@ export function ChatPage() {
   };
 
   const handleSubmit = (text: string) => {
-    // If there are no turns yet, this is a new goal; otherwise it's a
-    // refinement of the active plan.
     if (turns.length === 0) {
       void handleNewGoal(text);
     } else {
@@ -260,8 +195,6 @@ export function ChatPage() {
   };
 
   const handleRetry = () => {
-    // Retry re-runs the last user instruction against the conversation
-    // minus the failed assistant turn.
     const lastUserIndex = [...turns]
       .map((t) => t.role)
       .lastIndexOf(ChatRole.user);
@@ -272,7 +205,6 @@ export function ChatPage() {
     if (trimmed.length === 0) {
       void handleNewGoal(lastUser.content);
     } else {
-      // Re-issue as a refinement against the trimmed conversation.
       void refinePlan
         .mutateAsync({
           instruction: lastUser.content,
@@ -315,7 +247,7 @@ export function ChatPage() {
       ]);
       setSaveTarget(null);
       toast.success("Workflow saved", {
-        description: `"${name}" is now in your Workflows library.`,
+        description: `"${name}" is in Workflows — open it anytime and Copy for MCP.`,
       });
       void navigate({ to: "/workflows" });
       return wf;
@@ -334,7 +266,6 @@ export function ChatPage() {
 
   return (
     <section data-ocid="chat.page" className="flex h-full flex-col">
-      {/* Conversation scroll area */}
       <div
         ref={scrollRef}
         data-ocid="chat.scroll_area"
@@ -365,27 +296,13 @@ export function ChatPage() {
                         ? handleRetry
                         : undefined
                     }
-                    onRunPlan={
-                      showPlanAffordances && isLastAssistant
-                        ? () => handleRunPlan(turn.content)
-                        : undefined
-                    }
                     isSavingPlan={createWorkflow.isPending}
-                    isRunningPlan={isRunning}
                     isLastAssistant={isLastAssistant}
                   />
                 );
               })}
 
-              {isPending && (
-                <ChatMessageLoading
-                  label={
-                    isRunning
-                      ? "Executing on the Internet Computer…"
-                      : undefined
-                  }
-                />
-              )}
+              {isPending && <ChatMessageLoading />}
 
               {error && !isPending && (
                 <Alert variant="destructive" data-ocid="chat.error_state">
@@ -410,7 +327,6 @@ export function ChatPage() {
         </div>
       </div>
 
-      {/* Sticky composer */}
       <div className="border-t border-border bg-background/80 px-1 py-3 backdrop-blur-md">
         <div className="mx-auto w-full max-w-3xl">
           <ChatInput
@@ -419,8 +335,8 @@ export function ChatPage() {
             disabled={isPending}
             placeholder={
               turns.length === 0
-                ? "e.g. Check my ICP balance on the ledger…"
-                : "Refine the plan, or press Run now on the plan to execute…"
+                ? "Describe a goal — e.g. check ICP balance, migrate NFTs…"
+                : "Refine the plan — e.g. 'add a dry-run step' or 'use my vault canister'…"
             }
           />
         </div>
@@ -438,9 +354,9 @@ export function ChatPage() {
 
 function EmptyState() {
   const examples = [
-    "Check the balance of ICP in the NNS ledger account",
-    "Look up my ICP ledger balance for this app principal",
-    "Migrate my DeFi position between protocols while minimizing cycles spend",
+    "Check my ICP balance on the NNS ledger via MCP",
+    "Move rare NFTs from Marketplace X into my vault, re-list the rest on Y",
+    "Migrate my DeFi position while staying cycle-conscious",
   ];
   return (
     <div
@@ -452,13 +368,25 @@ function EmptyState() {
       </div>
       <div className="space-y-2">
         <h2 className="font-display text-xl font-semibold tracking-tight text-foreground">
-          Plan here. Run reads here. Full MCP in Grok.
+          Build workflows. Run them in your AI agent.
         </h2>
-        <p className="mx-auto max-w-md text-sm text-muted-foreground">
-          Describe a goal → get a plan → press <strong>Run now</strong> for
-          in-browser ICP queries (e.g. ledger balance). For true multi-app
-          actions under other dApp principals, use <strong>Copy for MCP</strong>{" "}
-          into Grok with the IC connector.
+        <p className="mx-auto max-w-lg text-sm text-muted-foreground">
+          CrossApp Agent helps you set up the IC MCP connector, store Memory
+          (apps &amp; rules), and draft numbered workflows with real MCP tool
+          hints. Then <strong className="text-foreground">Copy for MCP</strong>{" "}
+          and paste into Grok or Claude — the agent executes under your Internet
+          Identity.
+        </p>
+        <p className="text-xs text-muted-foreground">
+          New here? Complete{" "}
+          <Link to="/setup" className="text-primary hover:underline">
+            Setup
+          </Link>{" "}
+          first, then seed{" "}
+          <Link to="/memory" className="text-primary hover:underline">
+            Memory
+          </Link>
+          .
         </p>
       </div>
       <div className="flex flex-wrap justify-center gap-2">
@@ -497,7 +425,6 @@ function SaveWorkflowDialog({
   const [description, setDescription] = useState("");
   const [tagsRaw, setTagsRaw] = useState("");
 
-  // Reset fields when the dialog opens for a new plan.
   useEffect(() => {
     if (open) {
       setName("");
@@ -537,8 +464,9 @@ function SaveWorkflowDialog({
           <DialogHeader>
             <DialogTitle>Save as Workflow</DialogTitle>
             <DialogDescription>
-              Persist this plan to your on-chain workflow library. You can edit
-              and reuse it later from the Workflows page.
+              Store this MCP-ready plan on-chain under your Internet Identity.
+              From Workflows you can reopen it, edit steps, and{" "}
+              <strong>Copy for MCP</strong> again anytime.
             </DialogDescription>
           </DialogHeader>
 
@@ -555,7 +483,7 @@ function SaveWorkflowDialog({
                 data-ocid="chat.save_workflow.name_input"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. Token-gated community launch"
+                placeholder="e.g. Check NNS ICP balance via MCP"
                 autoFocus
                 required
               />
@@ -573,7 +501,7 @@ function SaveWorkflowDialog({
                 data-ocid="chat.save_workflow.description_input"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="A short summary of what this workflow does…"
+                placeholder="When to use this workflow and which dApps it touches…"
                 rows={2}
               />
             </div>
@@ -590,7 +518,7 @@ function SaveWorkflowDialog({
                 data-ocid="chat.save_workflow.tags_input"
                 value={tagsRaw}
                 onChange={(e) => setTagsRaw(e.target.value)}
-                placeholder="launch, community, token"
+                placeholder="nns, icp, balance, mcp"
               />
             </div>
           </div>

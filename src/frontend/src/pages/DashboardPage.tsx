@@ -32,21 +32,21 @@ const QUICK_ACCESS = [
   {
     to: "/chat",
     label: "Chat",
-    description: "Describe a cross-app goal and get an MCP-ready plan.",
+    description: "Describe a goal and draft an MCP-ready workflow to copy.",
     icon: MessageSquare,
     ocid: "dashboard.quick_access.chat",
   },
   {
     to: "/workflows",
     label: "Workflows",
-    description: "Browse, edit, and reuse your saved plans.",
+    description: "Saved plans — reopen and Copy for MCP anytime.",
     icon: Workflow,
     ocid: "dashboard.quick_access.workflows",
   },
   {
     to: "/memory",
     label: "Memory",
-    description: "Tune preferences, rules, and trusted dApps.",
+    description: "Apps, canister IDs, rules, and notes for planning.",
     icon: Brain,
     ocid: "dashboard.quick_access.memory",
   },
@@ -109,12 +109,13 @@ export default function DashboardPage() {
           </span>
         </div>
         <h1 className="font-display text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-          One agent, every app
+          Setup, memory, and MCP workflows
         </h1>
         <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
-          Plan cross-dApp moves on the Internet Computer, store memory on-chain,
-          then run plans through the IC MCP server under your Internet Identity
-          — no tab-switching.
+          Configure the IC MCP connector, store the dApps your agent should
+          know, and build numbered workflows to paste into Grok or Claude. This
+          app plans and saves — your AI agent executes under your Internet
+          Identity.
         </p>
       </header>
 
@@ -131,9 +132,9 @@ export default function DashboardPage() {
           </p>
           <p className="text-xs text-muted-foreground">
             {openAiQuery.data === false
-              ? "Template planner is active (operator AI key not set). Plans still target real MCP tools — run them in Grok, Claude, or ChatGPT."
+              ? "Template planner is active (no operator AI key). Workflows still use real MCP tool names — Copy for MCP into Grok/Claude."
               : openAiQuery.data === true
-                ? "AI-assisted plans enabled. Copy any plan into Grok, Claude, or ChatGPT with the IC MCP connector enabled."
+                ? "AI-assisted planning is on. Draft in Chat, then Copy for MCP into your connected AI agent."
                 : "Checking planner status…"}
           </p>
         </div>
@@ -149,8 +150,8 @@ export default function DashboardPage() {
         <EmptyState
           ocid="dashboard.onboarding.empty_state"
           icon={Sparkles}
-          title="Welcome — finish Setup, then plan"
-          description="Trust the IC MCP server with your Internet Identity, connect Grok (recommended), Claude, or ChatGPT, seed Memory with your dApps, then describe a cross-app goal in Chat. Plans paste into your MCP-connected AI."
+          title="Welcome — set up MCP, then build a workflow"
+          description="1) Setup: trust the IC MCP URL and connect Grok. 2) Memory: add canister IDs. 3) Chat: describe a goal. 4) Copy for MCP and paste into your AI agent. This app does not run MCP tools itself."
           hint="first-time · onboarding"
           actionLabel="Start Setup"
           actionTo="/setup"
