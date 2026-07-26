@@ -2,7 +2,7 @@ manifest_version = "0.1.0"
 
 [project]
 id = "my-app"
-name = "ICP MCP Server Assistant"
+name = "ICP MCP Connector Assistant"
 
 [workspace]
 include = ["src/**"]

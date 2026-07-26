@@ -2,7 +2,7 @@
 
 ## Direction
 
-ICP MCP Server Assistant — a dark-mode-first personal control center for IC MCP setup, memory, and workflows on the Internet Computer, built on neutral grayscale with a single electric cyan accent.
+ICP MCP Connector Assistant — a dark-mode-first personal control center for IC MCP setup, memory, and workflows on the Internet Computer, built on neutral grayscale with a single electric cyan accent.
 
 ## Tone
 

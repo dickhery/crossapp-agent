@@ -1,5 +1,5 @@
 {
-  "overview": "ICP MCP Server Assistant — set up the official IC MCP connector (with your custom connector name), store on-chain memory, and draft MCP-ready workflows to copy into Grok or Claude under your Internet Identity.",
+  "overview": "ICP MCP Connector Assistant — set up the official IC MCP connector (with your custom connector name), store on-chain memory, and draft MCP-ready workflows to copy into Grok or Claude under your Internet Identity.",
   "features": [
     "Log in with Internet Identity and see your principal",
     "Custom MCP connector display name (e.g. Agent Identity) used in Copy for MCP instructions",

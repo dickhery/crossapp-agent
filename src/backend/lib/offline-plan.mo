@@ -77,7 +77,7 @@ module {
     if (balance) {
       var balSteps : [Text] = [
         "Confirm the IC MCP connector is trusted in Internet Identity and connected in Grok or Claude.",
-        "Identify the ICP ledger canister ryjl3-tyaaa-aaaaa-aaaba-cai (or the ledger registered in ICP MCP Server Assistant Memory).",
+        "Identify the ICP ledger canister ryjl3-tyaaa-aaaaa-aaaba-cai (or the ledger registered in ICP MCP Connector Assistant Memory).",
         "Resolve the NNS app (MCP: resolve_app https://nns.ic0.app or icp_find_app_by_name).",
         "Get your principal at NNS (MCP: get_app_principal) and list accounts if needed (MCP: list_app_accounts).",
         "Query ICP balance as that principal (MCP: canister_query on the ledger icrc1_balance_of) and report the amount in ICP.",
