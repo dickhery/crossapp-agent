@@ -11,6 +11,7 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
+import { AgentPermissionsToggle } from "@/components/chat/AgentPermissionsToggle";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,6 +28,8 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
+import { useAgentPermissions } from "@/hooks/use-agent-permissions";
+import { useConnectorDisplayName } from "@/hooks/use-connector-name";
 import {
   useDeleteWorkflow,
   useDuplicateWorkflow,
@@ -34,6 +37,7 @@ import {
   useToggleFavorite,
   useUpdateWorkflow,
 } from "@/hooks/use-workflows";
+import { planClipboardPayload } from "@/lib/mcp";
 import type { Workflow } from "@/types";
 
 // Tags are entered as comma-separated text and persisted as a trimmed string
@@ -57,6 +61,9 @@ export function WorkflowEditPage() {
   const deleteWorkflow = useDeleteWorkflow();
   const toggleFavorite = useToggleFavorite();
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const { connectorName } = useConnectorDisplayName();
+  const { grantAllPermissions, setGrantAllPermissions } = useAgentPermissions();
 
   const workflow = Array.isArray(getWorkflow.data)
     ? null
@@ -145,6 +152,31 @@ export function WorkflowEditPage() {
     });
   };
 
+  const handleCopyForMcp = async () => {
+    const text = planText.trim();
+    if (!text) {
+      toast.error("Plan is empty — add steps before copying.");
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(
+        planClipboardPayload(text, {
+          connectorDisplayName: connectorName,
+          grantAllPermissions,
+        }),
+      );
+      setCopied(true);
+      toast.success(
+        grantAllPermissions
+          ? `Copied with full permissions — paste into Grok/Claude with "${connectorName}" enabled`
+          : `Copied for MCP — paste into Grok/Claude with "${connectorName}" enabled`,
+      );
+      window.setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast.error("Clipboard unavailable — select the plan text manually.");
+    }
+  };
+
   const saving = updateWorkflow.isPending;
   const busy =
     saving ||
@@ -225,7 +257,7 @@ export function WorkflowEditPage() {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Button
             variant="ghost"
             size="icon"
@@ -246,6 +278,20 @@ export function WorkflowEditPage() {
               }
               aria-hidden
             />
+          </Button>
+          <Button
+            variant="default"
+            size="sm"
+            data-ocid="workflow_edit.copy_mcp_button"
+            onClick={() => void handleCopyForMcp()}
+            disabled={busy || !planText.trim()}
+          >
+            {copied ? (
+              <Check className="h-4 w-4" aria-hidden />
+            ) : (
+              <Copy className="h-4 w-4" aria-hidden />
+            )}
+            {copied ? "Copied" : "Copy for MCP"}
           </Button>
           <Button
             variant="outline"
@@ -337,10 +383,34 @@ export function WorkflowEditPage() {
           </p>
         </div>
 
+        <AgentPermissionsToggle
+          checked={grantAllPermissions}
+          onCheckedChange={setGrantAllPermissions}
+          ocidPrefix="workflow_edit"
+        />
+
         <div className="space-y-2">
-          <Label htmlFor="workflow-plan" data-ocid="workflow_edit.plan_label">
-            Plan
-          </Label>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <Label htmlFor="workflow-plan" data-ocid="workflow_edit.plan_label">
+              Plan
+            </Label>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              data-ocid="workflow_edit.copy_mcp_plan_button"
+              onClick={() => void handleCopyForMcp()}
+              disabled={busy || !planText.trim()}
+              className="h-8"
+            >
+              {copied ? (
+                <Check className="h-3.5 w-3.5" aria-hidden />
+              ) : (
+                <Copy className="h-3.5 w-3.5" aria-hidden />
+              )}
+              {copied ? "Copied" : "Copy for MCP"}
+            </Button>
+          </div>
           <Textarea
             id="workflow-plan"
             value={planText}
@@ -350,6 +420,15 @@ export function WorkflowEditPage() {
             rows={16}
             className="font-mono text-xs leading-relaxed scrollbar-thin"
           />
+          <p className="text-xs text-muted-foreground">
+            Copy for MCP includes connector{" "}
+            <strong className="text-foreground">
+              &quot;{connectorName}&quot;
+            </strong>
+            {grantAllPermissions
+              ? " and pre-confirms full read / write / execute permissions."
+              : " and asks the agent to confirm before writes."}
+          </p>
         </div>
       </div>
 

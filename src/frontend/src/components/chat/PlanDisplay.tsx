@@ -2,8 +2,10 @@ import { Check, Copy, ExternalLink, RefreshCw, Save } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { AgentPermissionsToggle } from "@/components/chat/AgentPermissionsToggle";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useAgentPermissions } from "@/hooks/use-agent-permissions";
 import { useConnectorDisplayName } from "@/hooks/use-connector-name";
 import {
   GROK_CHAT_URL,
@@ -33,15 +35,22 @@ export function PlanDisplay({
 }: PlanDisplayProps) {
   const [copied, setCopied] = useState(false);
   const { connectorName } = useConnectorDisplayName();
+  const { grantAllPermissions, setGrantAllPermissions } = useAgentPermissions();
+
+  const buildPayload = () =>
+    planClipboardPayload(planText, {
+      connectorDisplayName: connectorName,
+      grantAllPermissions,
+    });
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(
-        planClipboardPayload(planText, connectorName),
-      );
+      await navigator.clipboard.writeText(buildPayload());
       setCopied(true);
       toast.success(
-        `Workflow copied — paste into Grok/Claude with "${connectorName}" enabled`,
+        grantAllPermissions
+          ? `Workflow copied with full permissions — paste into Grok/Claude with "${connectorName}" enabled`
+          : `Workflow copied — paste into Grok/Claude with "${connectorName}" enabled`,
       );
       window.setTimeout(() => setCopied(false), 2000);
     } catch {
@@ -51,11 +60,11 @@ export function PlanDisplay({
 
   const handleOpenGrok = async () => {
     try {
-      await navigator.clipboard.writeText(
-        planClipboardPayload(planText, connectorName),
-      );
+      await navigator.clipboard.writeText(buildPayload());
       toast.success(
-        `Copied for "${connectorName}". Paste into Grok after the tab opens.`,
+        grantAllPermissions
+          ? `Copied with full permissions for "${connectorName}". Paste into Grok after the tab opens.`
+          : `Copied for "${connectorName}". Paste into Grok after the tab opens.`,
       );
     } catch {
       // still open Grok
@@ -87,6 +96,15 @@ export function PlanDisplay({
           <span className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground/70">
             {displayLines.length} {displayLines.length === 1 ? "step" : "steps"}
           </span>
+          {grantAllPermissions && (
+            <Badge
+              variant="outline"
+              className="border-primary/30 text-primary"
+              data-ocid="plan_display.permissions_badge"
+            >
+              Full permissions
+            </Badge>
+          )}
         </div>
         <div className="flex flex-wrap items-center gap-1.5">
           {canRetry && (
@@ -147,6 +165,13 @@ export function PlanDisplay({
         </div>
       </div>
 
+      <AgentPermissionsToggle
+        checked={grantAllPermissions}
+        onCheckedChange={setGrantAllPermissions}
+        ocidPrefix="plan_display"
+        className="mb-4"
+      />
+
       <div
         data-ocid="plan_display.howto"
         className="mb-4 space-y-2 rounded-lg border border-border bg-secondary/30 p-3 text-xs leading-relaxed text-muted-foreground"
@@ -174,12 +199,22 @@ export function PlanDisplay({
             ).
           </li>
           <li>
+            Optionally enable{" "}
+            <strong className="text-foreground">
+              Grant all read / write / execute
+            </strong>{" "}
+            above if you want the agent to run without waiting for per-step
+            confirmation (still bound by your Memory rules).
+          </li>
+          <li>
             Press <strong className="text-foreground">Copy for MCP</strong> —
             the paste text tells the agent to use{" "}
             <strong className="text-foreground">
               &quot;{connectorName}&quot;
             </strong>
-            .
+            {grantAllPermissions
+              ? " and that full permissions are pre-confirmed."
+              : "."}
           </li>
           <li>
             Open a chat with{" "}

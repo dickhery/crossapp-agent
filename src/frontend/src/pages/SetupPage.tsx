@@ -14,10 +14,12 @@ import {
 import { type ReactNode, useState } from "react";
 import { toast } from "sonner";
 
+import { AgentPermissionsToggle } from "@/components/chat/AgentPermissionsToggle";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useAgentPermissions } from "@/hooks/use-agent-permissions";
 import { useConnectorDisplayName } from "@/hooks/use-connector-name";
 import { APP_NAME } from "@/lib/brand";
 import {
@@ -74,6 +76,7 @@ export function SetupPage() {
   );
   const { connectorName, defaultName, saveConnectorName, resetConnectorName } =
     useConnectorDisplayName();
+  const { grantAllPermissions, setGrantAllPermissions } = useAgentPermissions();
   const [nameDraft, setNameDraft] = useState(connectorName);
 
   const toggle = (key: keyof ChecklistState) => {
@@ -272,6 +275,38 @@ export function SetupPage() {
             </Button>
           </div>
         </div>
+      </div>
+
+      {/* Default agent permissions for Copy for MCP — browser-local only */}
+      <div
+        data-ocid="setup.agent_permissions_card"
+        className="space-y-3 rounded-xl border border-border bg-card p-5"
+      >
+        <div className="space-y-1">
+          <h2 className="font-display text-base font-semibold tracking-tight text-foreground">
+            Agent permissions for Copy for MCP
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            When you copy a plan or workflow, the paste text can either ask the
+            AI agent to confirm writes, or pre-grant full{" "}
+            <strong className="text-foreground">read / write / execute</strong>{" "}
+            so the agent can run without pausing. You can still change this on
+            each plan or workflow before copying. Preference is stored in this
+            browser only (not on-chain — zero cycles).
+          </p>
+        </div>
+        <AgentPermissionsToggle
+          checked={grantAllPermissions}
+          onCheckedChange={(next) => {
+            setGrantAllPermissions(next);
+            toast.success(
+              next
+                ? "Default set: pre-grant full permissions in Copy for MCP"
+                : "Default set: confirm writes in Copy for MCP",
+            );
+          }}
+          ocidPrefix="setup"
+        />
       </div>
 
       {/* Step 1 — II */}
@@ -529,9 +564,17 @@ export function SetupPage() {
             a dry-run before any update”).
           </li>
           <li>
+            Optionally enable{" "}
+            <strong className="text-foreground">
+              Grant all read / write / execute
+            </strong>{" "}
+            (Setup default or on the plan/workflow) if you want the agent to
+            proceed without per-step confirmation.
+          </li>
+          <li>
             Press <strong className="text-foreground">Copy for MCP</strong>. The
             clipboard names your connector (<em>{connectorName}</em>), includes
-            the MCP URL, safety rules, and the step list.
+            the MCP URL, permission rules, and the step list.
           </li>
           <li>
             Open Grok (or Claude), enable{" "}

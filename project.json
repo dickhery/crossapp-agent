@@ -3,11 +3,12 @@
   "features": [
     "Log in with Internet Identity and see your principal",
     "Custom MCP connector display name (e.g. Agent Identity) used in Copy for MCP instructions",
+    "Optional pre-grant of full read/write/execute agent permissions in Copy for MCP (browser-local default + per plan/workflow toggle)",
     "Guided Setup for trusting the IC MCP server with Grok, Claude, and ChatGPT paths",
     "Thorough how-to for creating workflows and running them in an external AI agent",
     "Describe cross-dApp goals in chat and get numbered plans with real MCP tool hints",
     "Offline template planner when the operator AI key is not set — still MCP-tool-aware",
-    "Copy for MCP (named connector + URL + safety rules) and save reusable workflows on-chain",
+    "Copy for MCP (named connector + URL + permission rules) and save reusable workflows on-chain",
     "Store preferred dApps, canister IDs, personal rules, and notes on-chain",
     "Dashboard with MCP status, recent plans, and first-time onboarding",
     "History log of generated plans with re-open support",
@@ -24,5 +25,5 @@
     "motoko",
     "dark-mode"
   ],
-  "last_updated": "2026-07-24T18:00:00.000Z"
+  "last_updated": "2026-07-26T12:00:00.000Z"
 }
