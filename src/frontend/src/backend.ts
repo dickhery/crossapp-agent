@@ -133,8 +133,9 @@ export interface Result {
 }
 export interface PreferredDApp {
     id: bigint;
+    accountIds: Array<string>;
+    canisterIds: Array<string>;
     friendlyName: string;
-    canisterId: string;
 }
 export type HistoryId = bigint;
 export interface Cell {
@@ -191,7 +192,7 @@ export interface backendInterface {
     _initialize_access_control(): Promise<void>;
     _internet_identity_sign_in_finish(): Promise<Result__1>;
     _internet_identity_sign_in_start(): Promise<Uint8Array>;
-    addDApp(friendlyName: string, canisterId: string): Promise<Preferences>;
+    addDApp(friendlyName: string, canisterIds: Array<string>, accountIds: Array<string>): Promise<Preferences>;
     addRule(text: string): Promise<Preferences>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     createWorkflow(name: string, description: string, tags: Array<string>, planText: string, favorite: boolean): Promise<Workflow>;
@@ -268,17 +269,17 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async addDApp(arg0: string, arg1: string): Promise<Preferences> {
+    async addDApp(arg0: string, arg1: Array<string>, arg2: Array<string>): Promise<Preferences> {
         if (this.processError) {
             try {
-                const result = await this.actor.addDApp(arg0, arg1);
+                const result = await this.actor.addDApp(arg0, arg1, arg2);
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.addDApp(arg0, arg1);
+            const result = await this.actor.addDApp(arg0, arg1, arg2);
             return result;
         }
     }

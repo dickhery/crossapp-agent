@@ -12,15 +12,31 @@ module {
   public let MCP_URL : Text = "https://mcp.beta.id.ai/mcp-prod";
   public let II_TRUST_URL : Text = "https://id.ai/manage/settings";
 
+  func formatDApp(d : Core.PreferredDApp) : Text {
+    let cans = if (d.canisterIds.size() == 0) {
+      "(none)"
+    } else {
+      d.canisterIds.vals().join(", ")
+    };
+    let accts = if (d.accountIds.size() == 0) {
+      "(not set — resolve via get_app_principal / list_app_accounts before transfers)"
+    } else {
+      d.accountIds.vals().join(", ")
+    };
+    "  - " # d.friendlyName # "\n" #
+    "      canisters: " # cans # "\n" #
+    "      agent account IDs: " # accts;
+  };
+
   func prefsBlock(prefs : Core.Preferences) : Text {
     var parts : [Text] = [];
     if (prefs.dApps.size() > 0) {
-      let lines = prefs.dApps.map(
-        func(d : Core.PreferredDApp) : Text {
-          "  - " # d.friendlyName # " → " # d.canisterId
-        },
+      let lines = prefs.dApps.map(formatDApp);
+      parts := parts.concat(
+        [
+          "Your preferred dApps (use listed agent account IDs for deposits/transfers):",
+        ].concat(lines)
       );
-      parts := parts.concat(["Your preferred dApps / canisters:"].concat(lines));
     } else {
       parts := parts.concat([
         "Your preferred dApps / canisters: (none saved yet — add them under Memory)",
@@ -139,9 +155,24 @@ module {
 
     if (prefs.dApps.size() > 0) {
       let first = prefs.dApps[0];
-      steps := steps.concat([
-        "Start with preferred dApp \"" # first.friendlyName # "\" (" # first.canisterId # ") from Memory — confirm it with (MCP: icp_lookup_canister_info_by_id).",
-      ]);
+      let primaryCanister = if (first.canisterIds.size() > 0) {
+        first.canisterIds[0]
+      } else {
+        "(no canister set)"
+      };
+      var memStep =
+        "Start with preferred dApp \"" # first.friendlyName # "\" (canisters: " #
+        first.canisterIds.vals().join(", ") # ") from Memory — confirm with (MCP: icp_lookup_canister_info_by_id) on " #
+        primaryCanister # ".";
+      if (first.accountIds.size() > 0) {
+        memStep #=
+          " For transfers into this app use ONLY agent account ID(s): " #
+          first.accountIds.vals().join(", ") # ".";
+      } else {
+        memStep #=
+          " No agent account ID stored — resolve the correct account with (MCP: get_app_principal) / (MCP: list_app_accounts) before any transfer.";
+      };
+      steps := steps.concat([memStep]);
     };
     steps;
   };

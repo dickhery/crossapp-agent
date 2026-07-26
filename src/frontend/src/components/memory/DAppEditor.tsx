@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   useAddDApp,
   useDeleteDApp,
@@ -28,15 +29,63 @@ type DAppEditorProps = {
 
 type Draft = {
   friendlyName: string;
-  canisterId: string;
+  /** One canister principal per line (or comma-separated). */
+  canisterIdsText: string;
+  /** One agent account ID per line (or comma-separated). */
+  accountIdsText: string;
 };
 
-const EMPTY_DRAFT: Draft = { friendlyName: "", canisterId: "" };
+const EMPTY_DRAFT: Draft = {
+  friendlyName: "",
+  canisterIdsText: "",
+  accountIdsText: "",
+};
+
+/** Soft caps match backend (core.mo) so we fail client-side first. */
+const MAX_CANISTERS_PER_DAPP = 12;
+const MAX_ACCOUNTS_PER_DAPP = 12;
+const MAX_ID_CHARS = 200;
+
+/**
+ * Split a multi-line / comma-separated ID field into trimmed unique strings.
+ */
+function parseIdList(raw: string, maxCount: number): string[] {
+  const parts = raw
+    .split(/[\n,]+/)
+    .map((s) => s.trim())
+    .filter((s) => s.length > 0 && s.length <= MAX_ID_CHARS);
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const p of parts) {
+    if (seen.has(p)) continue;
+    seen.add(p);
+    out.push(p);
+    if (out.length >= maxCount) break;
+  }
+  return out;
+}
+
+function idsToText(ids: string[]): string {
+  return ids.join("\n");
+}
 
 function isDraftValid(draft: Draft): boolean {
   return (
-    draft.friendlyName.trim().length > 0 && draft.canisterId.trim().length > 0
+    draft.friendlyName.trim().length > 0 &&
+    parseIdList(draft.canisterIdsText, MAX_CANISTERS_PER_DAPP).length > 0
   );
+}
+
+function dAppFromDraft(
+  id: bigint,
+  draft: Draft,
+): Omit<PreferredDApp, "id"> & { id: bigint } {
+  return {
+    id,
+    friendlyName: draft.friendlyName.trim(),
+    canisterIds: parseIdList(draft.canisterIdsText, MAX_CANISTERS_PER_DAPP),
+    accountIds: parseIdList(draft.accountIdsText, MAX_ACCOUNTS_PER_DAPP),
+  };
 }
 
 export function DAppEditor({ dApps }: DAppEditorProps) {
@@ -55,18 +104,27 @@ export function DAppEditor({ dApps }: DAppEditorProps) {
   const handleAdd = () => {
     if (!isDraftValid(addDraft)) return;
     setError(null);
-    addDApp.mutate([addDraft.friendlyName.trim(), addDraft.canisterId.trim()], {
-      onSuccess: () => setAddDraft(EMPTY_DRAFT),
-      onError: (e) =>
-        setError(e instanceof Error ? e.message : "Failed to add dApp"),
-    });
+    const payload = dAppFromDraft(0n, addDraft);
+    addDApp.mutate(
+      {
+        friendlyName: payload.friendlyName,
+        canisterIds: payload.canisterIds,
+        accountIds: payload.accountIds,
+      },
+      {
+        onSuccess: () => setAddDraft(EMPTY_DRAFT),
+        onError: (e) =>
+          setError(e instanceof Error ? e.message : "Failed to add dApp"),
+      },
+    );
   };
 
   const startEdit = (dApp: PreferredDApp) => {
     setEditingId(dApp.id);
     setEditDraft({
       friendlyName: dApp.friendlyName,
-      canisterId: dApp.canisterId,
+      canisterIdsText: idsToText(dApp.canisterIds ?? []),
+      accountIdsText: idsToText(dApp.accountIds ?? []),
     });
     setError(null);
   };
@@ -79,18 +137,11 @@ export function DAppEditor({ dApps }: DAppEditorProps) {
   const saveEdit = (dApp: PreferredDApp) => {
     if (!isDraftValid(editDraft)) return;
     setError(null);
-    updateDApp.mutate(
-      {
-        id: dApp.id,
-        friendlyName: editDraft.friendlyName.trim(),
-        canisterId: editDraft.canisterId.trim(),
-      },
-      {
-        onSuccess: () => cancelEdit(),
-        onError: (e) =>
-          setError(e instanceof Error ? e.message : "Failed to update dApp"),
-      },
-    );
+    updateDApp.mutate(dAppFromDraft(dApp.id, editDraft), {
+      onSuccess: () => cancelEdit(),
+      onError: (e) =>
+        setError(e instanceof Error ? e.message : "Failed to update dApp"),
+    });
   };
 
   const confirmDelete = () => {
@@ -124,9 +175,11 @@ export function DAppEditor({ dApps }: DAppEditorProps) {
             Apps the agent can control
           </h2>
           <p className="text-sm text-muted-foreground">
-            Add each IC dApp or canister your agent should plan against. Use a
-            clear name (e.g. &quot;NFT vault&quot;) and the canister principal
-            from the app&apos;s docs or MCP discovery.
+            Bundle each dApp with its canister principals and the account IDs
+            your agent&apos;s Internet Identity uses inside that app. Plans and
+            Copy for MCP will tell the agent to use these exact account IDs for
+            deposits and transfers — reducing the risk of sending funds to the
+            wrong destination.
           </p>
         </div>
       </div>
@@ -134,65 +187,101 @@ export function DAppEditor({ dApps }: DAppEditorProps) {
       {/* Add form */}
       <div
         data-ocid="memory.dapps.add_form"
-        className="rounded-lg border border-border bg-secondary/40 p-4"
+        className="space-y-3 rounded-lg border border-border bg-secondary/40 p-4"
       >
-        <div className="grid gap-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
+        <div className="space-y-1.5">
+          <Label htmlFor="dapp-name" className="text-xs text-muted-foreground">
+            App name
+          </Label>
+          <Input
+            id="dapp-name"
+            data-ocid="memory.dapps.name_input"
+            placeholder="e.g. NNS, OpenChat, My NFT Vault"
+            value={addDraft.friendlyName}
+            onChange={(e) =>
+              setAddDraft((d) => ({ ...d, friendlyName: e.target.value }))
+            }
+            disabled={isAddBusy}
+          />
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-1.5">
             <Label
-              htmlFor="dapp-name"
+              htmlFor="dapp-canisters"
               className="text-xs text-muted-foreground"
             >
-              App name
+              Canister IDs{" "}
+              <span className="text-muted-foreground/70">
+                (one per line, required)
+              </span>
             </Label>
-            <Input
-              id="dapp-name"
-              data-ocid="memory.dapps.name_input"
-              placeholder="e.g. My NFT Vault"
-              value={addDraft.friendlyName}
-              onChange={(e) =>
-                setAddDraft((d) => ({ ...d, friendlyName: e.target.value }))
-              }
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleAdd();
-              }}
-              disabled={isAddBusy}
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label
-              htmlFor="dapp-canister"
-              className="text-xs text-muted-foreground"
-            >
-              Canister ID
-            </Label>
-            <Input
-              id="dapp-canister"
+            <Textarea
+              id="dapp-canisters"
               data-ocid="memory.dapps.canister_input"
-              placeholder="e.g. ryjl3-tyaaa-aaaaa-aaaba-cai"
-              value={addDraft.canisterId}
-              onChange={(e) =>
-                setAddDraft((d) => ({ ...d, canisterId: e.target.value }))
+              placeholder={
+                "e.g.\nryjl3-tyaaa-aaaaa-aaaba-cai\nrrkah-fqaaa-aaaaa-aaaaq-cai"
               }
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleAdd();
-              }}
+              value={addDraft.canisterIdsText}
+              onChange={(e) =>
+                setAddDraft((d) => ({
+                  ...d,
+                  canisterIdsText: e.target.value,
+                }))
+              }
               disabled={isAddBusy}
-              className="font-mono text-xs"
+              rows={3}
+              className="font-mono text-xs leading-relaxed"
             />
           </div>
+          <div className="space-y-1.5">
+            <Label
+              htmlFor="dapp-accounts"
+              className="text-xs text-muted-foreground"
+            >
+              Agent account IDs{" "}
+              <span className="text-muted-foreground/70">
+                (optional, recommended)
+              </span>
+            </Label>
+            <Textarea
+              id="dapp-accounts"
+              data-ocid="memory.dapps.account_input"
+              placeholder={
+                "Account IDs for this agent II inside the app\n(e.g. ICRC account, account identifier, principal)"
+              }
+              value={addDraft.accountIdsText}
+              onChange={(e) =>
+                setAddDraft((d) => ({
+                  ...d,
+                  accountIdsText: e.target.value,
+                }))
+              }
+              disabled={isAddBusy}
+              rows={3}
+              className="font-mono text-xs leading-relaxed"
+            />
+          </div>
+        </div>
+        <p className="font-mono text-[11px] text-muted-foreground/70">
+          Up to {MAX_CANISTERS_PER_DAPP} canisters and {MAX_ACCOUNTS_PER_DAPP}{" "}
+          account IDs per app. Get agent accounts via MCP (
+          <code className="rounded bg-muted px-1">get_app_principal</code>,{" "}
+          <code className="rounded bg-muted px-1">list_app_accounts</code>) or
+          the app&apos;s own UI.
+        </p>
+        <div className="flex justify-end">
           <Button
             type="button"
             data-ocid="memory.dapps.add_button"
             onClick={handleAdd}
             disabled={!isDraftValid(addDraft) || isAddBusy}
-            className="sm:mb-0"
           >
             {isAddBusy ? (
               <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
             ) : (
               <Plus className="h-4 w-4" aria-hidden />
             )}
-            Add
+            Add app
           </Button>
         </div>
       </div>
@@ -217,8 +306,9 @@ export function DAppEditor({ dApps }: DAppEditorProps) {
             No apps registered yet
           </p>
           <p className="mt-1 text-sm text-muted-foreground">
-            Add a friendly name and canister ID above so plans can reference
-            your vaults, markets, and ledgers by principal.
+            Add a friendly name, one or more canister IDs, and ideally the
+            agent&apos;s account IDs for that app so plans never guess where to
+            send funds.
           </p>
         </div>
       ) : (
@@ -228,14 +318,16 @@ export function DAppEditor({ dApps }: DAppEditorProps) {
         >
           {dApps.map((dApp, index) => {
             const isEditing = editingId === dApp.id;
+            const canisters = dApp.canisterIds ?? [];
+            const accounts = dApp.accountIds ?? [];
             return (
               <li
                 key={dApp.id.toString()}
                 data-ocid={`memory.dapps.item.${index}`}
-                className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between"
+                className="flex flex-col gap-3 p-4"
               >
                 {isEditing ? (
-                  <div className="grid flex-1 gap-3 sm:grid-cols-2">
+                  <div className="space-y-3">
                     <Input
                       data-ocid={`memory.dapps.edit_name_input.${index}`}
                       aria-label="Edit friendly name"
@@ -249,20 +341,47 @@ export function DAppEditor({ dApps }: DAppEditorProps) {
                       disabled={isEditBusy}
                       autoFocus
                     />
-                    <Input
-                      data-ocid={`memory.dapps.edit_canister_input.${index}`}
-                      aria-label="Edit canister ID"
-                      value={editDraft.canisterId}
-                      onChange={(e) =>
-                        setEditDraft((d) => ({
-                          ...d,
-                          canisterId: e.target.value,
-                        }))
-                      }
-                      disabled={isEditBusy}
-                      className="font-mono text-xs"
-                    />
-                    <div className="flex gap-2 sm:col-span-2 sm:justify-end">
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <div className="space-y-1.5">
+                        <Label className="text-xs text-muted-foreground">
+                          Canister IDs
+                        </Label>
+                        <Textarea
+                          data-ocid={`memory.dapps.edit_canister_input.${index}`}
+                          aria-label="Edit canister IDs"
+                          value={editDraft.canisterIdsText}
+                          onChange={(e) =>
+                            setEditDraft((d) => ({
+                              ...d,
+                              canisterIdsText: e.target.value,
+                            }))
+                          }
+                          disabled={isEditBusy}
+                          rows={3}
+                          className="font-mono text-xs leading-relaxed"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label className="text-xs text-muted-foreground">
+                          Agent account IDs
+                        </Label>
+                        <Textarea
+                          data-ocid={`memory.dapps.edit_account_input.${index}`}
+                          aria-label="Edit account IDs"
+                          value={editDraft.accountIdsText}
+                          onChange={(e) =>
+                            setEditDraft((d) => ({
+                              ...d,
+                              accountIdsText: e.target.value,
+                            }))
+                          }
+                          disabled={isEditBusy}
+                          rows={3}
+                          className="font-mono text-xs leading-relaxed"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex gap-2 justify-end">
                       <Button
                         type="button"
                         variant="ghost"
@@ -294,14 +413,54 @@ export function DAppEditor({ dApps }: DAppEditorProps) {
                     </div>
                   </div>
                 ) : (
-                  <>
-                    <div className="min-w-0 space-y-0.5">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                    <div className="min-w-0 space-y-2">
                       <p className="truncate font-medium text-foreground">
                         {dApp.friendlyName}
                       </p>
-                      <p className="truncate font-mono text-xs text-muted-foreground">
-                        {dApp.canisterId}
-                      </p>
+                      <div className="space-y-1">
+                        <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/60">
+                          Canisters
+                        </p>
+                        {canisters.length > 0 ? (
+                          <ul className="space-y-0.5">
+                            {canisters.map((id) => (
+                              <li
+                                key={id}
+                                className="truncate font-mono text-xs text-muted-foreground"
+                              >
+                                {id}
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <p className="text-xs italic text-muted-foreground/70">
+                            None
+                          </p>
+                        )}
+                      </div>
+                      <div className="space-y-1">
+                        <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/60">
+                          Agent account IDs
+                        </p>
+                        {accounts.length > 0 ? (
+                          <ul className="space-y-0.5">
+                            {accounts.map((id) => (
+                              <li
+                                key={id}
+                                className="truncate font-mono text-xs text-primary/90"
+                              >
+                                {id}
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <p className="text-xs italic text-amber-500/90">
+                            Not set — agent may guess the wrong account for
+                            transfers
+                          </p>
+                        )}
+                      </div>
                     </div>
                     <div className="flex shrink-0 gap-1">
                       <Button
@@ -331,7 +490,7 @@ export function DAppEditor({ dApps }: DAppEditorProps) {
                         <Trash2 className="h-4 w-4" aria-hidden />
                       </Button>
                     </div>
-                  </>
+                  </div>
                 )}
               </li>
             );
@@ -351,7 +510,7 @@ export function DAppEditor({ dApps }: DAppEditorProps) {
             <AlertDialogTitle>Remove preferred dApp?</AlertDialogTitle>
             <AlertDialogDescription>
               {pendingDelete
-                ? `"${pendingDelete.friendlyName}" will be removed from your preferences. This cannot be undone.`
+                ? `"${pendingDelete.friendlyName}" and its canister/account IDs will be removed from your preferences. This cannot be undone.`
                 : "This dApp will be removed from your preferences."}
             </AlertDialogDescription>
           </AlertDialogHeader>

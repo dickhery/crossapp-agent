@@ -1,10 +1,11 @@
 import { useActor } from "@caffeineai/core-infrastructure";
-import { Brain, Loader2, RefreshCw } from "lucide-react";
+import { AlertTriangle, Brain, Loader2, RefreshCw } from "lucide-react";
 
 import { createActor } from "@/backend";
 import { DAppEditor } from "@/components/memory/DAppEditor";
 import { NotesEditor } from "@/components/memory/NotesEditor";
 import { RulesEditor } from "@/components/memory/RulesEditor";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EMPTY_PREFERENCES, useGetPreferences } from "@/hooks/use-preferences";
@@ -66,13 +67,34 @@ export function MemoryPage() {
               Memory &amp; Preferences
             </h1>
             <p className="text-sm text-muted-foreground">
-              Register the IC dApps and canisters your agent may control, plus
-              personal rules and notes. Stored on-chain under your Internet
-              Identity only.
+              Register each dApp with its canister IDs and your agent&apos;s
+              account IDs for that app, plus personal rules and notes. Stored
+              on-chain under your Internet Identity only.
             </p>
           </div>
         </div>
       </header>
+
+      <Alert
+        data-ocid="memory.agent_risk_warning"
+        className="border-amber-500/40 bg-amber-500/5 text-foreground [&>svg]:text-amber-500"
+      >
+        <AlertTriangle />
+        <AlertTitle className="font-display">
+          Risk: agents acting under your Internet Identity
+        </AlertTitle>
+        <AlertDescription className="text-muted-foreground">
+          Connecting an AI agent (Grok, Claude, etc.) to the IC MCP server lets
+          it call tools as your II-derived principal for each app. Mistakes —
+          especially wrong{" "}
+          <strong className="text-foreground">account IDs</strong> on ICP or
+          token transfers — can send funds to the wrong place and may be
+          irreversible. Always store the correct agent account IDs per app
+          below, prefer read-only grants when exploring, double-check
+          destinations before writes, and never pre-grant full permissions for
+          high-value transfers you have not verified.
+        </AlertDescription>
+      </Alert>
 
       {showLoading ? (
         <PreferencesSkeleton />

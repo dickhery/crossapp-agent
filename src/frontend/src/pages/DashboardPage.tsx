@@ -47,7 +47,7 @@ const QUICK_ACCESS = [
   {
     to: "/memory",
     label: "Memory",
-    description: "Apps, canister IDs, rules, and notes for planning.",
+    description: "Apps, canisters, agent account IDs, rules, and notes.",
     icon: Brain,
     ocid: "dashboard.quick_access.memory",
   },
@@ -158,7 +158,7 @@ export default function DashboardPage() {
           ocid="dashboard.onboarding.empty_state"
           icon={Sparkles}
           title="Welcome — set up MCP, then build a workflow"
-          description="1) Setup: trust the IC MCP URL and connect Grok. 2) Memory: add canister IDs. 3) Chat: describe a goal. 4) Copy for MCP and paste into your AI agent. This app does not run MCP tools itself."
+          description="1) Setup: trust the IC MCP URL and connect Grok. 2) Memory: add canisters and agent account IDs per app. 3) Chat: describe a goal. 4) Copy for MCP and paste into your AI agent. This app does not run MCP tools itself."
           hint="first-time · onboarding"
           actionLabel="Start Setup"
           actionTo="/setup"

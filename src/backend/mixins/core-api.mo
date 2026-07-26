@@ -127,10 +127,11 @@ mixin (
 
   public shared ({ caller }) func addDApp(
     friendlyName : Text,
-    canisterId : Text,
+    canisterIds : [Text],
+    accountIds : [Text],
   ) : async Core.Preferences {
     requireOwner(caller);
-    CoreLib.addDApp(preferencesByOwner, caller, friendlyName, canisterId);
+    CoreLib.addDApp(preferencesByOwner, caller, friendlyName, canisterIds, accountIds);
   };
 
   public shared ({ caller }) func updateDApp(dApp : Core.PreferredDApp) : async Core.Preferences {

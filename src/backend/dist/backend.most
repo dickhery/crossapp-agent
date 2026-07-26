@@ -51,11 +51,27 @@ type NewActor__380078096 =
     workflowsByOwner :
       Map__222667396<Principal, List__560604548<Workflow__292346919>>
   };
+type NewPreferences__107699597 =
+  {
+    dApps : [NewPreferredDApp__185003643];
+    notes : Text;
+    rules : [Rule__578899597]
+  };
+type NewPreferredDApp__185003643 =
+  {accountIds : [Text]; canisterIds : [Text]; friendlyName : Text; id : Nat};
 type NextHistoryId__986329403 = {var next : Nat};
 type NextWorkflowId__818629449 = {var next : Nat};
 type Node__1000929467<K, V> =
   {#internal : Internal__41346355<K, V>; #leaf : Leaf__712614010<K, V>};
 type OldActor__1028436379 = {};
+type OldPreferences__478021297 =
+  {
+    dApps : [OldPreferredDApp__996685421];
+    notes : Text;
+    rules : [Rule__578899597]
+  };
+type OldPreferredDApp__996685421 =
+  {canisterId : Text; friendlyName : Text; id : Nat};
 type Owner__432551029 = Principal;
 type Preferences__273479893 =
   {
@@ -70,11 +86,12 @@ type Preferences__748046753 =
     rules : [Rule__450962524]
   };
 type PreferredDApp__246777288 =
-  {canisterId : Text; friendlyName : Text; id : Nat};
+  {accountIds : [Text]; canisterIds : [Text]; friendlyName : Text; id : Nat};
 type PreferredDApp__643643477 =
   {canisterId : Text; friendlyName : Text; id : Nat};
 type Rule__277570396 = {id : Nat; text : Text};
 type Rule__450962524 = {id : Nat; text : Text};
+type Rule__578899597 = {id : Nat; text : Text};
 type Timestamp__301639476 = Int;
 type UserRole__686137147 = {#admin; #guest; #user};
 type UserRole__690129077 = {#admin; #guest; #user};
@@ -104,7 +121,16 @@ type Workflow__582877400 =
     updatedAt : Timestamp__301639476
   };
 {
-  "20260724_104324" : (_old : OldActor__1028436379) -> NewActor__380078096
+  "20260724_104324" : (_old : OldActor__1028436379) -> NewActor__380078096;
+  "20260726_033535" :
+    (old : {
+             preferencesByOwner :
+               Map__222667396<Principal, OldPreferences__478021297>
+           }) ->
+      {
+        preferencesByOwner :
+          Map__222667396<Principal, NewPreferences__107699597>
+      }
 }
 actor  {
   stable accessControlState :

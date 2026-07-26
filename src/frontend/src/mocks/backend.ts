@@ -81,12 +81,14 @@ const samplePreferences: Preferences = {
     {
       id: 1n,
       friendlyName: "My NFT Vault",
-      canisterId: "rrkah-fqaaa-aaaaa-aaaaq-cai",
+      canisterIds: ["rrkah-fqaaa-aaaaa-aaaaq-cai"],
+      accountIds: ["example-agent-account-id"],
     },
     {
       id: 2n,
       friendlyName: "Marketplace A",
-      canisterId: "ryjl3-tyaaa-aaaaa-aaaba-cai",
+      canisterIds: ["ryjl3-tyaaa-aaaaa-aaaba-cai"],
+      accountIds: [],
     },
   ],
   rules: [
@@ -204,11 +206,16 @@ export const mockBackend: backendInterface = {
       : { notes, dApps: [], rules: [] };
     return preferences;
   },
-  addDApp: async (friendlyName, canisterId) => {
+  addDApp: async (friendlyName, canisterIds, accountIds) => {
     preferences = preferences ?? { notes: "", dApps: [], rules: [] };
     preferences.dApps = [
       ...preferences.dApps,
-      { id: nextDAppId++, friendlyName, canisterId },
+      {
+        id: nextDAppId++,
+        friendlyName,
+        canisterIds,
+        accountIds: accountIds ?? [],
+      },
     ];
     return preferences;
   },

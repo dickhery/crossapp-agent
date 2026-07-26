@@ -51,8 +51,9 @@ export interface Preferences {
 }
 export interface PreferredDApp {
   'id' : bigint,
+  'accountIds' : Array<string>,
+  'canisterIds' : Array<string>,
   'friendlyName' : string,
-  'canisterId' : string,
 }
 export interface Result { 'hasMore' : boolean, 'rows' : Array<Array<Cell>> }
 export type Result__1 = { 'ok' : null } |
@@ -84,7 +85,7 @@ export interface _SERVICE {
   '_initialize_access_control' : ActorMethod<[], undefined>,
   '_internet_identity_sign_in_finish' : ActorMethod<[], Result__1>,
   '_internet_identity_sign_in_start' : ActorMethod<[], Uint8Array>,
-  'addDApp' : ActorMethod<[string, string], Preferences>,
+  'addDApp' : ActorMethod<[string, Array<string>, Array<string>], Preferences>,
   'addRule' : ActorMethod<[string], Preferences>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
   'createWorkflow' : ActorMethod<
@@ -115,7 +116,10 @@ export interface _SERVICE {
   'setOpenAIApiKey' : ActorMethod<[string], undefined>,
   'toggleFavorite' : ActorMethod<[WorkflowId], [] | [Workflow]>,
   'updateDApp' : ActorMethod<[PreferredDApp], Preferences>,
-  'updateHistoryEntry' : ActorMethod<[HistoryId, string, string], [] | [HistoryEntry]>,
+  'updateHistoryEntry' : ActorMethod<
+    [HistoryId, string, string],
+    [] | [HistoryEntry]
+  >,
   'updateRule' : ActorMethod<[Rule], Preferences>,
   'updateWorkflow' : ActorMethod<[Workflow], [] | [Workflow]>,
 }

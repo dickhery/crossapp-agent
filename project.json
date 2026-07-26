@@ -9,7 +9,9 @@
     "Describe cross-dApp goals in chat and get numbered plans with real MCP tool hints",
     "Offline template planner when the operator AI key is not set — still MCP-tool-aware",
     "Copy for MCP (named connector + URL + permission rules) and save reusable workflows on-chain",
-    "Store preferred dApps, canister IDs, personal rules, and notes on-chain",
+    "Memory apps with multiple canister IDs and agent account IDs per app (included in plan prompts)",
+    "Risk warning about II-backed agents and wrong-account transfer loss",
+    "Store preferred dApps, personal rules, and notes on-chain",
     "Dashboard with MCP status, recent plans, and first-time onboarding",
     "History log of generated plans with re-open support",
     "Cycle-conscious caps on history, workflows, memory size, and model context"
@@ -25,5 +27,5 @@
     "motoko",
     "dark-mode"
   ],
-  "last_updated": "2026-07-26T12:00:00.000Z"
+  "last_updated": "2026-07-26T18:00:00.000Z"
 }

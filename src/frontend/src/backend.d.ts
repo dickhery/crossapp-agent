@@ -87,8 +87,9 @@ export interface Result {
 }
 export interface PreferredDApp {
     id: bigint;
+    accountIds: Array<string>;
+    canisterIds: Array<string>;
     friendlyName: string;
-    canisterId: string;
 }
 export type HistoryId = bigint;
 export interface Cell {
@@ -142,7 +143,7 @@ export enum UserRole {
     guest = "guest"
 }
 export interface backendInterface {
-    addDApp(friendlyName: string, canisterId: string): Promise<Preferences>;
+    addDApp(friendlyName: string, canisterIds: Array<string>, accountIds: Array<string>): Promise<Preferences>;
     addRule(text: string): Promise<Preferences>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     createWorkflow(name: string, description: string, tags: Array<string>, planText: string, favorite: boolean): Promise<Workflow>;

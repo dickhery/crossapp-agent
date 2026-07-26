@@ -33,6 +33,11 @@ module {
   let MAX_RULES : Nat = 40;
   let MAX_NOTES_CHARS : Nat = 4_000;
   let MAX_WORKFLOWS_PER_OWNER : Nat = 80;
+  // Bound per-app ID lists so Memory stays heap- and prompt-size conscious.
+  let MAX_CANISTERS_PER_DAPP : Nat = 12;
+  let MAX_ACCOUNTS_PER_DAPP : Nat = 12;
+  let MAX_ID_CHARS : Nat = 200;
+  let MAX_DAPP_NAME_CHARS : Nat = 120;
 
   // =========================================================================
   // Internal helpers
@@ -378,6 +383,68 @@ module {
     max + 1;
   };
 
+  // Trim-ish: drop empty / oversized IDs, cap count, de-dupe (order preserved).
+  // Keeps stored Memory small and plan prompts from ballooning.
+  func normalizeIdList(ids : [Text], maxCount : Nat) : [Text] {
+    var out : [Text] = [];
+    label collect for (raw in ids.vals()) {
+      if (out.size() >= maxCount) { break collect };
+      if (raw.size() == 0 or raw.size() > MAX_ID_CHARS) { continue collect };
+      var seen = false;
+      for (e in out.vals()) {
+        if (e == raw) { seen := true };
+      };
+      if (not seen) {
+        out := out.concat([raw]);
+      };
+    };
+    out;
+  };
+
+  func normalizeDApp(dApp : Core.PreferredDApp) : Core.PreferredDApp {
+    let name = if (dApp.friendlyName.size() > MAX_DAPP_NAME_CHARS) {
+      // Soft cap name length without a full UTF-8 slice helper.
+      var acc = "";
+      var n = 0;
+      label l for (c in dApp.friendlyName.chars()) {
+        if (n >= MAX_DAPP_NAME_CHARS) { break l };
+        acc #= Text.fromChar(c);
+        n += 1;
+      };
+      acc;
+    } else { dApp.friendlyName };
+    let canisterIds = normalizeIdList(dApp.canisterIds, MAX_CANISTERS_PER_DAPP);
+    let accountIds = normalizeIdList(dApp.accountIds, MAX_ACCOUNTS_PER_DAPP);
+    if (name.size() == 0) {
+      Runtime.trap("App name is required");
+    };
+    if (canisterIds.size() == 0) {
+      Runtime.trap("At least one canister ID is required per app");
+    };
+    {
+      id = dApp.id;
+      friendlyName = name;
+      canisterIds;
+      accountIds;
+    };
+  };
+
+  func formatDAppForPrompt(d : Core.PreferredDApp) : Text {
+    let cans = if (d.canisterIds.size() == 0) {
+      "(none)"
+    } else {
+      d.canisterIds.vals().join(", ")
+    };
+    let accts = if (d.accountIds.size() == 0) {
+      "(not set — discover via get_app_principal / list_app_accounts before any transfer)"
+    } else {
+      d.accountIds.vals().join(", ")
+    };
+    "  - " # d.friendlyName # "\n" #
+    "      canisters: " # cans # "\n" #
+    "      agent account IDs (use ONLY these for deposits/transfers to this app): " # accts;
+  };
+
   // Computes the next rule id within a preferences record.
   func nextRuleId(prefs : Core.Preferences) : Nat {
     var max = 0;
@@ -399,22 +466,42 @@ module {
     owner : Common.Owner,
     prefs : Core.Preferences,
   ) : Core.Preferences {
-    preferencesByOwner.add(owner, prefs);
-    prefs;
+    if (prefs.dApps.size() > MAX_DAPPS) {
+      Runtime.trap("Preferred dApp limit reached (" # MAX_DAPPS.toText() # ")");
+    };
+    if (prefs.rules.size() > MAX_RULES) {
+      Runtime.trap("Rule limit reached (" # MAX_RULES.toText() # ")");
+    };
+    if (prefs.notes.size() > MAX_NOTES_CHARS) {
+      Runtime.trap("Notes exceed " # MAX_NOTES_CHARS.toText() # " characters");
+    };
+    let cleaned : Core.Preferences = {
+      dApps = prefs.dApps.map(normalizeDApp);
+      rules = prefs.rules;
+      notes = prefs.notes;
+    };
+    preferencesByOwner.add(owner, cleaned);
+    cleaned;
   };
 
   public func addDApp(
     preferencesByOwner : Map.Map<Common.Owner, Core.Preferences>,
     owner : Common.Owner,
     friendlyName : Text,
-    canisterId : Text,
+    canisterIds : [Text],
+    accountIds : [Text],
   ) : Core.Preferences {
     let prefs = ensurePreferences(preferencesByOwner, owner);
     if (prefs.dApps.size() >= MAX_DAPPS) {
       Runtime.trap("Preferred dApp limit reached (" # MAX_DAPPS.toText() # ")");
     };
     let id = nextDAppId(prefs);
-    let dApp : Core.PreferredDApp = { id; friendlyName; canisterId };
+    let dApp = normalizeDApp({
+      id;
+      friendlyName;
+      canisterIds;
+      accountIds;
+    });
     let updated : Core.Preferences = {
       prefs with
       dApps = prefs.dApps.concat([dApp]);
@@ -429,8 +516,9 @@ module {
     dApp : Core.PreferredDApp,
   ) : Core.Preferences {
     let prefs = ensurePreferences(preferencesByOwner, owner);
+    let cleaned = normalizeDApp(dApp);
     let newDApps = prefs.dApps.map(func(d : Core.PreferredDApp) : Core.PreferredDApp {
-      if (d.id == dApp.id) { dApp } else { d };
+      if (d.id == cleaned.id) { cleaned } else { d };
     });
     let updated : Core.Preferences = { prefs with dApps = newDApps };
     preferencesByOwner.add(owner, updated);
@@ -693,9 +781,12 @@ module {
     "create/top-up. Stop before delete.\n" #
     "5. Respect every personal rule; if a rule conflicts with the goal, add a " #
     "step that surfaces the conflict instead of ignoring it.\n" #
-    "6. Copy-paste ready: no markdown fences, no preamble/epilogue — only the " #
+    "6. When Memory lists agent account IDs for an app, use ONLY those exact " #
+    "account IDs for any transfer, deposit, or payment into that app. Never " #
+    "guess or invent account IDs — wrong IDs can permanently lose funds.\n" #
+    "7. Copy-paste ready: no markdown fences, no preamble/epilogue — only the " #
     "numbered steps (a one-line Goal: header is allowed).\n" #
-    "7. Be cycle-conscious: avoid redundant status checks, batch discovery, " #
+    "8. Be cycle-conscious: avoid redundant status checks, batch discovery, " #
     "and never suggest unbounded loops of update calls."
   };
 
@@ -739,12 +830,13 @@ module {
   func renderPreferences(prefs : Core.Preferences) : Text {
     var parts : [Text] = [];
     if (prefs.dApps.size() > 0) {
-      let dAppLines = prefs.dApps.map(
-        func(d : Core.PreferredDApp) : Text {
-          "  - " # d.friendlyName # " (canister id: " # d.canisterId # ")"
-        },
+      let dAppLines = prefs.dApps.map(formatDAppForPrompt);
+      parts := parts.concat(
+        [
+          "Preferred dApps (canisters + agent account IDs from Memory):",
+          "For any ICP/token transfer into an app below, destination MUST be one of that app's listed agent account IDs.",
+        ].concat(dAppLines)
       );
-      parts := parts.concat(["Preferred dApps / canister IDs:"].concat(dAppLines));
     };
     if (prefs.rules.size() > 0) {
       let ruleLines = prefs.rules.map(

@@ -4,11 +4,13 @@ module {
   // Domain types for the CrossApp Agent core: workflows, preferences, history,
   // and the chat conversation that drives plan generation.
 
-  // A preferred dApp / important canister with a friendly name.
+  // A preferred dApp with its related canisters and the agent's account IDs
+  // for that app (so plans can tell MCP agents where to send ICP/tokens).
   public type PreferredDApp = {
     id : Nat;                 // stable id within the owner's dApp list
     friendlyName : Text;     // human label, e.g. "My NFT Vault"
-    canisterId : Text;       // canister principal as text, e.g. "rrkah-f..."
+    canisterIds : [Text];    // one or more canister principals for this app
+    accountIds : [Text];     // agent account IDs under this app (ICRC/account hex/principal)
   };
 
   // A personal rule / constraint the agent must respect when planning.

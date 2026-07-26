@@ -60,7 +60,11 @@ export function useSavePreferences() {
   });
 }
 
-type DAppInput = [string, string];
+type DAppInput = {
+  friendlyName: string;
+  canisterIds: string[];
+  accountIds: string[];
+};
 
 export function useAddDApp() {
   const qc = useQueryClient();
@@ -68,7 +72,11 @@ export function useAddDApp() {
   return useMutation({
     mutationFn: async (input: DAppInput) => {
       requireActor(actor);
-      return actor.addDApp(...input);
+      return actor.addDApp(
+        input.friendlyName,
+        input.canisterIds,
+        input.accountIds,
+      );
     },
     onSuccess: (prefs) => {
       qc.setQueryData(preferencesKey, prefs);

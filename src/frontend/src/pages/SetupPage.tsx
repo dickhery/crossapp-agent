@@ -452,6 +452,13 @@ export function SetupPage() {
                   and retry.
                 </li>
               </ol>
+              <p className="rounded-md border border-amber-500/30 bg-amber-500/5 px-3 py-2 text-xs leading-relaxed text-muted-foreground">
+                <strong className="text-foreground">Warning:</strong> An Actions
+                grant lets the agent act as your Internet Identity for each app.
+                Wrong account IDs on transfers can permanently lose funds.
+                Prefer Questions-only while exploring; store agent account IDs
+                under Memory before any deposit/transfer workflows.
+              </p>
             </div>
           }
         />
@@ -532,18 +539,24 @@ export function SetupPage() {
           </li>
           <li>
             <strong className="text-foreground">Open Memory</strong> and add
-            every dApp or canister the agent should know:
+            every dApp the agent should know:
             <ul className="mt-1 list-disc space-y-1 pl-5">
               <li>
                 <em>App name</em> — human label (e.g. “ICP Ledger”, “NNS
                 Governance”).
               </li>
               <li>
-                <em>Canister ID</em> — principal text (e.g.{" "}
+                <em>Canister IDs</em> — one or more principals for that app
+                (e.g.{" "}
                 <code className="rounded bg-muted px-1 font-mono text-[11px]">
                   ryjl3-tyaaa-aaaaa-aaaba-cai
                 </code>
                 ).
+              </li>
+              <li>
+                <em>Agent account IDs</em> — the account(s) your agent II uses{" "}
+                <strong className="text-foreground">inside that app</strong> (so
+                transfers do not go to the wrong destination).
               </li>
               <li>
                 Optional: personal <em>rules</em> (risk caps) and <em>notes</em>{" "}

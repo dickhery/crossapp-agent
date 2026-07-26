@@ -132,12 +132,14 @@ export function agentPermissionLines(grantAllPermissions: boolean): string[] {
       "PERMISSIONS (pre-confirmed by me for this workflow): I grant this agent full READ, WRITE, and EXECUTE access to tools from the named MCP connector.",
       "Do not wait for per-step confirmation. Proceed autonomously through the plan: use read tools when sufficient; use write/update/execute tools (canister_update_call, top-up, install, delete, and similar) when a step requires them.",
       "Still respect every personal rule in the plan. Be cycle-conscious: no redundant loops; check icp_cycles_balance before create/top-up. If a step clearly violates a personal rule or goes beyond the plan scope, stop and explain.",
+      "CRITICAL: For any ICP/token transfer or deposit into an app, use ONLY the agent account IDs listed for that app in the workflow/Memory section. Never invent or substitute account IDs — wrong destinations can permanently lose funds.",
     ];
   }
   return [
     "Prefer read-only tools first: canister_query, discovery, get_canister_candid, get_app_principal, resolve_app.",
     "Ask me before any write/delete (canister_update_call, top-up, install, delete).",
     "Respect every personal rule mentioned in the plan. Be cycle-conscious: no redundant loops; check icp_cycles_balance before create/top-up.",
+    "CRITICAL: For any ICP/token transfer or deposit into an app, use ONLY the agent account IDs listed for that app in the workflow/Memory section. Never invent or substitute account IDs — wrong destinations can permanently lose funds.",
   ];
 }
 

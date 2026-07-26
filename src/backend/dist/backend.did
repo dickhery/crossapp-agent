@@ -44,7 +44,8 @@ type Result =
  };
 type PreferredDApp = 
  record {
-   canisterId: text;
+   accountIds: vec text;
+   canisterIds: vec text;
    friendlyName: text;
    id: nat;
  };
@@ -108,7 +109,8 @@ service : {
   _initialize_access_control: () -> ();
   _internet_identity_sign_in_finish: () -> (Result__1);
   _internet_identity_sign_in_start: () -> (blob);
-  addDApp: (friendlyName: text, canisterId: text) -> (Preferences);
+  addDApp: (friendlyName: text, canisterIds: vec text, accountIds:
+   vec text) -> (Preferences);
   addRule: ("text": text) -> (Preferences);
   assignCallerUserRole: (user: principal, role: UserRole) -> ();
   createWorkflow: (name: text, description: text, tags: vec text, planText:

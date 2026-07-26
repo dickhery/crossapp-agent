@@ -32,8 +32,9 @@ export const Error = IDL.Variant({
 export const Result__1 = IDL.Variant({ 'ok' : IDL.Null, 'err' : Error });
 export const PreferredDApp = IDL.Record({
   'id' : IDL.Nat,
+  'accountIds' : IDL.Vec(IDL.Text),
+  'canisterIds' : IDL.Vec(IDL.Text),
   'friendlyName' : IDL.Text,
-  'canisterId' : IDL.Text,
 });
 export const Rule = IDL.Record({ 'id' : IDL.Nat, 'text' : IDL.Text });
 export const Preferences = IDL.Record({
@@ -97,7 +98,11 @@ export const idlService = IDL.Service({
   '_initialize_access_control' : IDL.Func([], [], []),
   '_internet_identity_sign_in_finish' : IDL.Func([], [Result__1], []),
   '_internet_identity_sign_in_start' : IDL.Func([], [IDL.Vec(IDL.Nat8)], []),
-  'addDApp' : IDL.Func([IDL.Text, IDL.Text], [Preferences], []),
+  'addDApp' : IDL.Func(
+      [IDL.Text, IDL.Vec(IDL.Text), IDL.Vec(IDL.Text)],
+      [Preferences],
+      [],
+    ),
   'addRule' : IDL.Func([IDL.Text], [Preferences], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
   'createWorkflow' : IDL.Func(
@@ -169,8 +174,9 @@ export const idlFactory = ({ IDL }) => {
   const Result__1 = IDL.Variant({ 'ok' : IDL.Null, 'err' : Error });
   const PreferredDApp = IDL.Record({
     'id' : IDL.Nat,
+    'accountIds' : IDL.Vec(IDL.Text),
+    'canisterIds' : IDL.Vec(IDL.Text),
     'friendlyName' : IDL.Text,
-    'canisterId' : IDL.Text,
   });
   const Rule = IDL.Record({ 'id' : IDL.Nat, 'text' : IDL.Text });
   const Preferences = IDL.Record({
@@ -231,7 +237,11 @@ export const idlFactory = ({ IDL }) => {
     '_initialize_access_control' : IDL.Func([], [], []),
     '_internet_identity_sign_in_finish' : IDL.Func([], [Result__1], []),
     '_internet_identity_sign_in_start' : IDL.Func([], [IDL.Vec(IDL.Nat8)], []),
-    'addDApp' : IDL.Func([IDL.Text, IDL.Text], [Preferences], []),
+    'addDApp' : IDL.Func(
+        [IDL.Text, IDL.Vec(IDL.Text), IDL.Vec(IDL.Text)],
+        [Preferences],
+        [],
+      ),
     'addRule' : IDL.Func([IDL.Text], [Preferences], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
     'createWorkflow' : IDL.Func(
