@@ -183,6 +183,13 @@ export const mockBackend: backendInterface = {
     history = history.filter((h) => h.id !== id);
     return history.length < before;
   },
+  updateHistoryEntry: async (id, goal, planText) => {
+    const idx = history.findIndex((h) => h.id === id);
+    if (idx < 0) return null;
+    const updated = { ...history[idx], goal, planText } as HistoryEntry;
+    history = history.map((h, i) => (i === idx ? updated : h));
+    return updated;
+  },
 
   // --- Preferences -------------------------------------------------------
   getPreferences: async () =>

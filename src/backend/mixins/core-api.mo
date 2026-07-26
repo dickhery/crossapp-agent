@@ -180,6 +180,16 @@ mixin (
     CoreLib.deleteHistoryEntry(historyByOwner, caller, id);
   };
 
+  // Edit a history plan (goal + plan text). Local update only — no AI outcall.
+  public shared ({ caller }) func updateHistoryEntry(
+    id : Common.HistoryId,
+    goal : Text,
+    planText : Text,
+  ) : async ?Core.HistoryEntry {
+    requireOwner(caller);
+    CoreLib.updateHistoryEntry(historyByOwner, caller, id, goal, planText);
+  };
+
   // --- Plan generation -----------------------------------------------------
 
   // Generates a structured, numbered plan from a natural-language goal,

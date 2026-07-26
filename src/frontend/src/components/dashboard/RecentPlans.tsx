@@ -1,8 +1,23 @@
-import { useNavigate } from "@tanstack/react-router";
-import { History, MessageSquare } from "lucide-react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { History, MessageSquare, Pencil, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 
 import { EmptyState } from "@/components/dashboard/EmptyState";
+import { HistoryEditDialog } from "@/components/history/HistoryEditDialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useDeleteHistoryEntry } from "@/hooks/use-history";
 import type { HistoryEntry } from "@/types";
 
 const RECENT_LIMIT = 5;
@@ -38,24 +53,43 @@ export type RecentPlansProps = {
 
 /**
  * Renders the most recent plans (last 5 from history) on the dashboard.
- * Shows a layout-matched skeleton while loading and a helpful empty state
- * directing first-time users to the chat when there is no history yet.
+ * Supports reopen, edit, and delete without leaving the overview.
  */
 export function RecentPlans({ history, isLoading }: RecentPlansProps) {
   const navigate = useNavigate();
+  const deleteEntry = useDeleteHistoryEntry();
+  const [editEntry, setEditEntry] = useState<HistoryEntry | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<HistoryEntry | null>(null);
+
   const recent = (history ?? [])
     .slice()
     .sort((a, b) => Number(b.createdAt - a.createdAt))
     .slice(0, RECENT_LIMIT);
 
-  // Reopen a specific recent plan in chat — deep-links to /chat with the
-  // history entry id so ChatPage loads that exact plan, not the history list.
   const handleReopen = (entry: HistoryEntry) => {
     void navigate({
       to: "/chat",
       search: { historyId: entry.id.toString(), plan: undefined },
     });
   };
+
+  const handleDelete = () => {
+    if (!deleteTarget) return;
+    const target = deleteTarget;
+    deleteEntry.mutate(target.id, {
+      onSuccess: (ok) => {
+        setDeleteTarget(null);
+        if (ok) {
+          toast.success("Plan deleted from history.");
+        } else {
+          toast.error("Plan not found — it may already be deleted.");
+        }
+      },
+      onError: () => toast.error("Could not delete plan."),
+    });
+  };
+
+  const isDeleting = deleteEntry.isPending;
 
   return (
     <section
@@ -70,13 +104,13 @@ export function RecentPlans({ history, isLoading }: RecentPlansProps) {
         >
           Recent plans
         </h2>
-        <a
-          href="/history"
+        <Link
+          to="/history"
           data-ocid="dashboard.recent_plans.view_all_link"
           className="text-xs font-medium text-muted-foreground transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
           View all
-        </a>
+        </Link>
       </div>
 
       {isLoading ? (
@@ -114,36 +148,112 @@ export function RecentPlans({ history, isLoading }: RecentPlansProps) {
         <ul data-ocid="dashboard.recent_plans.list" className="space-y-3">
           {recent.map((entry, i) => (
             <li key={entry.id}>
-              <button
-                type="button"
-                onClick={() => handleReopen(entry)}
+              <div
                 data-ocid={`dashboard.recent_plans.item.${i + 1}`}
-                className="group flex w-full items-start gap-3 rounded-xl border border-border bg-card p-4 text-left transition-smooth hover:border-primary/40 hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                className="group flex w-full items-start gap-3 rounded-xl border border-border bg-card p-4 transition-smooth hover:border-primary/40 hover:bg-secondary"
               >
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-border bg-secondary text-muted-foreground transition-colors group-hover:text-primary">
-                  <MessageSquare className="h-4 w-4" aria-hidden />
-                </div>
-                <div className="min-w-0 flex-1 space-y-1">
-                  <p className="truncate font-display text-sm font-medium text-foreground">
-                    {entry.goal || "Untitled goal"}
-                  </p>
-                  <p className="line-clamp-1 text-xs text-muted-foreground">
-                    {entry.planText || "No plan text"}
-                  </p>
-                </div>
-                <time
-                  className="shrink-0 font-mono text-[11px] text-muted-foreground/70"
-                  dateTime={new Date(
-                    Number(entry.createdAt / 1_000_000n),
-                  ).toISOString()}
+                <button
+                  type="button"
+                  onClick={() => handleReopen(entry)}
+                  data-ocid={`dashboard.recent_plans.open.${i + 1}`}
+                  className="flex min-w-0 flex-1 items-start gap-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-lg"
                 >
-                  {formatRelative(entry.createdAt)}
-                </time>
-              </button>
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-border bg-secondary text-muted-foreground transition-colors group-hover:text-primary">
+                    <MessageSquare className="h-4 w-4" aria-hidden />
+                  </div>
+                  <div className="min-w-0 flex-1 space-y-1">
+                    <p className="truncate font-display text-sm font-medium text-foreground">
+                      {entry.goal || "Untitled goal"}
+                    </p>
+                    <p className="line-clamp-1 text-xs text-muted-foreground">
+                      {entry.planText || "No plan text"}
+                    </p>
+                  </div>
+                  <time
+                    className="shrink-0 font-mono text-[11px] text-muted-foreground/70"
+                    dateTime={new Date(
+                      Number(entry.createdAt / 1_000_000n),
+                    ).toISOString()}
+                  >
+                    {formatRelative(entry.createdAt)}
+                  </time>
+                </button>
+                <div className="flex shrink-0 items-center gap-0.5">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    data-ocid={`dashboard.recent_plans.edit.${i + 1}`}
+                    aria-label={`Edit plan: ${entry.goal || "Untitled goal"}`}
+                    onClick={() => setEditEntry(entry)}
+                    disabled={isDeleting}
+                    className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                  >
+                    <Pencil className="h-3.5 w-3.5" aria-hidden />
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    data-ocid={`dashboard.recent_plans.delete.${i + 1}`}
+                    aria-label={`Delete plan: ${entry.goal || "Untitled goal"}`}
+                    onClick={() => setDeleteTarget(entry)}
+                    disabled={isDeleting}
+                    className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" aria-hidden />
+                  </Button>
+                </div>
+              </div>
             </li>
           ))}
         </ul>
       )}
+
+      <HistoryEditDialog
+        entry={editEntry}
+        open={editEntry !== null}
+        onOpenChange={(open) => {
+          if (!open) setEditEntry(null);
+        }}
+        ocidPrefix="dashboard.recent_plans.edit"
+      />
+
+      <AlertDialog
+        open={deleteTarget !== null}
+        onOpenChange={(open) => {
+          if (!open) setDeleteTarget(null);
+        }}
+      >
+        <AlertDialogContent data-ocid="dashboard.recent_plans.delete_dialog">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete this plan from history?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This permanently removes the plan for{" "}
+              <span className="font-medium text-foreground">
+                {deleteTarget?.goal || "Untitled goal"}
+              </span>
+              . This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              data-ocid="dashboard.recent_plans.delete_cancel"
+              disabled={isDeleting}
+            >
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              data-ocid="dashboard.recent_plans.delete_confirm"
+              onClick={handleDelete}
+              disabled={isDeleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 dark:bg-destructive/60"
+            >
+              {isDeleting ? "Deleting…" : "Delete plan"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </section>
   );
 }

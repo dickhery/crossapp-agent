@@ -27,6 +27,8 @@ module {
   let MAX_CONVERSATION_MESSAGES : Nat = 12;
   let MAX_GOAL_CHARS : Nat = 2_000;
   let MAX_MESSAGE_CHARS : Nat = 4_000;
+  // Bound stored plan bodies so a single update cannot bloat heap / cycles.
+  let MAX_PLAN_TEXT_CHARS : Nat = 16_000;
   let MAX_DAPPS : Nat = 40;
   let MAX_RULES : Nat = 40;
   let MAX_NOTES_CHARS : Nat = 4_000;
@@ -180,7 +182,7 @@ module {
   ) : Core.Workflow {
     let list = ensureWorkflowList(workflowsByOwner, owner);
     if (list.size() >= MAX_WORKFLOWS_PER_OWNER) {
-      Runtime.trap("Workflow limit reached (" # Nat.toText(MAX_WORKFLOWS_PER_OWNER) # "). Delete unused workflows first.");
+      Runtime.trap("Workflow limit reached (" # MAX_WORKFLOWS_PER_OWNER.toText() # "). Delete unused workflows first.");
     };
     let counter = ensureWorkflowIdCounter(workflowIdsByOwner, owner);
     let id = counter.next;
@@ -409,7 +411,7 @@ module {
   ) : Core.Preferences {
     let prefs = ensurePreferences(preferencesByOwner, owner);
     if (prefs.dApps.size() >= MAX_DAPPS) {
-      Runtime.trap("Preferred dApp limit reached (" # Nat.toText(MAX_DAPPS) # ")");
+      Runtime.trap("Preferred dApp limit reached (" # MAX_DAPPS.toText() # ")");
     };
     let id = nextDAppId(prefs);
     let dApp : Core.PreferredDApp = { id; friendlyName; canisterId };
@@ -454,7 +456,7 @@ module {
   ) : Core.Preferences {
     let prefs = ensurePreferences(preferencesByOwner, owner);
     if (prefs.rules.size() >= MAX_RULES) {
-      Runtime.trap("Rule limit reached (" # Nat.toText(MAX_RULES) # ")");
+      Runtime.trap("Rule limit reached (" # MAX_RULES.toText() # ")");
     };
     let id = nextRuleId(prefs);
     let rule : Core.Rule = { id; text };
@@ -498,7 +500,7 @@ module {
     notes : Text,
   ) : Core.Preferences {
     if (notes.size() > MAX_NOTES_CHARS) {
-      Runtime.trap("Notes exceed " # Nat.toText(MAX_NOTES_CHARS) # " characters");
+      Runtime.trap("Notes exceed " # MAX_NOTES_CHARS.toText() # " characters");
     };
     let prefs = ensurePreferences(preferencesByOwner, owner);
     let updated : Core.Preferences = { prefs with notes };
@@ -592,6 +594,57 @@ module {
         };
       };
       case null { false };
+    };
+  };
+
+  // In-place edit of a history plan. Local write only (no HTTPS outcall) so
+  // cycle cost stays minimal. Caps goal/plan sizes; preserves owner + id +
+  // createdAt so chronology stays stable without a schema migration.
+  public func updateHistoryEntry(
+    historyByOwner : Map.Map<Common.Owner, List.List<Core.HistoryEntry>>,
+    owner : Common.Owner,
+    id : Common.HistoryId,
+    goal : Text,
+    planText : Text,
+  ) : ?Core.HistoryEntry {
+    if (goal.isEmpty()) {
+      Runtime.trap("Goal must not be empty");
+    };
+    if (goal.size() > MAX_GOAL_CHARS) {
+      Runtime.trap("Goal exceeds " # MAX_GOAL_CHARS.toText() # " characters");
+    };
+    if (planText.isEmpty()) {
+      Runtime.trap("Plan text must not be empty");
+    };
+    if (planText.size() > MAX_PLAN_TEXT_CHARS) {
+      Runtime.trap("Plan text exceeds " # MAX_PLAN_TEXT_CHARS.toText() # " characters");
+    };
+    switch (historyByOwner.get(owner)) {
+      case (?list) {
+        switch (findHistoryEntry(list, id)) {
+          case (?existing) {
+            let updated : Core.HistoryEntry = {
+              existing with
+              goal;
+              planText;
+            };
+            // Rebuild in place so chronological order (createdAt / append
+            // position) is preserved — edits must not reshuffle history.
+            let rebuilt = List.empty<Core.HistoryEntry>();
+            for (entry in list.values()) {
+              if (entry.id == id) {
+                rebuilt.add(updated);
+              } else {
+                rebuilt.add(entry);
+              };
+            };
+            historyByOwner.add(owner, rebuilt);
+            ?updated;
+          };
+          case null { null };
+        };
+      };
+      case null { null };
     };
   };
 

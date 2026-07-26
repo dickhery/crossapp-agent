@@ -133,6 +133,11 @@ export const idlService = IDL.Service({
   'setOpenAIApiKey' : IDL.Func([IDL.Text], [], []),
   'toggleFavorite' : IDL.Func([WorkflowId], [IDL.Opt(Workflow)], []),
   'updateDApp' : IDL.Func([PreferredDApp], [Preferences], []),
+  'updateHistoryEntry' : IDL.Func(
+      [HistoryId, IDL.Text, IDL.Text],
+      [IDL.Opt(HistoryEntry)],
+      [],
+    ),
   'updateRule' : IDL.Func([Rule], [Preferences], []),
   'updateWorkflow' : IDL.Func([Workflow], [IDL.Opt(Workflow)], []),
 });
@@ -266,6 +271,11 @@ export const idlFactory = ({ IDL }) => {
     'setOpenAIApiKey' : IDL.Func([IDL.Text], [], []),
     'toggleFavorite' : IDL.Func([WorkflowId], [IDL.Opt(Workflow)], []),
     'updateDApp' : IDL.Func([PreferredDApp], [Preferences], []),
+    'updateHistoryEntry' : IDL.Func(
+        [HistoryId, IDL.Text, IDL.Text],
+        [IDL.Opt(HistoryEntry)],
+        [],
+      ),
     'updateRule' : IDL.Func([Rule], [Preferences], []),
     'updateWorkflow' : IDL.Func([Workflow], [IDL.Opt(Workflow)], []),
   });

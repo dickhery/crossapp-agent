@@ -152,7 +152,7 @@ module {
     var numbered : [Text] = [];
     var i = 1;
     for (step in steps.vals()) {
-      numbered := Array.concat(numbered, [Nat.toText(i) # ". " # step]);
+      numbered := numbered.concat([i.toText() # ". " # step]);
       i += 1;
     };
 

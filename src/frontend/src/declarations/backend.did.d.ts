@@ -115,6 +115,7 @@ export interface _SERVICE {
   'setOpenAIApiKey' : ActorMethod<[string], undefined>,
   'toggleFavorite' : ActorMethod<[WorkflowId], [] | [Workflow]>,
   'updateDApp' : ActorMethod<[PreferredDApp], Preferences>,
+  'updateHistoryEntry' : ActorMethod<[HistoryId, string, string], [] | [HistoryEntry]>,
   'updateRule' : ActorMethod<[Rule], Preferences>,
   'updateWorkflow' : ActorMethod<[Workflow], [] | [Workflow]>,
 }

@@ -1,7 +1,9 @@
 import { useNavigate } from "@tanstack/react-router";
-import { Clock, MessageSquare, Trash2 } from "lucide-react";
+import { Clock, MessageSquare, Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 
+import { HistoryEditDialog } from "@/components/history/HistoryEditDialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -67,6 +69,7 @@ export function HistoryEntryCard({
   const navigate = useNavigate();
   const deleteEntry = useDeleteHistoryEntry();
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
 
   const { absolute, relative } = formatTimestamp(entry.createdAt);
 
@@ -81,7 +84,15 @@ export function HistoryEntryCard({
 
   const handleDelete = () => {
     deleteEntry.mutate(entry.id, {
-      onSuccess: () => setConfirmOpen(false),
+      onSuccess: (ok) => {
+        setConfirmOpen(false);
+        if (ok) {
+          toast.success("Plan deleted from history.");
+        } else {
+          toast.error("Plan not found — it may already be deleted.");
+        }
+      },
+      onError: () => toast.error("Could not delete plan."),
     });
   };
 
@@ -130,8 +141,20 @@ export function HistoryEntryCard({
           </div>
         </button>
 
-        {/* Delete action — opens confirmation dialog */}
-        <div className="flex shrink-0 items-center sm:ml-2">
+        {/* Edit + delete — stop propagation so the card body does not navigate */}
+        <div className="flex shrink-0 items-center gap-1 sm:ml-2">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            data-ocid={`history.edit_button.${index}`}
+            aria-label={`Edit history entry: ${entry.goal || "Untitled goal"}`}
+            onClick={() => setEditOpen(true)}
+            disabled={isDeleting}
+            className="h-9 w-9 text-muted-foreground hover:text-foreground"
+          >
+            <Pencil className="h-4 w-4" aria-hidden />
+          </Button>
           <Button
             type="button"
             variant="ghost"
@@ -146,6 +169,13 @@ export function HistoryEntryCard({
           </Button>
         </div>
       </article>
+
+      <HistoryEditDialog
+        entry={entry}
+        open={editOpen}
+        onOpenChange={setEditOpen}
+        ocidPrefix={`history.edit.${index}`}
+      />
 
       <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
         <AlertDialogContent data-ocid={`history.delete_dialog.${index}`}>

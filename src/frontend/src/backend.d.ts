@@ -170,6 +170,7 @@ export interface backendInterface {
     setOpenAIApiKey(key: string): Promise<void>;
     toggleFavorite(id: WorkflowId): Promise<Workflow | null>;
     updateDApp(dApp: PreferredDApp): Promise<Preferences>;
+    updateHistoryEntry(id: HistoryId, goal: string, planText: string): Promise<HistoryEntry | null>;
     updateRule(rule: Rule): Promise<Preferences>;
     updateWorkflow(workflow: Workflow): Promise<Workflow | null>;
 }

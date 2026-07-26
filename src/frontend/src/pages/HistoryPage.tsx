@@ -97,9 +97,8 @@ export function HistoryPage() {
   const { data, isLoading, isError, refetch, isFetching } = useListHistory();
   const navigate = useNavigate();
 
-  // Newest first — listHistory returns chronological order; reverse for
-  // most-recent-first display.
-  const entries: HistoryEntry[] = (data ?? []).slice().reverse();
+  // listHistory already returns most-recent-first (backend reverses append order).
+  const entries: HistoryEntry[] = data ?? [];
 
   const goToChat = () => {
     void navigate({
@@ -119,8 +118,8 @@ export function HistoryPage() {
             History
           </h1>
           <p className="text-sm text-muted-foreground">
-            Every plan you’ve generated, stored on-chain. Click any entry to
-            reopen it in chat for further refinement.
+            Every plan you’ve generated, stored on-chain. Open one to refine in
+            chat, edit the goal or steps, or delete plans you no longer need.
           </p>
         </div>
         <div className="flex items-center gap-2">

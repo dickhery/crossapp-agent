@@ -137,6 +137,8 @@ service : {
   setOpenAIApiKey: (key: text) -> ();
   toggleFavorite: (id: WorkflowId) -> (opt Workflow);
   updateDApp: (dApp: PreferredDApp) -> (Preferences);
+  updateHistoryEntry: (id: HistoryId, goal: text, planText: text) ->
+   (opt HistoryEntry);
   updateRule: (rule: Rule) -> (Preferences);
   updateWorkflow: (workflow: Workflow) -> (opt Workflow);
 }

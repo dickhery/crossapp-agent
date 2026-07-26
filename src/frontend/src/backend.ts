@@ -219,6 +219,7 @@ export interface backendInterface {
     setOpenAIApiKey(key: string): Promise<void>;
     toggleFavorite(id: WorkflowId): Promise<Workflow | null>;
     updateDApp(dApp: PreferredDApp): Promise<Preferences>;
+    updateHistoryEntry(id: HistoryId, goal: string, planText: string): Promise<HistoryEntry | null>;
     updateRule(rule: Rule): Promise<Preferences>;
     updateWorkflow(workflow: Workflow): Promise<Workflow | null>;
 }
@@ -657,6 +658,20 @@ export class Backend implements backendInterface {
         } else {
             const result = await this.actor.updateDApp(arg0);
             return result;
+        }
+    }
+    async updateHistoryEntry(arg0: HistoryId, arg1: string, arg2: string): Promise<HistoryEntry | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updateHistoryEntry(arg0, arg1, arg2);
+                return from_candid_opt_n26(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updateHistoryEntry(arg0, arg1, arg2);
+            return from_candid_opt_n26(this._uploadFile, this._downloadFile, result);
         }
     }
     async updateRule(arg0: Rule): Promise<Preferences> {

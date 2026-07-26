@@ -38,8 +38,32 @@ export function useDeleteHistoryEntry() {
       if (!actor) throw new Error("Actor not ready");
       return actor.deleteHistoryEntry(id);
     },
-    onSuccess: () => {
+    onSuccess: (_ok, id) => {
       void qc.invalidateQueries({ queryKey: historyKey });
+      void qc.invalidateQueries({ queryKey: entryKey(id) });
+    },
+  });
+}
+
+// Local update of goal + planText only — no AI outcall, minimal cycles.
+export function useUpdateHistoryEntry() {
+  const qc = useQueryClient();
+  const { actor } = useActor(createActor);
+  return useMutation({
+    mutationFn: async (input: {
+      id: HistoryId;
+      goal: string;
+      planText: string;
+    }) => {
+      if (!actor) throw new Error("Actor not ready");
+      return actor.updateHistoryEntry(input.id, input.goal, input.planText);
+    },
+    onSuccess: (saved, input) => {
+      void qc.invalidateQueries({ queryKey: historyKey });
+      void qc.invalidateQueries({ queryKey: entryKey(input.id) });
+      if (saved) {
+        qc.setQueryData(entryKey(input.id), saved);
+      }
     },
   });
 }
