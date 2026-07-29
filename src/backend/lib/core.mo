@@ -747,9 +747,9 @@ module {
   // model can ground its plan in the user's environment and constraints.
   // =========================================================================
 
-  // System prompt tuned for the official Internet Computer MCP beta server
-  // (https://mcp.beta.id.ai/). Tool names must match that server exactly —
-  // agents only speak textual Candid; the server encodes/decodes.
+  // System prompt tuned for the official Internet Computer MCP server
+  // (https://mcp.internetcomputer.org/mcp). Tool names must match that server
+  // exactly — agents only speak textual Candid; the server encodes/decodes.
   func planSystemPrompt() : Text {
     "You are a planning assistant for the True Cross-App Personal Agent on the " #
     "Internet Computer. Users will paste your plan into Grok, Claude, or ChatGPT " #

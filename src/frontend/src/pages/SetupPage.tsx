@@ -185,7 +185,7 @@ export function SetupPage() {
                 rel="noreferrer"
                 className="text-primary hover:underline"
               >
-                mcp.beta.id.ai
+                mcp.internetcomputer.org
               </a>
             </p>
           </div>

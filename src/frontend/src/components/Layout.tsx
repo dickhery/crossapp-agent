@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/hooks/use-auth";
+import { MCP_DOCS_URL } from "@/lib/mcp";
 
 function PrincipalBadge() {
   const { principalText, principalShort } = useAuth();
@@ -159,12 +160,12 @@ export function Layout({ children }: { children: ReactNode }) {
           <p className="text-center font-mono text-[11px] text-muted-foreground/70">
             IC MCP ·{" "}
             <a
-              href="https://mcp.beta.id.ai/"
+              href={MCP_DOCS_URL}
               target="_blank"
               rel="noreferrer"
               className="text-primary hover:underline"
             >
-              mcp.beta.id.ai
+              mcp.internetcomputer.org
             </a>
             {" · "}
             Built with{" "}

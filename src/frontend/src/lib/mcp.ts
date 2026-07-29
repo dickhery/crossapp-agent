@@ -1,14 +1,14 @@
-// Canonical Internet Computer MCP beta connector values used across Setup,
+// Canonical Internet Computer MCP connector values used across Setup,
 // plan copy affordances, and onboarding copy. Keep in sync with
-// https://mcp.beta.id.ai/ and backend/lib/offline-plan.mo.
+// https://mcp.internetcomputer.org/mcp and backend/lib/offline-plan.mo.
 //
 // Connector *display name* and the grant-all-permissions default are stored in
 // localStorage only (zero canister cycles) so Copy for MCP can name the user's
 // Grok/Claude connector and optionally pre-authorize agent tool use.
 
-export const MCP_CONNECTOR_URL = "https://mcp.beta.id.ai/mcp-prod";
+export const MCP_CONNECTOR_URL = "https://mcp.internetcomputer.org/mcp";
 export const II_TRUSTED_MCP_SETTINGS_URL = "https://id.ai/manage/settings";
-export const MCP_DOCS_URL = "https://mcp.beta.id.ai/";
+export const MCP_DOCS_URL = "https://mcp.internetcomputer.org/";
 export const GROK_CONNECTORS_URL = "https://grok.com/connectors";
 export const GROK_CHAT_URL = "https://grok.com/";
 
@@ -41,7 +41,7 @@ export const AI_APPS = {
     name: "ChatGPT",
     recommended: false,
     connectorsUrl: "https://chatgpt.com/",
-    docsUrl: "https://mcp.beta.id.ai/",
+    docsUrl: "https://mcp.internetcomputer.org/",
     planNote:
       "Custom MCP / Apps usually needs Developer mode and is limited on consumer plans — Business or Enterprise is often required. Prefer Grok or Claude if you hit plan walls.",
   },

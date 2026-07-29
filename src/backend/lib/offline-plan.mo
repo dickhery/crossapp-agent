@@ -9,7 +9,7 @@ import Core "../types/core";
 module {
 
   // MCP connector users must trust and add to their AI app.
-  public let MCP_URL : Text = "https://mcp.beta.id.ai/mcp-prod";
+  public let MCP_URL : Text = "https://mcp.internetcomputer.org/mcp";
   public let II_TRUST_URL : Text = "https://id.ai/manage/settings";
 
   func formatDApp(d : Core.PreferredDApp) : Text {
